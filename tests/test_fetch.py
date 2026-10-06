@@ -529,6 +529,7 @@ def test_crawl_diagnostics_reports_ok_and_error_pages_with_full_fetch_result_det
         "error_code": None,
         "truncated": False,
         "js_rendered": False,
+        "requested_url": None,  # B-76: only set when a redirect ended somewhere else
     }
     error_page = diag["pages"][1]
     assert error_page["status"] == "error"
@@ -813,3 +814,60 @@ def test_b75_two_different_empty_shells_are_not_merged():
         result = crawl_site("https://example.com/", ["example.com"], BASE_CONFIG, client=client)
 
     assert len(result.pages) == 3
+
+
+def _redirect_client(pages, redirects):
+    def handler(request: httpx.Request) -> httpx.Response:
+        key = str(request.url)
+        if key in redirects:
+            return httpx.Response(301, headers={"Location": redirects[key]})
+        if key in pages:
+            status, body = pages[key]
+            return httpx.Response(status, text=body)
+        return httpx.Response(404, text="not found")
+    return httpx.Client(transport=httpx.MockTransport(handler), follow_redirects=True, max_redirects=5)
+
+
+def test_b76_fetch_page_records_the_final_resolved_url():
+    # B-76 (PRD Section 9: "Record the final resolved URL as the source").
+    pages = {"https://example.com/customers/": (200, "<html><body>Customers</body></html>")}
+    redirects = {"https://example.com/360-customer-engagement": "https://example.com/customers/"}
+    with _redirect_client(pages, redirects) as client:
+        page = fetch_page(client, "https://example.com/360-customer-engagement", 100_000, 5)
+
+    assert page.url == "https://example.com/customers"          # normalised final URL
+    assert page.requested_url == "https://example.com/360-customer-engagement"
+
+
+def test_b76_fetch_page_without_a_redirect_leaves_requested_url_empty():
+    with make_client() as client:
+        page = fetch_page(client, "https://example.com/about", 100_000, 5)
+    assert page.url == "https://example.com/about"
+    assert page.requested_url is None
+
+
+def test_b76_redirect_to_a_page_already_kept_is_a_duplicate_and_links_resolve_from_the_final_url():
+    # Found on freshworks.com: /company/partners redirects to /partners/, which was also crawled.
+    pages = {
+        "https://example.com/": (200, '<html><body><a href="/partners">P</a> <a href="/company/partners">CP</a> '
+                                      '<a href="/old-team">T</a></body></html>'),
+        "https://example.com/partners": (200, "<html><head><title>Partners</title></head><body>Partner list</body></html>"),
+        "https://example.com/company/team/": (200, '<html><body>Team <a href="board">Board</a></body></html>'),
+        "https://example.com/company/team/board": (200, "<html><body>Board members</body></html>"),
+    }
+    redirects = {
+        "https://example.com/company/partners": "https://example.com/partners",
+        "https://example.com/old-team": "https://example.com/company/team/",
+    }
+    with _redirect_client(pages, redirects) as client:
+        result = crawl_site("https://example.com/", ["example.com"], BASE_CONFIG, client=client)
+
+    urls = [p.url for p in result.pages if p.status == "ok"]
+    assert urls.count("https://example.com/partners") == 1
+    assert "https://example.com/company/partners" in result.skipped_as_duplicate
+    team = next(p for p in result.pages if p.url == "https://example.com/company/team")
+    assert team.requested_url == "https://example.com/old-team"
+    # "board" is relative to /company/team/, not to the /old-team address that was requested.
+    assert "https://example.com/company/team/board" in urls
+    assert crawl_diagnostics(result)["pages"][urls.index("https://example.com/company/team")]["requested_url"] \
+        == "https://example.com/old-team"

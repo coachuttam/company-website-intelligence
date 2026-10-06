@@ -110,6 +110,13 @@ class FetchResult:
     js_rendered: bool = False   # True when the JS fallback replaced the static fetch (B-16)
     content_hash: Optional[str] = None  # sha256 of the fetched body, set on success; crawl_site
                                          # replaces it with the cleaned-text hash (B-75) for dedup
+    # B-76: the URL that was asked for, when redirects ended somewhere else. `url` is then the
+    # final resolved URL (PRD Section 9: "Record the final resolved URL as the source").
+    requested_url: Optional[str] = None
+    # The final address exactly as the server gave it (trailing slash kept): the base relative
+    # links resolve against. `url` drops the trailing slash, which would move "board" on
+    # /company/team/ up a level to /company/board.
+    link_base: Optional[str] = None
 
 
 @dataclass
@@ -153,6 +160,7 @@ def crawl_diagnostics(result: CrawlResult) -> dict:
                 "error_code": p.error_code,
                 "truncated": p.truncated,
                 "js_rendered": p.js_rendered,
+                "requested_url": p.requested_url,  # B-76, None unless redirected
             }
             for p in result.pages
         ],
@@ -392,9 +400,14 @@ def fetch_page(client: httpx.Client, url: str, max_raw_bytes: int, timeout_s: fl
                 chunks.append(chunk)
             body = b"".join(chunks)
             html = body.decode(resp.encoding or "utf-8", errors="replace")
-            return FetchResult(url=url, status="ok", status_code=resp.status_code,
+            # B-76: after redirects, the page's source is where the chain ended, not where it
+            # started. Normalised the same way as every other URL in the crawl.
+            final_url = normalize_url(str(resp.url))
+            return FetchResult(url=final_url, status="ok", status_code=resp.status_code,
                                 html=html, elapsed_s=time.monotonic() - start,
-                                truncated=truncated, content_hash=content_hash(html))
+                                truncated=truncated, content_hash=content_hash(html),
+                                requested_url=url if final_url != url else None,
+                                link_base=str(resp.url))
     except httpx.TooManyRedirects as e:
         return FetchResult(url=url, status="error", error_code="REDIRECT_LIMIT_EXCEEDED",
                             elapsed_s=time.monotonic() - start,
@@ -442,6 +455,7 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
         heapq.heappush(queue, (_priority_rank(start_url, keywords), 0, next(counter), start_url))
         seen = {start_url}          # normalised URLs already queued or fetched (CLN-01, URL half)
         content_hashes: set = set()  # content hashes of pages already kept (CLN-01, content half)
+        kept_urls: set = set()       # final URLs of pages already kept (B-76)
         last_request = 0.0
 
         # B-65 (2026-10-06): max_pages counts pages that were actually fetched, not attempts. A page
@@ -478,12 +492,13 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
             if (page.status == "ok" and js_renderer is not None
                     and needs_fallback(page.html, cfg.get("js_fallback_min_text_chars",
                                                             DEFAULT_MIN_TEXT_CHARS))):
-                rendered_html = js_renderer(url, cfg.get("js_fallback_timeout_s", DEFAULT_TIMEOUT_S))
+                rendered_html = js_renderer(page.url, cfg.get("js_fallback_timeout_s", DEFAULT_TIMEOUT_S))
                 if rendered_html:
                     page = FetchResult(
                         url=page.url, status="ok", status_code=page.status_code,
                         html=rendered_html, elapsed_s=page.elapsed_s,
                         content_hash=content_hash(rendered_html), js_rendered=True,
+                        requested_url=page.requested_url, link_base=page.link_base,
                     )
                 # A failed render (rendered_html is None) leaves the original static `page`
                 # in place -- degrade gracefully, never lose a page just because the
@@ -494,18 +509,24 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
             # set above can't catch that -- only the fetched content can. Keep the first copy,
             # drop the rest. B-75: compared on cleaned text, not raw HTML (see dedup_hash).
             if page.status == "ok" and page.html:
-                page.content_hash = dedup_hash(url, page.html)
-            if page.status == "ok" and page.content_hash and page.content_hash in content_hashes:
+                page.content_hash = dedup_hash(page.url, page.html)
+            # B-76: a redirect that lands on a page already kept is a duplicate by address alone.
+            redirected_to_kept = page.requested_url is not None and page.url in kept_urls
+            if redirected_to_kept or (
+                    page.status == "ok" and page.content_hash and page.content_hash in content_hashes):
                 result.skipped_as_duplicate.append(url)
             else:
                 if page.status == "ok" and page.content_hash:
                     content_hashes.add(page.content_hash)
+                kept_urls.add(page.url)
+                seen.add(page.url)       # B-76: a link to the final URL is not queued again
                 result.pages.append(page)
                 if page.status != "ok" and failed_count < max_failed:
                     failed_count += 1
 
             if page.status == "ok" and page.html and depth < cfg["max_depth"]:
-                page_links = extract_links(page.html, url, approved_domains)
+                # B-76: relative links resolve against where the page actually is.
+                page_links = extract_links(page.html, page.link_base or page.url, approved_domains)
                 if (skip_other_locales and depth == 0 and not english_locale_site
                         and any(locale_language(l) == "en" for l in page_links)):
                     english_locale_site = True      # B-69: the start page itself links to /en...
