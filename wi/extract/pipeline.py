@@ -350,12 +350,20 @@ def _truncate_mismatched_value_evidence(data: dict) -> Optional[str]:
     return note
 
 
+def _sent_coverage(pages_checked: int) -> dict:
+    """B-79: coverage for a not_found field, from what the pipeline actually sent to the model
+    (after the input-budget guard), never from the model's own account of what it read. On
+    freshworks.com the model reported "home, about, 2 pages checked" for four fields after being
+    sent 40 pages, which understated the search and could not be checked."""
+    return {"page_types_checked": ["all pages sent to the model"], "pages_checked": pages_checked}
+
+
 def _not_found_replacement(field_name: str, pages_checked: int) -> Claim:
     return Claim(
         claim_id=f"replacement:{field_name}",
         field=field_name,
         status=Status.not_found,
-        coverage={"page_types_checked": ["all crawled pages"], "pages_checked": pages_checked},
+        coverage=_sent_coverage(pages_checked),
     )
 
 
@@ -469,6 +477,12 @@ def extract_claims(
 
         if truncation_note:
             run.schema_errors.append(f"claim #{i} ({field_name}): {truncation_note}")
+
+        if claim.status == Status.not_found:
+            # B-79: the model's own coverage is replaced by what was really sent to it.
+            data = claim.model_dump()
+            data["coverage"] = _sent_coverage(len(llm_pages))
+            claim = Claim(**data)
 
         if claim.status in (Status.extracted, Status.inferred):
             # Normalised on both sides (see _page_text_by_url's docstring): a claim whose

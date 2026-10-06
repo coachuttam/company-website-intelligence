@@ -153,7 +153,9 @@ from wi.crawl.fetch import content_hash
 # 20 (2026-10-07, B-77): a claim whose evidence the B-36 fallback found on another crawled page now
 # cites that page instead of the one the model named, so a stale cached claim would keep the wrong
 # source_url.
-EXTRACTION_LOGIC_VERSION = 20
+# 21 (2026-10-07, B-79): a not_found field's coverage now records the pages actually sent to the
+# model instead of the model's own account, so a stale cached claim would keep the model's numbers.
+EXTRACTION_LOGIC_VERSION = 21
 
 
 def run_fingerprint(site_url: str, pages: List[CleanPage], config: dict) -> str:

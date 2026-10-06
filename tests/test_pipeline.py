@@ -1097,3 +1097,31 @@ def test_b77_a_cited_url_that_was_never_crawled_moves_to_the_page_holding_the_qu
 
     claim = next(c for c in run.claims if c.field == "traction.named_customers")
     assert claim.source_url == "https://example.com/case-studies/closeknit-health"
+
+
+# --- B-79: not_found coverage comes from the pages actually sent -----------------------------
+
+def test_b79_model_reported_coverage_is_replaced_by_the_pages_sent():
+    # Found on freshworks.com: four not_found fields said "home, about, 2 pages checked" after the
+    # model was sent 40 pages.
+    pages = [CleanPage(url=f"https://example.com/p{i}", title=f"P{i}", text="Nothing relevant.")
+             for i in range(3)]
+    claims = _all_not_found_claims()   # every one claims {"homepage"}, 1 page
+    run = extract_claims("https://example.com/", pages, CONFIG, FakeCompleter({"claims": claims}),
+                          retrieved_at="2026-10-07")
+
+    for claim in run.claims:
+        assert claim.status == Status.not_found
+        assert claim.coverage.pages_checked == 3
+        assert claim.coverage.page_types_checked == ["all pages sent to the model"]
+
+
+def test_b79_pages_dropped_by_the_input_budget_are_not_counted_as_checked():
+    pages = [_page("https://example.com/a", 30), _page("https://example.com/b", 30),
+             _page("https://example.com/c", 30)]
+    config = {"llm": {"small_model": "gpt-4o-mini", "max_input_tokens_per_run": 10}}  # ~40 chars
+    run = extract_claims("https://example.com/", pages, config,
+                          FakeCompleter({"claims": _all_not_found_claims()}), retrieved_at="2026-10-07")
+
+    assert len(run.dropped_pages) == 2
+    assert {c.coverage.pages_checked for c in run.claims} == {1}
