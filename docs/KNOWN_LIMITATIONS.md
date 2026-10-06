@@ -1,0 +1,74 @@
+# Known limitations (draft for the handoff docs)
+
+Status as of 2026-10-07, code at `EXTRACTION_LOGIC_VERSION` 22, `prompt_version` 16, Jev on.
+
+## Accuracy
+
+- **Dev headline is about 68%, against an 80% target (AC-02).** The post-B-81 3-round mean is
+  67.6% (69.3 / 66.7 / 66.7); the build before B-75 measured 68.9%. The 80% target applies to
+  held-out sites, which have not been measured on this code (see below).
+- **Run-to-run noise is about ±3 points.** The model is called at temperature 0.1, and Jev's
+  decisions move with it (Calendly's `sales_motion` came out at probability 0.71 to 0.76, just
+  under the 0.8 threshold). Judge a change on 3 or more `--no-cache` runs; a single run cannot show a
+  difference of 3 points or less.
+- **About a third of dev errors trace to the labels, not the system.** See
+  `docs/ERROR_REVIEW.md`: 26 of 73 non-right verdicts are label granularity or format, two valid
+  wordings on the site, or a `not_found` label where the run found gate-verified text. The dev labels
+  were made by hand by Uttam on 2026-09-28, mostly from website screenshots, so text on a page the
+  screenshots did not show can be missing from them; they have not had a second independent check.
+
+## Evaluation sets
+
+- **The old held-out set is contaminated.** After the held-out sites were first run and scored
+  (2026-09-27), fixes B-39 to B-54 were made using their failures; every one of those rows except
+  B-46 names held-out sites, and B-46 (semantic-judge widening) followed the same results. B-51
+  re-labelled one field, `customers.segments`, in all 10 held-out label files after comparing them
+  with the live sites. (B-37 and B-38 came from the dev set, before the first held-out run.) A score
+  on these sites is no longer a held-out measurement. A fresh set must be labelled by hand before
+  any run, the code tagged, and the set run once.
+- **The dev set is saturated.** Calendly, Loom, Typeform, Notion and SimpleStores have been used to
+  find and check every recent fix, so the dev headline overstates performance on unseen sites.
+- **Peeked sites** (run outside the dev set, so excluded from the fresh held-out set) are listed in
+  `eval/peeked_sites.txt`.
+
+## Latency and cost
+
+- **p50 latency misses its target.** Post-B-81: p50 87 s against 60 s; p95 182 s against 180 s,
+  just over because of one 136 s model call (the other rounds' p95 were 132 to 134 s). The crawl is
+  most of the time (69 s per site on average, against 24 s for the model call), set by
+  `rate_limit_rps: 1` and `max_pages: 40`;
+  SimpleStores also hits the 120 s `total_budget_s` after 14 to 16 pages. Meeting 60 s needs a
+  change to those Section 13 parameters, which needs approval.
+- **Cost is well inside its targets:** mean $0.0062 and p95 $0.0089 per site against $0.10 and
+  $0.25 (gpt-4o-mini list prices; Jev adds about $0.0001).
+
+## Field-specific
+
+- **`pricing.sales_motion` misses demo-led cues worded "Book a demo" or "Get a demo".** On
+  freshworks.com the pricing page's own button block lists "Book a demo", "Get a demo" and
+  "Contact us" next to "Start for free", yet both runs answered "Self-serve signup" and Jev answered
+  "unclear" (p 0.87 to 0.89, not applied). Prompt rule 14 names "Request a Demo", "Contact Sales",
+  "Talk to Sales", "Get a Quote" and "Get in Touch", but not these two phrasings. Whether that gap is
+  the cause, or the model simply stopped at the first cue (which rule 17 already warns against), is
+  not confirmed. No change has been made.
+- **`products.delivery_model` scoring does not reward the B-81 trim.** B-81 removes detail the
+  quote does not mention (for example "software (web app)" becomes "software" in 11 of 15 dev runs),
+  so the value is better supported, but the field's score stayed at 40%: two dev labels are long
+  free-text descriptions ("Digital software delivered online with a downloadable app") and Calendly's
+  label is `not_found`, so neither the trimmed nor the untrimmed value matches.
+- **`products.names` bare-label guard also rejects correct names.** When the only quote available
+  for a product is its own name (Notion "Notion AI", Typeform "Growth Flow"), the guard that stops
+  menu labels being reported as products rejects the real product too.
+
+## Crawl
+
+- **B-80 drops redirects that leave the approved domain.** A page whose redirect ends on another
+  domain is dropped and recorded in `dropped_after_redirect`. Loom now redirects 15 of its links
+  (`/security`, `/signup`, blog posts) to atlassian.com, so those pages are no longer read; Loom's
+  crawl fell from 60 fetches to 25 kept pages. Company information that has moved to a parent
+  company's domain is not collected.
+- **Login check is links only.** B-78 skips login and SSO links before fetching, but a normal link
+  that redirects to a login page is still fetched (it is then dropped only if it leaves the
+  approved domains, B-80).
+- **Pages a JS-only site renders after load** are read only through the Playwright fallback, when
+  the static text is under the threshold.
