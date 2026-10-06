@@ -1,0 +1,151 @@
+{
+  "site": "https://basecamp.com/",
+  "split": "dev",
+  "labelled_on": "2026-09-26",
+  "labelled_by": "Claude (draft; independently re-checked against live pages by Claude via WebFetch/WebSearch 2026-09-27, see review_notes); independently human-reviewed by Uttam against the live site 2026-09-27, all values/evidence/not_found calls confirmed as-is, no corrections",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "Drafted by Claude, the same assistant building the extraction pipeline this label set will score -- NOT an independent human researcher. Uttam or Abhishek should still spot-check before formally treating this as ground truth. Independent re-check (2026-09-27, via WebFetch/WebSearch against live basecamp.com/37signals.com pages, a separate process from the original drafting and from the extraction pipeline's OpenAI calls): every field confirmed accurate against fresh fetches -- no corrections needed. Two things noted, not changed: (1) traction.certifications lists only PCI DSS; the security page also references a CSA CAIQ v4.1 self-assessment and an EDUCAUSE HECVAT 4 toolkit response, but both are self-assessment questionnaires answered by the company, not certifications issued to it, so they were deliberately left out (same reasoning as bajajauto.json's award-vs-certification distinction). (2) traction.partnerships lists 13 real, confirmed integration partners, but basecamp.com/integrations now lists roughly 80 across 8 categories -- the label's list is a genuine but non-exhaustive subset, not a wrong one. Human review (Uttam, 2026-09-27): checked against the live site independently of the pipeline and of Claude; confirmed as-is, no corrections needed. This satisfies the PRD Section 12 ground-truth requirement.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Basecamp",
+      "source_url": "https://basecamp.com/",
+      "evidence": "Basecamp is project management without all the nonsense. Rock solid and famously easy to use."
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "Project management without all the nonsense \u2014 rock solid and famously easy to use",
+      "source_url": "https://basecamp.com/",
+      "evidence": "Basecamp is project management without all the nonsense. Rock solid and famously easy to use."
+    },
+    "company_identity.headquarters": {
+      "status": "not_found"
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Basecamp",
+        "HEY",
+        "Fizzy"
+      ],
+      "source_url": "https://basecamp.com/",
+      "evidence": "Basecamp\u2122 is designed, built, and backed by 37signals\u2122, the people behind HEY\u2122 and Fizzy\u2122"
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "Software delivered as native apps and a progressive web app across platforms, plus a command-line interface",
+      "source_url": "https://basecamp.com/apps",
+      "evidence": "iOS, Android, Mac, Windows, on the web, and on the command line."
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "People, teams, companies, and non-profits",
+      "source_url": "https://basecamp.com/",
+      "evidence": "nearly a million people, teams, companies, and non-profits worldwide rely on it daily"
+    },
+    "customers.industries": {
+      "status": "extracted",
+      "value": [
+        "product developers",
+        "woodworkers",
+        "music industry folks",
+        "logistics pros",
+        "publishers",
+        "event planners",
+        "marketers",
+        "architects",
+        "artists",
+        "software designers",
+        "brand strategists",
+        "educators"
+      ],
+      "source_url": "https://basecamp.com/",
+      "evidence": "They're product developers, woodworkers, music industry folks, logistics pros, publishers, event planners, marketers, architects, artists, software designers, brand strategists, educators\u2026"
+    },
+    "pricing.public_plans": {
+      "status": "extracted",
+      "value": [
+        "Free, no cost",
+        "Freelancer, $25/mo",
+        "Studio, $59/mo",
+        "Pro, $99/mo",
+        "Unlimited, $299/mo billed annually"
+      ],
+      "source_url": "https://basecamp.com/pricing",
+      "evidence": "Start free with Basecamp \u2014 one project, five users, forever free. Paid plans run $25\u2013$299/mo, all fixed price with no per-user fees."
+    },
+    "pricing.sales_motion": {
+      "status": "extracted",
+      "value": "Self-serve sign-up, with an optional sales-assisted demo",
+      "source_url": "https://basecamp.com/pricing",
+      "evidence": "Want a walkthrough? Live Q&A session? Book a personal demo"
+    },
+    "pricing.free_trial": {
+      "status": "extracted",
+      "value": "30-day free trial on standard plans, 45-day free trial on the Unlimited plan; no credit card required for the Free account or any trial",
+      "source_url": "https://basecamp.com/pricing",
+      "evidence": "We don't require a credit card on the Free account, or for any of the free trials."
+    },
+    "pricing.revenue_model": {
+      "status": "extracted",
+      "value": "Flat-rate subscription (fixed price, no per-user fees)",
+      "source_url": "https://basecamp.com/pricing",
+      "evidence": "No per-user fees, everyone's included. Just clear, fixed prices."
+    },
+    "traction.named_customers": {
+      "status": "extracted",
+      "value": [
+        "Moore Communications Group",
+        "Full Sail University",
+        "Penn State OEM",
+        "Roebothan McKay Marshall",
+        "L\u00e4genhetsbyte",
+        "Chamber Nation",
+        "St. Stephen's Episcopal Church",
+        "Clark Partners Realty Group"
+      ],
+      "source_url": "https://basecamp.com/",
+      "evidence": [
+        "Patrick Sheffield, Moore Communications Group",
+        "Shannon Kropf, Full Sail University",
+        "Aaron Bingaman, Penn State OEM",
+        "John Drover, Roebothan McKay Marshall",
+        "Teddy Zetterlund, L\u00e4genhetsbyte",
+        "Kelly Hunter, Chamber Nation",
+        "Blake Rider, St. Stephen's Episcopal Church",
+        "Anthony Clark, Clark Partners Realty Group"
+      ]
+    },
+    "traction.certifications": {
+      "status": "extracted",
+      "value": [
+        "PCI DSS"
+      ],
+      "source_url": "https://37signals.com/policies/security",
+      "evidence": "Our current PCI DSS Certificate of Compliance (PDF), issued by SecurityMetrics on our SAQ A self-assessment, is renewed annually."
+    },
+    "traction.partnerships": {
+      "status": "extracted",
+      "value": [
+        "Zapier",
+        "Zoho Flow",
+        "Harvest",
+        "Toggl",
+        "Retool",
+        "Unito.io",
+        "Klipfolio",
+        "Honeybadger",
+        "Instabug",
+        "Deskpro",
+        "Nusii",
+        "Proposify",
+        "OAuth.io"
+      ],
+      "source_url": "https://basecamp.com/integrations",
+      "evidence": "Assistant, Can Do!, CData Software, Digital Habits: To-Do, elastic.io, Field Trip, Monkedo, Pleexy, Ply, Retool, RSSBus, SureTriggers, TaskClone, Team O'clock, To-do Helpers, Unito.io, Zapier, Zoho Flow"
+    },
+    "comparisons.named_alternatives": {
+      "status": "not_found"
+    }
+  }
+}

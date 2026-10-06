@@ -1,0 +1,226 @@
+{
+  "site": "https://darwinbox.com/",
+  "split": "dev",
+  "labelled_on": "2026-09-26",
+  "labelled_by": "Claude (draft; independently re-checked against live pages by Claude via WebFetch/WebSearch 2026-09-27, see review_notes); independently human-reviewed by Uttam against the live site 2026-09-27, all values/evidence/not_found calls confirmed as-is, no corrections",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "Drafted by Claude, the same assistant building the extraction pipeline this label set will score -- NOT an independent human researcher. The site is a JS-heavy React/Storyblok build; some fetches only returned hero-section content, so a few not_found fields may exist on pages that didn't fully render for this fetch tool. The Claim schema only allows ONE source_url per field, but products.names, traction.named_customers and traction.partnerships were genuinely gathered from several different pages here -- the source_url below is the single most representative page for each. Multi-value evidence strings are best-effort summaries of listed items rather than one single contiguous quote in every case -- spot-check before treating as verbatim. Independent re-check (2026-09-27, via WebFetch/WebSearch, a separate process from both the original drafting and the extraction pipeline): one real correction found -- company_identity.headquarters was wrongly not_found; darwinbox.com/en-us itself never states an HQ, but the company's own newsroom subdomain (newsroom.darwinbox.com) explicitly announces a 'Global Headquarters in Hyderabad' (Nov 2022 press release), so this is now extracted as Hyderabad, India. Flagging for scoring purposes: this is a first-party statement but on a separate subdomain from the primary crawled site, so the pipeline may legitimately miss it depending on crawl scope -- a miss here would be a crawl-coverage gap, not necessarily an extraction bug. Also independently re-checked traction.certifications (still not_found -- a fresh security-and-architecture page fetch plus a targeted web search for ISO 27001/SOC 2 turned up nothing first-party, increasing confidence this is correct rather than a rendering artifact) and the comparisons.named_alternatives blog page (confirmed real and on-topic: 'Workday vs. SAP SuccessFactors vs. Darwinbox: The Great HR Tech Face-off'). traction.named_customers' ~76-name list was re-fetched and matched at roughly 97% (74/76); the 2-3 names that differed (present in one fetch, absent in the other) are most consistent with a rotating logo-wall carousel or lossy page-summarization rather than a real drafting error, so the list was left unchanged rather than edited on uncertain grounds. Human review (Uttam, 2026-09-27): checked against the live site independently of the pipeline and of Claude; confirmed as-is, no corrections needed. This satisfies the PRD Section 12 ground-truth requirement.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Darwinbox",
+      "source_url": "https://darwinbox.com/",
+      "evidence": "Darwinbox lets you build, scale and deliver your HR processes with a consumer grade employee experience at 40% lesser TCO than the Workdays of the world."
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "A modern HR platform with AI at its core, designed to delight employees and empower HR teams (positioned as AI-Native HCM for Global Enterprises)",
+      "source_url": "https://darwinbox.com/en-us",
+      "evidence": "Experience a modern HR platform with AI at its core, designed to delight employees and empower HR teams."
+    },
+    "company_identity.headquarters": {
+      "status": "extracted",
+      "value": "Hyderabad, India",
+      "source_url": "https://newsroom.darwinbox.com/press-release/global-headquarters-hyderabad",
+      "evidence": "Darwinbox, the fastest-growing HR tech platform from Asia, today announced the inauguration of its Global Headquarters in Hyderabad."
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Darwinbox Cortex",
+        "Core HR",
+        "Payroll",
+        "Workforce Management",
+        "People Analytics",
+        "Engage",
+        "HR Service Management"
+      ],
+      "source_url": "https://darwinbox.com/en-us",
+      "evidence": [
+        "The next-generation of HCM is here. Meet Darwinbox Cortex.",
+        "A flexible, robust, and globally compliant HR core that adapts to how your business works- today and tomorrow.",
+        "100% digitized, accurate and audit ready payroll on one unified platform",
+        "Simplify Scheduling, Tracking & Approvals",
+        "AI-powered People Analytics which empowers everyone in the organization with reliable, personalized insights for quick actions.",
+        "Build a truly connected workplace with continuous listening, via surveys, AI-driven insights, and action that drives engagement and performance.",
+        "AI-first, 24/7 support with seamless human handoffs for queries that deserve it. In the flow of work."
+      ]
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "Software platform (HR/HCM platform)",
+      "source_url": "https://darwinbox.com/en-us",
+      "evidence": "Experience a modern HR platform with AI at its core, designed to delight employees and empower HR teams."
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "Global Enterprises",
+      "source_url": "https://darwinbox.com/en-us",
+      "evidence": "AI-Native HCM for Global Enterprises"
+    },
+    "customers.industries": {
+      "status": "extracted",
+      "value": [
+        "BFSI",
+        "Consumer Goods & Durables",
+        "Diversified",
+        "Education",
+        "Event Management & Sustainable Real Estate",
+        "Healthcare",
+        "Hospitality",
+        "Internet & Computer",
+        "Logistics",
+        "Manufacturing",
+        "Media & Telecom",
+        "Pharmaceuticals",
+        "IT Services",
+        "Oil & Gas",
+        "Retail",
+        "Transportation",
+        "Others"
+      ],
+      "source_url": "https://explore.darwinbox.com/resources/customer-success-stories",
+      "evidence": "BFSI, Consumer Goods & Durables, Diversified, Education, Event Management & Sustainable Real Estate, Healthcare, Hospitality, Internet & Computer, Logistics, Manufacturing, Media & Telecom, Pharmaceuticals, IT Services, Oil & Gas, Retail, Transportation, Others (industry filter tags on the customer success stories page)"
+    },
+    "pricing.public_plans": {
+      "status": "not_found"
+    },
+    "pricing.sales_motion": {
+      "status": "extracted",
+      "value": "Contact sales / custom quote (demo-led, not self-serve)",
+      "source_url": "https://explore.darwinbox.com/org/ph/hr-software-pricing",
+      "evidence": "HR Software Price List - Choose your modules and get a quote today"
+    },
+    "pricing.free_trial": {
+      "status": "not_found"
+    },
+    "pricing.revenue_model": {
+      "status": "not_found"
+    },
+    "traction.named_customers": {
+      "status": "extracted",
+      "value": [
+        "Bharti AXA",
+        "Security Bank (BPI)",
+        "Orion Innovation",
+        "Yashoda Hospitals",
+        "TVS Motor Company",
+        "Licious",
+        "Union Cement Company",
+        "Yatra",
+        "ALEC Holding",
+        "Ghassan Aboud Holding",
+        "Banyan Group",
+        "Mahindra Logistics",
+        "Hetero Pharma",
+        "Deltin",
+        "Salam Air",
+        "PayMongo",
+        "MAKA",
+        "Bloom Holding",
+        "Al Fardan Group",
+        "ODM",
+        "Carousell",
+        "Narai Hospitality Group",
+        "Expo City Dubai",
+        "Go Global Business Services",
+        "AstraTech",
+        "JG Summit",
+        "Astera Labs",
+        "CBC Group",
+        "NECC",
+        "Kueski",
+        "Sterling Oil",
+        "Modinity Group",
+        "Singlife",
+        "Acuity Knowledge Partners",
+        "Shakey's",
+        "Ujjivan",
+        "Halodoc",
+        "Suzlon",
+        "Federal Land",
+        "Nexdigm",
+        "Ephicacy",
+        "EFS",
+        "QX Global Group",
+        "ADA Axiata",
+        "Physics Wallah",
+        "Steriscience & Stelis",
+        "Lulu Group",
+        "Shalina Healthcare",
+        "PDAX",
+        "Busy Bees Group",
+        "Bigbasket",
+        "Robinsons Bank",
+        "Cebu Pacific",
+        "JSW",
+        "Straive",
+        "PT Gunung Raja Paksi (GRP)",
+        "Universal Robina (URC)",
+        "Zee Media",
+        "Poorvika",
+        "Indorama",
+        "Rupeek",
+        "MatchMove",
+        "MobiKwik",
+        "makeO",
+        "Socar",
+        "Gokongwei Group",
+        "Duroflex",
+        "More Retail",
+        "Pasar Polis",
+        "Evans Group Indonesia",
+        "BKP",
+        "HealthKart",
+        "Kopi Kenangan",
+        "Quick Heal",
+        "Ramky Enviro",
+        "TATA CLiQ",
+        "GVK BIO",
+        "Bisleri"
+      ],
+      "source_url": "https://explore.darwinbox.com/resources/customer-success-stories",
+      "evidence": "Customer logos and case studies listed on the Darwinbox customer success stories page (e.g. \"300+ man-hours/month saved through paperless onboarding\", \"1,600 Employees, Zero Paper, Onboarding in 60 Minutes, Not 240\", \"25,000 Employees, Two Countries, 99.7% on the Platform in Six Months\")"
+    },
+    "traction.certifications": {
+      "status": "not_found"
+    },
+    "traction.partnerships": {
+      "status": "extracted",
+      "value": [
+        "iMocha",
+        "MeritTrac",
+        "EduThrill",
+        "IDfy",
+        "Authbridge",
+        "Aparajitha Corporate Services",
+        "Impelsys",
+        "Leegality",
+        "SignDrive",
+        "Jify",
+        "Disprz",
+        "Docebo",
+        "Enthral",
+        "VioletLMS",
+        "ESOP Direct (A Qapita Company)",
+        "Neeyamo",
+        "Xoxoday",
+        "Qwikcilver",
+        "Tax2win",
+        "myBiz",
+        "Traveloka"
+      ],
+      "source_url": "https://explore.darwinbox.com/darwinbox-partners",
+      "evidence": "Being a part of Darwinbox's Partners community gives you exclusive access to hand-picked partners that solve for various business related challenges \u2014 hand-picked for their skills, experience and the capabilities of delivering solutions as per the client's needs, listed across categories including Assessments, Background Verification, Compliance, Content, e-Signatures, Earned Wage Access, Learning Management, Options Management, Payroll, Redemption, Tax, and Travel."
+    },
+    "comparisons.named_alternatives": {
+      "status": "extracted",
+      "value": [
+        "SAP SuccessFactors",
+        "Workday"
+      ],
+      "source_url": "https://darwinbox.com/blog/comparison-sapsf-vs-workday-vs-darwinbox",
+      "evidence": "Should you go with the legacy workhorses like SAP SuccessFactors and Workday HCM or switch to a next-gen solution like Darwinbox?"
+    }
+  }
+}

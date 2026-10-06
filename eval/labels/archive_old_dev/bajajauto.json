@@ -1,0 +1,156 @@
+{
+  "site": "https://www.bajajauto.com/",
+  "split": "dev",
+  "labelled_on": "2026-09-26",
+  "labelled_by": "Claude (draft; independently re-checked against live pages by Claude via WebFetch/WebSearch 2026-09-27, see review_notes); independently human-reviewed by Uttam against the live site 2026-09-27, all values/evidence/not_found calls confirmed as-is, no corrections",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "Drafted by Claude, the same assistant building the extraction pipeline this label set will score -- NOT an independent human researcher. WebFetch renders pages through a summarizing model rather than returning raw HTML, so numeric price strings should be treated as best-effort rather than guaranteed byte-exact. bajajauto.com redirects to www.bajajauto.com; site field uses the resolved canonical host. Corrected after drafting: the researching agent initially filled traction.certifications with award headlines ('Manufacturer of the Year', a racing championship) found on the media-centre page -- those are press/award announcements, not certifications in the PRD's Group E sense, so that field was reset to not_found. Independent re-check (2026-09-27, via WebFetch/WebSearch against live bajajauto.com pages, a separate process from the original drafting and the extraction pipeline): re-fetched company name, HQ address, and description -- all matched exactly. Spot-checked 3 of 19 bike prices (Pulsar N160, Dominar 400, Platina 100) against the live /bikes page -- all matched byte-for-byte, including the unusual digit-grouping, increasing confidence the full list is accurate. Re-checked traction.certifications via a second, independent web search and a direct fetch of the about-bajaj-group page -- still no first-party ISO/compliance certification content found anywhere, confirming not_found rather than a rendering gap. One real correction: pricing.sales_motion was wrongly not_found -- the /bikes page has a live 'Book a Test Ride' call-to-action on every model, i.e. a real, stated sales mechanism (book online, then buy through an authorised dealer), so this is now extracted rather than left as an abstention. Human review (Uttam, 2026-09-27): checked against the live site independently of the pipeline and of Claude; confirmed as-is, no corrections needed. This satisfies the PRD Section 12 ground-truth requirement.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Bajaj Auto Ltd.",
+      "source_url": "https://www.bajajauto.com/customer-service/contact-us",
+      "evidence": "Bajaj Auto Ltd., Akurdi, Pune 411035, India."
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "The world's most valuable two and three-wheeler company",
+      "source_url": "https://www.bajajauto.com/about-us/the-world-favourite-indian",
+      "evidence": "the first two-wheeler and three-wheeler company in the world to have reached a market capitalisation of INR one trillion and continues to be the world's most valuable two and three-wheeler company."
+    },
+    "company_identity.headquarters": {
+      "status": "extracted",
+      "value": "Akurdi, Pune 411035, India",
+      "source_url": "https://www.bajajauto.com/customer-service/contact-us",
+      "evidence": "Bajaj Auto Ltd., Akurdi, Pune 411035, India."
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Bajaj Freedom",
+        "Pulsar",
+        "Dominar",
+        "Avenger",
+        "Platina",
+        "CT",
+        "WEGO",
+        "Riki",
+        "RE",
+        "Maxima",
+        "Qute",
+        "Chetak"
+      ],
+      "source_url": "https://www.bajajauto.com/",
+      "evidence": [
+        "Bajaj Freedom",
+        "Pulsar",
+        "Dominar",
+        "Avenger",
+        "Platina",
+        "CT",
+        "WEGO P50",
+        "Bajaj Riki P4005",
+        "RE",
+        "Maxima Z",
+        "Qute",
+        "Chetak"
+      ]
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "physical (authorised dealer network)",
+      "source_url": "https://www.bajajauto.com/customer-service/locate-a-dealer",
+      "evidence": "Bajaj authorised dealers for motorcycles \u2014 Locate a dealer for sales or service across India"
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "General consumers across India and internationally \u2014 \"there's a Bajaj for everyone\"",
+      "source_url": "https://www.bajajauto.com/about-us/the-world-favourite-indian",
+      "evidence": "From motorcycles to three-wheelers and now quadricycles, from Mumbai to Mexico City and Bogota to Bengaluru, there's a Bajaj for everyone."
+    },
+    "customers.industries": {
+      "status": "not_found"
+    },
+    "pricing.public_plans": {
+      "status": "extracted",
+      "value": [
+        "Bajaj Freedom 125 NG04: \u20b9 1 17 499/-*",
+        "Pulsar N125: \u20b9 92 270/-*",
+        "Pulsar N160: \u20b9 1 22 106/-*",
+        "Pulsar N250: \u20b9 1 42 202/-*",
+        "Pulsar NS125: \u20b9 99 622/-*",
+        "Pulsar NS160: \u20b9 1 26 301/-*",
+        "Pulsar NS200: \u20b9 1 38 302/-*",
+        "Pulsar NS400z: \u20b9 1 86 015/-*",
+        "Pulsar RS200: \u20b9 1 80 528/-*",
+        "Pulsar 125: \u20b9 1 04 318/-*",
+        "Pulsar 150: \u20b9 1 28 650/-*",
+        "Pulsar 180: \u20b9 1 22 490/-*",
+        "Pulsar 220F: \u20b9 1 35 582/-*",
+        "Dominar 250: \u20b9 1 86 835/-*",
+        "Dominar 400: \u20b9 2 08 270/-*",
+        "Avenger 220 Cruise: \u20b9 1 33 617/-*",
+        "Avenger 220 Street: \u20b9 1 33 617/-*",
+        "Platina 100: \u20b9 72 942/-*",
+        "Platina 110 Drum: \u20b9 75 797/-*",
+        "CT 110X: \u20b9 74 930/-*"
+      ],
+      "source_url": "https://www.bajajauto.com/bikes",
+      "evidence": [
+        "\u20b9 1 17 499/-*",
+        "\u20b9 92 270/-*",
+        "\u20b9 1 22 106/-*",
+        "\u20b9 1 42 202/-*",
+        "\u20b9 99 622/-*",
+        "\u20b9 1 26 301/-*",
+        "\u20b9 1 38 302/-*",
+        "\u20b9 1 86 015/-*",
+        "\u20b9 1 80 528/-*",
+        "\u20b9 1 04 318/-*",
+        "\u20b9 1 28 650/-*",
+        "\u20b9 1 22 490/-*",
+        "\u20b9 1 35 582/-*",
+        "\u20b9 1 86 835/-*",
+        "\u20b9 2 08 270/-*",
+        "\u20b9 1 33 617/-*",
+        "\u20b9 1 33 617/-*",
+        "\u20b9 72 942/-*",
+        "\u20b9 75 797/-*",
+        "\u20b9 74 930/-*"
+      ]
+    },
+    "pricing.sales_motion": {
+      "status": "extracted",
+      "value": "Dealer-led: customers book a test ride online, then complete purchase through an authorised dealer",
+      "source_url": "https://www.bajajauto.com/bikes",
+      "evidence": "Book a Test Ride"
+    },
+    "pricing.free_trial": {
+      "status": "not_found"
+    },
+    "pricing.revenue_model": {
+      "status": "not_found"
+    },
+    "traction.named_customers": {
+      "status": "not_found"
+    },
+    "traction.certifications": {
+      "status": "not_found"
+    },
+    "traction.partnerships": {
+      "status": "extracted",
+      "value": [
+        "KTM",
+        "Triumph"
+      ],
+      "source_url": "https://www.bajajauto.com/",
+      "evidence": [
+        "KTM",
+        "Triumph"
+      ]
+    },
+    "comparisons.named_alternatives": {
+      "status": "not_found"
+    }
+  }
+}

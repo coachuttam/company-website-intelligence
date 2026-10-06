@@ -1,0 +1,120 @@
+{
+  "site": "https://innovaccer.com/",
+  "split": "held_out",
+  "labelled_on": "2026-09-27",
+  "labelled_by": "Claude (draft, researched live via WebFetch/WebSearch 2026-09-27) -- NOT an independent human researcher; needs human review before being treated as frozen ground truth.",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "Homepage also uses the tagline 'The Agentic Cloud for Healthcare'; the longer sentence from the About page was used as the description field. HQ page lists San Francisco as the primary address plus additional offices in Delhi, Bengaluru, and Abu Dhabi -- only SF address used as headquarters value. No pricing numbers found anywhere on-site; the site is entirely demo/contact-sales driven ('Request a Demo' pages), so pricing.public_plans, free_trial, and revenue_model are not_found. No on-site comparison/'vs' page naming competitors was found via search. customers.industries is effectively 'healthcare' as the single vertical the whole platform addresses, restated at the segment level given the company's singular focus. B-51 (2026-09-27): customers.segments' evidence was a paraphrase, not a literal quote; re-checked live and confirmed 'Provider / Payer / Public Sector / Life Sciences' are real short nav labels on the site (under a section literally headed 'INDUSTRIES', which is why customers.industries above independently arrives at the same healthcare framing) -- evidence updated to those exact labels. Separately noticed, not fixed here: customers.industries' status is 'inferred', but that field is not on this project's INFERENCE_WHITELIST (wi/schemas/claim.py) -- the same class of labelling bug found on temenos.json/thoughtworks.json's customers.segments, flagged for a separate fix.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Innovaccer",
+      "source_url": "https://innovaccer.com/",
+      "evidence": "Innovaccer -- The Agentic Cloud for Healthcare"
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "The Healthcare Intelligence Cloud equips every stakeholder in the patient journey to turn fragmented data into proactive, coordinated actions that elevate the quality of care and drive operational performance.",
+      "source_url": "https://innovaccer.com/about",
+      "evidence": "The Healthcare Intelligence Cloud equips every stakeholder in the patient journey to turn fragmented data into proactive, coordinated actions that elevate the quality of care and drive operational performance."
+    },
+    "company_identity.headquarters": {
+      "status": "extracted",
+      "value": "201 Mission Street, Suite 2900, San Francisco, CA 94105",
+      "source_url": "https://innovaccer.com/about",
+      "evidence": "201 Mission Street, Suite 2900, San Francisco, CA 94105"
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Gravity (Healthcare Intelligence Platform)",
+        "Atlas (Population Health Operating System)",
+        "Flow (AI-Powered RCM)",
+        "Galaxy (AI-Powered Payer Risk and Quality)",
+        "Cured (AI-Powered Healthcare Marketing)",
+        "Comet (AI-Powered Access Center)",
+        "PQS",
+        "StoryHealth",
+        "Humbi",
+        "InNote"
+      ],
+      "source_url": "https://innovaccer.com/",
+      "evidence": "Homepage names Gravity, Atlas, Flow, Galaxy, Cured, Comet, PQS, StoryHealth, Humbi and InNote as distinct named products/solutions."
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "software (cloud-based healthcare data and AI-agent platform delivered as SaaS/API)",
+      "source_url": "https://innovaccer.com/",
+      "evidence": "unifies data and deploys AI agents across clinical, operational, and financial workflows"
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "Provider, Payer, Public Sector, and Life Sciences",
+      "source_url": "https://innovaccer.com/",
+      "evidence": ["Provider", "Payer", "Public Sector", "Life Sciences"]
+    },
+    "customers.industries": {
+      "status": "inferred",
+      "value": [
+        "Healthcare (providers, payers, public sector)"
+      ],
+      "source_url": "https://innovaccer.com/",
+      "evidence": "All named products and customer segments (health systems, payers, government health bodies) are healthcare-specific, implying healthcare as the sole served industry."
+    },
+    "pricing.public_plans": {
+      "status": "not_found"
+    },
+    "pricing.sales_motion": {
+      "status": "extracted",
+      "value": "Demo-led / contact sales -- site funnels visitors to 'Request a Demo' pages rather than self-serve checkout",
+      "source_url": "https://innovaccer.com/demo",
+      "evidence": "Request a Demo (primary CTA across product and homepage pages)"
+    },
+    "pricing.free_trial": {
+      "status": "not_found"
+    },
+    "pricing.revenue_model": {
+      "status": "not_found"
+    },
+    "traction.named_customers": {
+      "status": "extracted",
+      "value": [
+        "Orlando Health",
+        "Atlantic Health System",
+        "Cone Health",
+        "Intermountain Health",
+        "Franciscan Alliance",
+        "Ascension",
+        "Adventist HealthCare",
+        "CHI Health",
+        "Banner Health",
+        "CommonSpirit Health",
+        "Kaiser Permanente",
+        "P3 Health Partners",
+        "MercyOne"
+      ],
+      "source_url": "https://innovaccer.com/",
+      "evidence": "Homepage and customers page name Orlando Health, Atlantic Health System, Cone Health, Intermountain Health, Franciscan Alliance, Ascension, Adventist HealthCare, CHI Health, Banner Health, CommonSpirit Health, Kaiser Permanente, P3 Health Partners, and MercyOne (3,500+ providers, 310,000 patients across 400 locations) as customers/case studies."
+    },
+    "traction.certifications": {
+      "status": "extracted",
+      "value": [
+        "HITRUST CSF Certified"
+      ],
+      "source_url": "https://innovaccer.com/security",
+      "evidence": "Innovaccer's FHIR-enabled Data Activation Platform has earned Certified status for information security by HITRUST."
+    },
+    "traction.partnerships": {
+      "status": "extracted",
+      "value": [
+        "Mastek",
+        "Coforge"
+      ],
+      "source_url": "https://innovaccer.com/",
+      "evidence": "Mastek and Coforge named as implementation/technology partners on the homepage."
+    },
+    "comparisons.named_alternatives": {
+      "status": "not_found"
+    }
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "generated_at": "2026-10-05",
+  "notion": [
+    "notion"
+  ],
+  "per_site": {
+    "notion": {
+      "counts": {
+        "correct": 4,
+        "incorrect": 3,
+        "correct_abstention": 5,
+        "miss": 1,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 2,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.7333333333333333
+    }
+  },
+  "per_field": {
+    "company_identity.name": {
+      "counts": {
+        "correct": 1,
+        "incorrect": 0,
+        "correct_abstention": 0,
+        "miss": 0,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 1.0
+    },
+    "company_identity.description": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 0,
+        "correct_abstention": 0,
+        "miss": 1,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.0
+    },
+    "company_identity.headquarters": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 0,
+        "correct_abstention": 1,
+        "miss": 0,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 1.0
+    },
+    "products.names": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 1,
+        "correct_abstention": 0,
+        "miss": 0,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.0
+    },
+    "products.delivery_model": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 1,
+        "correct_abstention": 0,
+        "miss": 0,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.0
+    },
+    "customers.segments": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 0,
+        "correct_abstention": 1,
+        "miss": 0,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 1.0
+    },
+    "customers.industries": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 0,
+        "correct_abstention": 1,
+        "miss": 0,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 1.0
+    },
+    "pricing.public_plans": {
+      "counts": {
+        "correct": 1,
+        "incorrect": 0,
+        "correct_abstention": 0,
+        "miss": 0,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 1.0
+    },
+    "pricing.sales_motion": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 1,
+        "correct_abstention": 0,
+        "miss": 0,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.0
+    },
+    "pricing.free_trial": {
+      "counts": {
+        "correct": 1,
+        "incorrect": 0,
+        "correct_abstention": 0,
+        "miss": 0,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 1.0
+    },
+    "pricing.revenue_model": {
+      "counts": {
+        "correct": 1,
+        "incorrect": 0,
+        "correct_abstention": 0,
+        "miss": 0,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 1.0
+    },
+    "traction.named_customers": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 0,
+        "correct_abstention": 0,
+        "miss": 0,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 1,
+        "correct_semantic": 0
+      },
+      "accuracy": 1.0
+    },
+    "traction.certifications": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 0,
+        "correct_abstention": 0,
+        "miss": 0,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 1,
+        "correct_semantic": 0
+      },
+      "accuracy": 1.0
+    },
+    "traction.partnerships": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 0,
+        "correct_abstention": 1,
+        "miss": 0,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 1.0
+    },
+    "comparisons.named_alternatives": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 0,
+        "correct_abstention": 1,
+        "miss": 0,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 1.0
+    }
+  },
+  "overall": {
+    "counts": {
+      "correct": 4,
+      "incorrect": 3,
+      "correct_abstention": 5,
+      "miss": 1,
+      "unsupported": 0,
+      "conflicting": 0,
+      "correct_partial": 2,
+      "correct_semantic": 0
+    },
+    "total": 15,
+    "accuracy": 0.7333333333333333,
+    "extraction_accuracy": 0.8333333333333334,
+    "inference_accuracy": 0.3333333333333333,
+    "conflicting_count": 0
+  },
+  "semantic_judge": {
+    "model": "gpt-4o-mini",
+    "calls": 2,
+    "prompt_tokens": 625,
+    "completion_tokens": 136,
+    "estimated_cost_usd": 0.00017535,
+    "fields_upgraded_to_correct_semantic": 0
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "site": "https://buffer.com/",
+  "split": "held_out",
+  "labelled_on": "2026-09-27",
+  "labelled_by": "Claude (draft, researched live via WebFetch/WebSearch 2026-09-27) -- NOT an independent human researcher; needs human review before being treated as frozen ground truth.",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "Buffer describes itself elsewhere (About page) as a fully remote, distributed team with no single office ('scattered around the world'); the address used for headquarters is Buffer, Inc.'s registered/legal address as stated in its Terms of Use, not a described physical HQ office -- flagged as a judgment call. customers.industries left not_found because Buffer names customer *segments* (creators, small businesses, agencies, nonprofits, higher ed) but does not name specific verticals/industries. Named customers are homepage logos with no accompanying case-study quotes captured. Competitor list comes from Buffer's own /compare page, which explicitly names and contrasts against each competitor. B-51 (2026-09-27): customers.segments' evidence was originally a paraphrase description, not a literal quote; re-checked live and confirmed these six segment names are genuine short labels repeated on the homepage and in the site footer under a 'Made for' heading -- evidence updated to those exact labels.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Buffer",
+      "source_url": "https://buffer.com/",
+      "evidence": "Use Buffer to manage your social media"
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "Use Buffer to manage your social media so that you can create and share your content everywhere, consistently.",
+      "source_url": "https://buffer.com/",
+      "evidence": "Use Buffer to manage your social media so that you can create and share your content everywhere, consistently."
+    },
+    "company_identity.headquarters": {
+      "status": "extracted",
+      "value": "Buffer, Inc. located at 2443 Fillmore Street #380-7163, San Francisco, CA 94115",
+      "source_url": "https://buffer.com/legal/terms-of-use/year/2021",
+      "evidence": "Buffer, Inc. located at 2443 Fillmore Street #380-7163, San Francisco, CA 94115"
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Publish",
+        "Create",
+        "Community",
+        "Analyze (Insights)",
+        "Collaborate",
+        "Start Page",
+        "Buffer AI Assistant"
+      ],
+      "source_url": "https://buffer.com/",
+      "evidence": "Homepage lists Publish, Create, Community, Analyze/Insights, Collaborate, Start Page and an AI Assistant as named product features."
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "software (cloud-based SaaS platform, accessed via web app, mobile apps, and a browser extension)",
+      "source_url": "https://buffer.com/",
+      "evidence": "Mobile apps (iOS/Android) and browser extension listed alongside the web publishing/analytics product."
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "Creators, Small Business, Agencies, Nonprofits, Higher Education, and Developers",
+      "source_url": "https://buffer.com/",
+      "evidence": ["Creators", "Small Business", "Agencies", "Nonprofits", "Higher Education", "Developers"]
+    },
+    "customers.industries": {
+      "status": "not_found"
+    },
+    "pricing.public_plans": {
+      "status": "extracted",
+      "value": [
+        "Free: $0/month, up to 3 channels",
+        "Essentials: $5/month per channel ($60 billed yearly)",
+        "Team: $10/month per channel ($120 billed yearly)"
+      ],
+      "source_url": "https://buffer.com/pricing",
+      "evidence": [
+        "Connect up to 3 channels",
+        "$5 /month or $60 billed yearly (save 2 months)",
+        "$10 /month or $120 billed yearly (save 2 months)"
+      ]
+    },
+    "pricing.sales_motion": {
+      "status": "extracted",
+      "value": "Self-serve online signup; no contact-sales/enterprise tier is presented",
+      "source_url": "https://buffer.com/pricing",
+      "evidence": "Get started for free (self-serve signup CTA throughout pricing page)"
+    },
+    "pricing.free_trial": {
+      "status": "extracted",
+      "value": "Free forever plan with no credit card required, plus a 14-day free trial on paid plans",
+      "source_url": "https://buffer.com/pricing",
+      "evidence": "No credit card needed. Free forever; 14-day free trial for our paid plans"
+    },
+    "pricing.revenue_model": {
+      "status": "extracted",
+      "value": "Subscription, priced per connected social channel rather than per user or per brand",
+      "source_url": "https://buffer.com/pricing",
+      "evidence": "you pay per channel rather than per brand or per client \u2014 so a portfolio of 30 accounts costs the same whether it's one brand or 15."
+    },
+    "traction.named_customers": {
+      "status": "extracted",
+      "value": [
+        "Metallica",
+        "Benefit",
+        "Wired",
+        "Semrush",
+        "Crocs",
+        "ElevenLabs",
+        "Pizza Hut",
+        "Vice",
+        "Clash of Clans"
+      ],
+      "source_url": "https://buffer.com/",
+      "evidence": "Customer logo row on homepage names Metallica, Benefit, Wired, Semrush, Crocs, ElevenLabs, Pizza Hut, Vice and Clash of Clans."
+    },
+    "traction.certifications": {
+      "status": "not_found"
+    },
+    "traction.partnerships": {
+      "status": "extracted",
+      "value": [
+        "Instagram",
+        "Facebook",
+        "TikTok",
+        "LinkedIn",
+        "X",
+        "YouTube",
+        "Threads",
+        "Pinterest",
+        "Google Business Profile",
+        "Bluesky",
+        "Mastodon",
+        "Substack",
+        "Canva",
+        "Google Drive",
+        "Zapier",
+        "Unsplash",
+        "Dropbox"
+      ],
+      "source_url": "https://buffer.com/",
+      "evidence": "Homepage lists supported social platforms (Instagram, Facebook, TikTok, LinkedIn, X, YouTube, Threads, Pinterest, Google Business Profile, Bluesky, Mastodon, Substack) and tool integrations (Canva, Google Drive, Zapier, Unsplash, Dropbox)."
+    },
+    "comparisons.named_alternatives": {
+      "status": "extracted",
+      "value": [
+        "Agorapulse",
+        "eClincher",
+        "Hootsuite",
+        "Later",
+        "Loomly",
+        "Meta Business Suite",
+        "Metricool",
+        "Sked Social",
+        "Sprout Social",
+        "Tailwind"
+      ],
+      "source_url": "https://buffer.com/compare",
+      "evidence": [
+        "Buffer offers more streamlined scheduling and analytics compared to Agorapulse's CRM focused features.",
+        "While eClincher provides automation options, Buffer stands out with its user-friendly interface and simplicity.",
+        "Hootsuite's broad functionality is matched by Buffer's focused, intuitive approach to social media scheduling and analytics.",
+        "While Later excels in Instagram marketing, Buffer provides a more holistic approach for managing multiple social platforms.",
+        "While Loomly focuses on approval workflows built for agencies, Buffer offers a simpler, more affordable way to plan and publish.",
+        "Meta Business Suite is limited to Facebook and Instagram, while Buffer offers streamlined scheduling and analytics across all your social media channels.",
+        "Named in comparison article title (Buffer vs Metricool)",
+        "Sked Social's strong Instagram focus contrasts with Buffer's well-rounded support for various social media platforms.",
+        "Sprout Social's depth in social listening and customer engagement is balanced by Buffer's straightforward scheduling and analytics capabilities.",
+        "Tailwind's Pinterest and Instagram specialization is trumped by Buffer's wide-ranging support for diverse social media channels."
+      ]
+    }
+  }
+}

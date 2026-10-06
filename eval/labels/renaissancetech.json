@@ -1,0 +1,80 @@
+{
+  "site": "https://www.rentec.com/",
+  "split": "held_out",
+  "labelled_on": "2026-09-27",
+  "labelled_by": "Claude (draft, researched live via WebFetch/WebSearch 2026-09-27) -- NOT an independent human researcher; needs human review before being treated as frozen ground truth.",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "rentec.com is a deliberately minimal/opaque public site (typical for Renaissance): it never names any of its funds (e.g. Medallion), never names clients/investors, and gives no pricing/fee figures anywhere in the crawlable public pages. Two office addresses appear on the Careers page: '600 Route 25A, East Setauket, New York 11733' (Renaissance Technologies LLC) and '520 Madison Avenue, New York, New York 10022' (Renaissance Institutional Management LLC) -- the East Setauket address was used as the headquarters value since it is the firm's long-standing primary/main office per the site's own listing order, but this is a judgment call given both are listed as formal registered addresses. A footer link to 'SBAI' (Standards Board for Alternative Investments) exists on the site but its exact link text/context could not be confirmed verbatim, so it was NOT recorded as a partnership -- flagged for human re-check. products.names is not_found because the site names no specific investment products/funds at all. B-51 (2026-09-27): customers.segments' value added 'qualified', 'private fund offerings' and 'not the general public' qualifiers not literally present in the quote -- the evidence quote itself was already correct and unchanged, but the value has been tightened to 'Appropriate investors', tracking only what the quote actually says ('appropriate investors').",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Renaissance Technologies",
+      "source_url": "https://www.rentec.com/",
+      "evidence": "Renaissance Technologies is an investment management firm that employs mathematical and statistical methods in the design and execution of its investment programs."
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "Renaissance Technologies is an investment management firm that employs mathematical and statistical methods in the design and execution of its investment programs.",
+      "source_url": "https://www.rentec.com/",
+      "evidence": "Renaissance Technologies is an investment management firm that employs mathematical and statistical methods in the design and execution of its investment programs."
+    },
+    "company_identity.headquarters": {
+      "status": "extracted",
+      "value": "600 Route 25A, East Setauket, New York 11733",
+      "source_url": "https://www.rentec.com/Careers.action?jobs=true",
+      "evidence": "Renaissance Technologies LLC / 600 Route 25A / East Setauket, New York 11733"
+    },
+    "products.names": {
+      "status": "not_found"
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "service (private investment management / asset management services offered through commingled funds to qualified investors)",
+      "source_url": "https://www.rentec.com/",
+      "evidence": "An offering may be made only by delivery of a confidential offering memorandum to appropriate investors."
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "Appropriate investors",
+      "source_url": "https://www.rentec.com/",
+      "evidence": "The materials on this website are for illustration and discussion purposes only and do not constitute an offering. An offering may be made only by delivery of a confidential offering memorandum to appropriate investors."
+    },
+    "customers.industries": {
+      "status": "not_found"
+    },
+    "pricing.public_plans": {
+      "status": "not_found"
+    },
+    "pricing.sales_motion": {
+      "status": "extracted",
+      "value": "Private placement only -- no public sign-up; investment offered exclusively via confidential offering memorandum to appropriate investors",
+      "source_url": "https://www.rentec.com/",
+      "evidence": "An offering may be made only by delivery of a confidential offering memorandum to appropriate investors."
+    },
+    "pricing.free_trial": {
+      "status": "not_found"
+    },
+    "pricing.revenue_model": {
+      "status": "not_found"
+    },
+    "traction.named_customers": {
+      "status": "not_found"
+    },
+    "traction.certifications": {
+      "status": "extracted",
+      "value": [
+        "Registered with the SEC",
+        "Registered with the NFA",
+        "Registered with the CFTC"
+      ],
+      "source_url": "https://www.rentec.com/Home.action?about=true",
+      "evidence": "Registered with the SEC, NFA, and CFTC"
+    },
+    "traction.partnerships": {
+      "status": "not_found"
+    },
+    "comparisons.named_alternatives": {
+      "status": "not_found"
+    }
+  }
+}

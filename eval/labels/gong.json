@@ -1,0 +1,180 @@
+{
+  "site": "https://www.gong.io/",
+  "split": "held_out",
+  "labelled_on": "2026-09-27",
+  "labelled_by": "Claude (draft, researched live via WebFetch/WebSearch 2026-09-27) -- NOT an independent human researcher; needs human review before being treated as frozen ground truth.",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "CONFLICT on headquarters: the About page (gong.io/about) states 'San Francisco, CA - 201 Spear Street 13th Floor, San Francisco CA, 94105' as the HQ address, while Gong's own Privacy Policy (gong.io/legal/privacy-policy) separately states 'Gong.io Ltd., our parent company, is headquartered in Israel.' Recorded the About-page value as primary since it's the dedicated company-info page, but this is a genuine cross-page conflict a human should resolve. products.names evidence is lower-confidence: the homepage content was returned to me already paraphrased/summarized rather than as raw quotable HTML for each product line, so a human should re-verify exact wording on the live page. Cloud Security Alliance STAR Registry was excluded from certifications as a self-assessment registry rather than a third-party-audited certification. traction.named_customers mixes strong evidence (dedicated case-study titles) with weaker evidence (customer logos with no accompanying quote) -- flagged per item. B-51 (2026-09-27): customers.segments' value included an invented 'primarily at B2B companies' qualifier not stated anywhere on-site, and its evidence was a paraphrase-adjacent sentence rather than the actual role-level breakdown; re-checked live and replaced with the real 'bring your entire GTM team together' sentence plus the specific role labels (CRO, RevOps, Sales teams, Customer success, Enablement) shown on the page.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Gong",
+      "source_url": "https://www.gong.io/about",
+      "evidence": "We founded Gong with one clear goal: to help every revenue team win more \u2014 consistently, confidently, and with total clarity."
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "Revenue AI OS helps your entire GTM organization win. Drive growth with multimodal revenue signal processing, specialized AI agents, and purpose-built applications.",
+      "source_url": "https://www.gong.io/",
+      "evidence": "Revenue AI OS helps your entire GTM organization win. Drive growth with multimodal revenue signal processing, specialized AI agents, and purpose-built applications."
+    },
+    "company_identity.headquarters": {
+      "status": "extracted",
+      "value": "San Francisco, CA (201 Spear Street, 13th Floor, San Francisco, CA 94105)",
+      "source_url": "https://www.gong.io/about",
+      "evidence": "San Francisco, CA - 201 Spear Street 13th Floor, San Francisco CA, 94105"
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Gong Engage",
+        "Gong Forecast",
+        "Gong Enable",
+        "Gong Agents",
+        "Gong Revenue Graph"
+      ],
+      "source_url": "https://www.gong.io/",
+      "evidence": [
+        "Gong Engage (sales engagement software), named product line on Gong homepage",
+        "Gong Forecast (revenue forecasting software), named product line on Gong homepage",
+        "Gong Enable (sales enablement software), named product line on Gong homepage",
+        "Gong Agents (AI automation for follow-ups, pipeline edits, enablement triggers), named on Gong homepage",
+        "Gong Revenue Graph (revenue data network), named on Gong homepage"
+      ]
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "software (cloud-based SaaS Revenue AI platform)",
+      "source_url": "https://www.gong.io/",
+      "evidence": "Revenue AI OS helps your entire GTM organization win."
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "GTM/revenue teams: CRO, RevOps, sales teams, customer success, and enablement",
+      "source_url": "https://www.gong.io/",
+      "evidence": ["From execs to RevOps to frontline reps, bring your entire GTM team together in Gong.", "CRO", "RevOps", "Sales teams", "Customer success", "Enablement"]
+    },
+    "customers.industries": {
+      "status": "extracted",
+      "value": [
+        "Technology",
+        "Financial Services",
+        "Healthcare",
+        "Manufacturing"
+      ],
+      "source_url": "https://www.gong.io/enterprise/",
+      "evidence": "Revenue AI Solutions by Industry | Gong for Tech, Financial Services, Healthcare & Manufacturing"
+    },
+    "pricing.public_plans": {
+      "status": "not_found"
+    },
+    "pricing.sales_motion": {
+      "status": "extracted",
+      "value": "Contact-sales / custom-quote (fill out a form for a customized proposal; pricing scales by team size)",
+      "source_url": "https://www.gong.io/pricing/",
+      "evidence": "We'd love to prepare a customized proposal for you! Simply fill out the form to get started."
+    },
+    "pricing.free_trial": {
+      "status": "not_found"
+    },
+    "pricing.revenue_model": {
+      "status": "extracted",
+      "value": "Per-user licensing plus a platform fee based on number of users supported",
+      "source_url": "https://www.gong.io/pricing/",
+      "evidence": "Gong's pricing model depends on a few factors specific to your team."
+    },
+    "traction.named_customers": {
+      "status": "extracted",
+      "value": [
+        "Google",
+        "Frontify",
+        "Anthropic",
+        "ADP",
+        "HubSpot",
+        "LinkedIn",
+        "Uber for Business",
+        "Sprout Social",
+        "SurveyMonkey",
+        "Frontline Education",
+        "Momentive",
+        "Iron Mountain",
+        "Andela"
+      ],
+      "source_url": "https://www.gong.io/customers",
+      "evidence": [
+        "Our partnership with Gong was that piece of magic we needed; it's been complementary to how we evaluate our performance. (Mike Chen, Director of Product Strategy, Google)",
+        "featured customer on the Gong customers page (Frontify)",
+        "named customer logo on Gong homepage (Anthropic)",
+        "named customer logo on Gong homepage (ADP)",
+        "named customer logo on Gong homepage (HubSpot)",
+        "LinkedIn Achieves Revenue Success with Gong",
+        "named customer logo on Gong homepage (Uber for Business)",
+        "named customer/testimonial reference on Gong homepage (Sprout Social)",
+        "named customer logo on Gong homepage (SurveyMonkey)",
+        "named customer logo on Gong homepage (Frontline Education)",
+        "Momentive's Success Enhancing Customer Conversations",
+        "Ascending the Peak: How Gong Helped New Hires at Iron Mountain Hit Their Ramp Targets",
+        "How Andela's Enablement Team Brought Lessons from a Football Pitch into Their Sales Pitch"
+      ]
+    },
+    "traction.certifications": {
+      "status": "extracted",
+      "value": [
+        "SOC 2 Type II",
+        "ISO/IEC 42001:2023 (AI Management System)",
+        "ISO/IEC 27001:2022",
+        "ISO/IEC 27017",
+        "ISO/IEC 27018",
+        "ISO/IEC 27701",
+        "PCI DSS SAQ D",
+        "EU-U.S. Data Privacy Framework"
+      ],
+      "source_url": "https://www.gong.io/platform/trust",
+      "evidence": [
+        "Service Controls (SOC 2 Type 2)",
+        "Artificial Intelligence Management System (ISO/IEC 42001:2023)",
+        "Information Security Management System (ISMS) (ISO/IEC 27001:2022)",
+        "Information security controls for cloud services (ISO/IEC 27017)",
+        "Protection of PII in public clouds acting as PII processors (ISO/IEC 27018)",
+        "Privacy Information Management System (PIMS) (ISO/IEC 27701)",
+        "The Payment Card Industry Data Security Standard (PCI DSS - SAQD)",
+        "certified with the EU-U.S. Data Privacy Framework"
+      ]
+    },
+    "traction.partnerships": {
+      "status": "extracted",
+      "value": [
+        "Slack",
+        "HubSpot CRM",
+        "Chili Piper",
+        "Gainsight",
+        "LinkedIn Sales Navigator",
+        "G2",
+        "AWS",
+        "Snowflake",
+        "ZoomInfo",
+        "Salesforce",
+        "Microsoft Teams",
+        "Zoom"
+      ],
+      "source_url": "https://collective.gong.io/",
+      "evidence": [
+        "Automate Slack notifications and never miss an important Gong call or comment",
+        "Get unparalleled visibility into how reps are interacting with customers",
+        "Schedule meetings, capture consent, and record calls with Gong + Chilipiper",
+        "Supercharge your customer success strategy with the tools you use daily",
+        "Get full wealth of LinkedIn Sales Navigator info on any contact",
+        "The power of peer reviews meets customer conversation context",
+        "Enhance Gong's Power with AWS: Cloud Built for Growth",
+        "Push Gong data into Snowflake in minutes, with no code required",
+        "Integrate Gong with Zoominfo and get the right contacts in Engage Flows",
+        "featured integration partner on Gong Collective (Salesforce)",
+        "featured integration partner on Gong Collective (Microsoft Teams)",
+        "featured integration partner on Gong Collective (Zoom)"
+      ]
+    },
+    "comparisons.named_alternatives": {
+      "status": "not_found"
+    }
+  }
+}

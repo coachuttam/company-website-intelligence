@@ -1,0 +1,156 @@
+{
+  "site": "https://sarvam.ai/",
+  "split": "held_out",
+  "labelled_on": "2026-09-27",
+  "labelled_by": "Claude (draft, researched live via WebFetch/WebSearch 2026-09-27) -- NOT an independent human researcher; needs human review before being treated as frozen ground truth.",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "Site's privacy policy is published under the legal entity name 'Axonwise Private Limited', operating the Sarvam AI brand -- noted here rather than used as the company_identity.name value, since the site brands itself as 'Sarvam'/'Sarvam AI' everywhere else. customers.industries was inferred from the sector affiliation of named customer logos (banks/NBFCs, e-commerce, government, insurance) rather than from an explicit on-site 'industries we serve' list, so it is marked inferred, not extracted -- flagged as a judgment call. pricing.public_plans is a representative subset of the full per-API rate card on the pricing page; many more line items (per-model LLM rates, additional Business-tier discounts) exist there. No on-site comparison/'vs competitor' page was found. B-51 (2026-09-27): customers.segments' evidence was a paraphrase ('Homepage customer logos and case studies span...'), not a literal quote; re-checked live and found no sentence anywhere on the real site states customer types/segments in words -- only the same implicit visual signal already used (more honestly, as an explicit inference) for customers.industries above: named customer logos and one Tata Capital testimonial, with no distinct customer-TYPE statement. Corrected to not_found per rule 4 rather than restate the industries inference under this field too.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Sarvam AI",
+      "source_url": "https://sarvam.ai/",
+      "evidence": "Sarvam AI branding across homepage and product pages"
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "We're building toward a future where AI is widely accessible to everyone in India, with a full-stack AI platform developed, deployed, and governed entirely in India.",
+      "source_url": "https://www.sarvam.ai/about-us",
+      "evidence": "We're building toward a future where AI is widely accessible to everyone in India. ... full-stack AI platform, with everything developed, deployed, and governed entirely in India."
+    },
+    "company_identity.headquarters": {
+      "status": "extracted",
+      "value": "732, Chinmaya Mission Hospital Road, Indiranagar Stage 1, Bengaluru, Karnataka 560038",
+      "source_url": "https://www.sarvam.ai/about-us",
+      "evidence": "732, Chinmaya Mission Hospital Road, Indiranagar Stage 1, Bengaluru, Karnataka 560038"
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Voice Agents",
+        "Content Studio",
+        "Doc Agents",
+        "Work Agents",
+        "Coding Agents",
+        "Sarvam Edge",
+        "Text-to-Speech",
+        "Speech-to-Text",
+        "Translation"
+      ],
+      "source_url": "https://sarvam.ai/",
+      "evidence": "Homepage names Voice Agents, Content Studio, Doc Agents, Work Agents, Coding Agents, and Sarvam Edge as product lines, alongside standalone Text-to-Speech, Speech-to-Text, and Translation APIs."
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "software (API/developer platform for speech, language and agentic AI, billed by usage; also offers edge/on-prem deployment via Sarvam Edge)",
+      "source_url": "https://sarvam.ai/api-pricing",
+      "evidence": "Every supported API draws from the same balance (pay-as-you-go API pricing model)"
+    },
+    "customers.segments": {
+      "status": "not_found"
+    },
+    "customers.industries": {
+      "status": "inferred",
+      "value": [
+        "Banking/Financial Services",
+        "E-commerce",
+        "Government",
+        "Insurance"
+      ],
+      "source_url": "https://sarvam.ai/",
+      "evidence": "Named customer logos include Axis Bank, IDFC, SBI Life and Tata Capital (banking/financial services), IndiaMART and Urban Company (e-commerce), AADHAAR and Skill India (government), and LIC (insurance), implying these as served industries."
+    },
+    "pricing.public_plans": {
+      "status": "extracted",
+      "value": [
+        "Text to Speech: \u20b93.00 per 1,000 characters",
+        "Speech to Text: \u20b930.00 per hour (\u20b945.00/hour with diarization)",
+        "Translation/Transliteration: \u20b90.005 per character (standard)",
+        "Document Digitisation: \u20b90.50 per page",
+        "Dubbing: \u20b91.67 per second (standard)"
+      ],
+      "source_url": "https://sarvam.ai/api-pricing",
+      "evidence": [
+        "\u20b93.00 per 1,000 characters",
+        "\u20b930.00 per hour ... Batch with diarization: \u20b945.00 per hour",
+        "\u20b90.005 per character (standard)",
+        "\u20b90.50 per page",
+        "\u20b91.67 per second (standard)"
+      ]
+    },
+    "pricing.sales_motion": {
+      "status": "extracted",
+      "value": "Self-serve pay-as-you-go API sign-up for standard use; contact-sales/custom pricing with forward-deployed engineers for Enterprise tier",
+      "source_url": "https://sarvam.ai/api-pricing",
+      "evidence": "Start with free credits, then add exactly what you need. ... Enterprise: Custom pricing"
+    },
+    "pricing.free_trial": {
+      "status": "extracted",
+      "value": "Free starting credits on the pay-as-you-go tier; 'Start free' sign-up available",
+      "source_url": "https://sarvam.ai/api-pricing",
+      "evidence": "Start with free credits, then add exactly what you need."
+    },
+    "pricing.revenue_model": {
+      "status": "extracted",
+      "value": "Usage-based/consumption pricing (per-character, per-hour, per-page and per-token rates), plus custom enterprise contracts",
+      "source_url": "https://sarvam.ai/api-pricing",
+      "evidence": "\u20b93.00 per 1,000 characters; \u20b930.00 per hour; Custom pricing (Enterprise)"
+    },
+    "traction.named_customers": {
+      "status": "extracted",
+      "value": [
+        "Aadhaar",
+        "Axis Bank",
+        "CRED",
+        "Infosys",
+        "LIC",
+        "Mahindra Finance",
+        "NABARD",
+        "Tata Capital",
+        "Urban Company",
+        "IndiaMART",
+        "SBI Life"
+      ],
+      "source_url": "https://sarvam.ai/",
+      "evidence": "Homepage customer-logo section names Aadhaar, Axis Bank, CRED, Infosys, LIC, Mahindra Finance, NABARD, Tata Capital, Urban Company, IndiaMART and SBI Life."
+    },
+    "traction.certifications": {
+      "status": "extracted",
+      "value": [
+        "ISO Certified",
+        "SOC 2 Type II"
+      ],
+      "source_url": "https://www.sarvam.ai/about-us",
+      "evidence": "ISO Certified and SOC 2 Type II"
+    },
+    "traction.partnerships": {
+      "status": "extracted",
+      "value": [
+        "IDFC FIRST Bank",
+        "C-DAC",
+        "IBM",
+        "HP",
+        "Government of Maharashtra",
+        "YCP India",
+        "Pixxel",
+        "Swiggy",
+        "Razorpay"
+      ],
+      "source_url": "https://www.sarvam.ai/partnerships",
+      "evidence": [
+        "IDFC FIRST Bank and Sarvam partner to build a self-improving bank",
+        "Sarvam and C-DAC come together to build India's sovereign AI stack, from silicon to application",
+        "IBM and Sarvam bring sovereign AI to mission-critical systems across India",
+        "HP and Sarvam bring voice-first AI to the PC",
+        "Sarvam partners with the Government of Maharashtra to deploy Indus across state departments",
+        "Sarvam partners with YCP India to accelerate enterprise AI adoption",
+        "Sarvam partners with Pixxel to power India's first orbital data centre satellite",
+        "Sarvam partners with Swiggy to bring voice-led commerce to India in every Indian language",
+        "Sarvam partners with Razorpay to bring voice-first commerce to India"
+      ]
+    },
+    "comparisons.named_alternatives": {
+      "status": "not_found"
+    }
+  }
+}

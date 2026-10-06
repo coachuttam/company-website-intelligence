@@ -1,0 +1,7 @@
+# LLM provider client — INSTALL ONLY THE ONE Abhishek approves in Week 1.
+# The provider and model stay configurable in config.yaml until benchmark evidence supports a default.
+# Install one:  pip install -r requirements-llm.txt   (after uncommenting a single line)
+
+# anthropic>=0.40        # Claude models (small and stronger)
+ openai>=1.50           # OpenAI models
+# google-genai>=0.3      # Gemini / Flash-class models

@@ -1,0 +1,263 @@
+# Section 13 parameters from the Final PRD. Approved by Abhishek as proposed, 2026-09-27
+# (PRD Section 14, decision 1) -- still tunable after the Week 1 baseline per the PRD's own
+# framing ("implementation parameters, not scope"), a tuning change just no longer needs a
+# fresh approval, only a documented reason (see the schema_version/prompt_version history
+# below for the standard this project already holds itself to for tuning changes).
+# Change values here, never in code.
+
+crawl:
+  max_depth: 2               # levels from the homepage
+  # Raised 25 -> 40 (2026-09-27, B-48): confirming B-47 live against gong.io/buffer.com/
+  # plaid.com showed each crawl hitting this exact cap ("fetched 25 page(s)") every time, with
+  # the enlarged priority-keyword set (B-47) now matching so many URLs that the fixed 25-page
+  # budget became a genuine zero-sum tradeoff -- plaid's crawl fetched all 12 new /industries/*
+  # pages but that displaced pages that used to support products.names/customers.segments/
+  # pricing.public_plans/pricing.free_trial/traction.named_customers, regressing 5 unrelated
+  # fields net. Raising the cap gives the now-larger priority tier room without starving
+  # everything else discovered in the same crawl. Paired with llm.max_input_tokens_per_run's
+  # matching raise below so the extra fetched pages aren't just silently trimmed away
+  # downstream by the old, now-too-tight token cap -- see that setting's own comment.
+  max_pages: 40              # pages per site
+  max_failed_pages: 20       # B-65: this many 404/403 fetches do not count against max_pages
+  request_timeout_s: 10      # per request
+  total_budget_s: 120        # per site
+  rate_limit_rps: 1          # requests per second per domain
+  max_raw_bytes: 2000000     # 2 MB raw page cap
+  max_clean_chars: 12000     # cleaned characters per page (default, non-priority pages)
+  max_redirects: 5
+  respect_robots: true
+  # Decided 2026-09-22: pages whose URL looks like it holds named entities (customers,
+  # testimonials, pricing, partners, certifications) get a bigger character allowance before
+  # truncation than the default above, since these are the pages most likely to carry the
+  # multi-value fields (named customers, certifications, partnerships) -- see wi/crawl/clean.py.
+  priority_max_clean_chars: 16000
+  # Widened 2026-09-27 (B-47): found while root-causing the held-out run's 43 misses that 15 of
+  # them concentrated in exactly three fields -- traction.certifications, traction.partnerships,
+  # customers.industries -- and inspecting the actual crawled page lists (gong.io, buffer.com,
+  # plaid.com) showed why: four of the original eight keywords (customer/testimonial/case-stud/
+  # client) are near-synonyms that all match the same case-study content type, so those sites'
+  # 25-page budget saturated on case studies (14 of 25 pages on each) while nothing resembling a
+  # trust/security/compliance page or an industries page was ever fetched at all -- there was no
+  # keyword to give them priority-tier standing in the first place. Added industr/integrat/trust/
+  # secur/complian below; kept every original keyword, since traction.named_customers is doing
+  # reasonably well (60% on the same run) and narrowing the case-study family risks trading one
+  # field's coverage for another's rather than genuinely fixing the gap. Does NOT fix a smaller,
+  # separate issue found the same way: buffer.com's crawl did prioritise a "partner" URL, but it
+  # was /partners/agencies (a marketing-affiliate program) rather than an integrations page --
+  # matching the RIGHT keyword on the WRONG page is a page-selection-among-candidates problem
+  # this keyword-list widening doesn't address, left open for now.
+  priority_url_keywords:
+    - customer
+    - testimonial
+    - case-stud
+    - partner
+    - certif
+    - pricing
+    - about
+    - client
+    - industr
+    - integrat
+    - trust
+    - secur
+    - complian
+  # JS-only page fallback (CRL-04 / B-16, decided 2026-09-26). Off by default: enabling it
+  # needs `pip install -r requirements-optional.txt` (playwright) AND `playwright install
+  # chromium` -- see wi/crawl/js_fallback.py. Safe to leave true with playwright missing:
+  # render_with_playwright() degrades to "no fallback happened" rather than erroring.
+  js_fallback_enabled: true
+  # Tried 500 on 2026-10-06 (hoping to catch notion.com's thin pages) and reverted: Notion's
+  # fetch showed no JS-rendered pages at 500 either, so its thinness is not a static-vs-rendered
+  # problem, and the dev-set headline did not move (68% -> 68%).
+  js_fallback_min_text_chars: 200   # below this many visible characters, static content
+                                     # counts as "insufficient" and the fallback triggers
+  js_fallback_timeout_s: 15
+
+llm:
+  provider: "openai"         # approved by Abhishek, 2026-09-27 (Section 13 sign-off; openai was
+                              # already the value in live use going into the approval)
+  small_model: "gpt-4o-mini" # Flash- or Haiku-class structured-output model
+  escalation_model: ""       # one stronger model, conflicts and ambiguity only
+  # Raised 40000 -> 60000 (2026-09-27, B-48, alongside crawl.max_pages 25 -> 40): the worst
+  # observed prompt at 25 pages was already 28972 tokens (72% of the old cap) on plaid.com, so
+  # simply raising max_pages without raising this would just move the bottleneck downstream --
+  # _fit_pages_to_input_budget() (wi/extract/pipeline.py) trims from the tail of the
+  # priority-ordered page list once the combined size would exceed this cap, silently dropping
+  # exactly the kind of later-discovered priority page (the new B-47 categories) this pair of
+  # changes is trying to keep. 60000 stays well clear of gpt-4o-mini's 128k context window and
+  # is a negligible cost difference (see wi/extract/llm.py -- gpt-4o-mini's per-token price is
+  # small enough that this module doesn't even compute a dollar figure yet).
+  max_input_tokens_per_run: 60000
+  max_output_tokens_per_run: 6000
+  max_escalation_calls: 3
+  # Added 2026-09-24: the extraction call never set this before, so it ran on OpenAI's
+  # default (1.0) -- a real, measured source of today's run-to-run variance (the same field
+  # flipping between a correct and a fabricated claim from one run to the next with nothing
+  # else changed). Lower = more repeatable; wi/extract/llm.py falls back to 0.1 if this key
+  # is missing, so this line is optional but recommended.
+  temperature: 0.1
+  # Added 2026-09-28: OpenAI's public list price per 1,000,000 tokens, used only to print an
+  # estimated cost per run (wi/extract/pricing.py) next to targets.cost_mean_usd/cost_p95_usd
+  # below -- this is not read anywhere billing actually happens, and it is not what really
+  # gets charged (no volume or prompt-caching discount applied, and it ignores the separate,
+  # much smaller semantic-judge calls eval/baseline.py and eval/held_out.py make). Source:
+  # https://devtk.ai/en/models/gpt-4o-mini/, checked 2026-09-28. Add a line here whenever a
+  # new model is set as small_model or escalation_model above, or run_site.py will print
+  # "cost unknown" for it instead of a number.
+  pricing_usd_per_1m_tokens:
+    gpt-4o-mini:
+      input: 0.15
+      output: 0.60
+
+cache:
+  max_age_days: 30
+  # "logic" added 2026-09-27 (wi/crawl/cache.py's EXTRACTION_LOGIC_VERSION) -- a fix to the
+  # deterministic evidence-checking code itself doesn't change any of the other four
+  # ingredients, so without this a code fix would never bust a previously-cached site's result.
+  key: "content_hash+prompt_version+schema_version+model+logic"
+
+targets:                     # reported in the Week 4 results, not enforced at runtime
+  latency_p50_s: 60
+  latency_p95_s: 180
+  cost_mean_usd: 0.10
+  cost_p95_usd: 0.25
+
+# Decision layer (B-62, 2026-10-06): TypeSafe Jev answers one closed question, pricing.sales_motion,
+# from the pricing page's text and returns a probability. Default switched to "jev" on 2026-10-06
+# after a dev-set A/B: sales_motion right on 1/5 sites with it off vs 5/5 on, headline 57% vs 61%.
+# Set provider to "none" to turn it off. Needs JEV_API_KEY in .env; without a key the step skips
+# itself and the extraction result is unchanged. A decision only replaces the extraction answer
+# when its probability is at least min_probability AND the page's own button/link lines back it
+# (see wi/classify/decisions.py).
+# mode: "override" lets an applied decision replace the model's answer; "fill_missing" only
+# fills a not_found.
+classifier:
+  provider: "jev"            # "none" | "jev"
+  mode: "override"           # "override" | "fill_missing"
+  min_probability: 0.8
+  # B-68 (2026-10-06): second decision, pricing.revenue_model, in the same Jev call. "fill_missing"
+  # only fills a not_found (a richer model answer is never replaced); only a "subscription" choice
+  # backed by a real recurring-price line on the page is applied. Set enabled: false to switch off.
+  revenue_model:
+    enabled: true
+    mode: "fill_missing"
+  jev:
+    model: "jev-latest"
+    base_url: "https://api.typesafe.ai/v1/systemone"
+    timeout_s: 30
+    price_usd_per_1m_input: 0.042
+
+# B-71 (2026-10-06): focused second pass. After the normal extraction, any of these fields still
+# not_found is asked again with ONLY the best-matching crawled pages in front of the model (same
+# prompt, same evidence gate, cached). Found on snowflake.com: the industries list was on a crawled
+# page but lost among 40 pages; shown that page alone the model returned all eight. Costs about
+# one extra small call per site; set enabled: false to switch off.
+focus_retry:
+  enabled: false   # B-72: off until a repeated --no-cache A/B shows it beats the first pass alone
+  max_pages: 4
+  fields:
+    - "customers.industries"
+    - "traction.certifications"
+    - "traction.named_customers"
+    - "traction.partnerships"
+    - "comparisons.named_alternatives"
+    - "company_identity.headquarters"
+
+news:                        # P1 only, built if the Week 3 gate passes
+  lookback_days: 90
+  max_items: 10
+  source_timeout_s: 15
+
+schema_version: "1"
+# History across 2026-09-27: 0 -> 1 (rule 9 take 1, company_identity.name quote-grounding) -> 0
+# (reverted -- no measurable gain) -> 2 (rule 9 take 2, "title-pointing": points the model at
+# each page's TITLE line as a source for a name-field quote; KEPT -- 5 of 6 genuine runs
+# favourable, no regression elsewhere) -> 3 (rule 2's "conflicting" status bullet reworded to
+# specify the paired-array value/evidence shape, alongside the B-06/EVD-05 fix that finally makes
+# wi/schemas/claim.py and wi/extract/pipeline.py actually check conflicting claims -- not a new
+# prompt-optimisation trial, a correctness fix, since conflicting claims previously required and
+# checked nothing at all) -> 4 (rule 10 added, B-07/OUT-04: asks the model for a separate
+# top-level "announcements" array for dated company-reported statements like funding rounds,
+# never folded into the 15 core fields -- another correctness/coverage fix, not an accuracy
+# trial, since this is a previously-unimplemented PRD requirement, not a tuning pass) -> 5
+# (rule 11, 2026-09-27: a NEW bounded prompt-optimisation trial -- see wi/extract/prompt.py's
+# module docstring -- targeting the list-field extraction weakness the crawl-coverage-misses
+# investigation surfaced as Week 3's single largest, best-evidenced problem: the model
+# reporting not_found on a MULTI_VALUE_FIELDS field despite the source page being crawled.
+# Uttam explicitly requested this as a second trial after rule 9's; noted here and in
+# PROGRESS.md that the PRD (Section 10) literally frames Week 3 as permitting only ONE bounded
+# trial, and rule 9 (take 1 + take 2) already used it -- proceeding on Uttam's explicit,
+# informed instruction, flagged for Abhishek's awareness alongside the other open Section 14
+# process decisions, not decided unilaterally) -> 6 (rule 12, 2026-09-27: NOT a new
+# prompt-optimisation trial -- a correctness/completeness fix, same category as rule 10's
+# announcements array and the conflicting-status format fix, implementing the Final PRD's own
+# explicit text (Section 4, Group B: "delivery model (software, service, marketplace,
+# physical)") that products.delivery_model was never actually given to the model as a
+# vocabulary. Found while investigating this field's flat 0% baseline accuracy: the model was
+# inventing its own categories outside the PRD's four ("manufacturing", "consulting") because
+# nothing ever told it those four words were the field's whole answer space -- see
+# wi/extract/prompt.py's module docstring for the full diagnosis, including what this fix does
+# NOT resolve (a hand-label wording issue on zerodha.json, flagged for Uttam rather than
+# decided unilaterally). Each bump exists so the 5 dev-set sites' cached results get busted and
+# the current prompt text actually gets exercised on re-run -- same reasoning as
+# EXTRACTION_LOGIC_VERSION in wi/crawl/cache.py, applied here to the prompt text. See
+# PROGRESS.md (2026-09-27) for the full trial writeups.
+#
+# Bumped 6 -> 7 (2026-09-27): rule 13 added to wi/extract/prompt.py, fixing customers.segments'
+# 0/10 held-out miss rate (3/10 sites were the model returning a JSON array for a field that must
+# stay a single string -- see that file's module docstring for the full diagnosis).
+#
+# Bumped 7 -> 8 (2026-09-27): rule 14 added to wi/extract/prompt.py, fixing pricing.sales_motion's
+# 0/10 held-out floor -- the field was never given a recognisable cue vocabulary or contrasted
+# against pricing.revenue_model, so the model either skipped it (7/10 sites) or answered with a
+# billing concept instead of a sales-motion one (3/10 sites) -- see that file's module docstring.
+#
+# Bumped 8 -> 9 (2026-09-27): rule 15 added to wi/extract/prompt.py, closing a live
+# customers.segments paraphrase-fabrication bug found via a live fetch of sarvam.ai/about-us --
+# the model composed a plausible-sounding sentence instead of quoting the one real sentence that
+# already stated the segments together, a rule 7 violation even though every fact in it was true.
+# Paired same-day with B-42 (wi/validate/evidence.py, EXTRACTION_LOGIC_VERSION 8 -> 9), which
+# legalises a JSON-array/multi-line "evidence" for a single-string value when segments genuinely
+# come from separate parts of a page with no single covering sentence -- see both files' module
+# docstrings.
+#
+# Bumped 9 -> 10 (2026-09-27, B-50): rule 16 added to wi/extract/prompt.py, closing a live
+# array-field version of rule 15's pattern found on gong.io while confirming B-49 -- the model
+# folded 8 specifically-named, individually-listed certifications into a vague
+# ["SOC 2", "ISO standards"] value backed by one general summary sentence naming neither. Not
+# isolated: traction.certifications sat at 20% across all 10 held-out sites, the same shape
+# recurring on razorpay.com/temenos.com/plaid.com (miss) and thoughtworks.com ("700+
+# certifications" -- incorrect). See wi/extract/prompt.py's module docstring for the full
+# diagnosis.
+#
+# Bumped 10 -> 11 (2026-09-27, B-52): rule 17 added to wi/extract/prompt.py, closing
+# pricing.sales_motion's "stops at the first cue" pattern -- confirmed via a live WebFetch of
+# razorpay.com/pricing (crawled, per the run's own page list, and genuinely showing both a
+# self-serve and a contact-sales/enterprise cue) that the model instead used a homepage sentence
+# with no sales-motion signal at all as its evidence, ignoring the crawled pricing page entirely;
+# plaid.com showed a narrower version, citing the right page but only its first tier's cue. Rule
+# 14's "report both" instruction was already correct and is unchanged -- rule 17 addresses which
+# page to trust (the one marked pricing by URL/TITLE) and how much of it to read (all of it, not
+# just the first cue) before answering. See wi/extract/prompt.py's module docstring.
+# Bumped 11 -> 12 (2026-10-02): rule 18 (products.names candidate-classification --
+# genuine product vs. use-case/solution/audience/pricing-plan application of the base
+# product) was already present in wi/extract/prompt.py's text but this version number was
+# never bumped when it was added, leaving RunCache's whole-site fingerprint unable to tell
+# a pre-rule-18 cached run apart from a post-rule-18 one. Prompt-text-only change, same
+# pattern as rules 13-17 -- no EXTRACTION_LOGIC_VERSION bump needed.
+# Bumped 12 -> 13 (2026-10-02): added a second rule 18 worked example after 3 independent
+# --no-cache loom.com reps showed the first worked example (a Products-menu scenario) wasn't
+# enough -- the model kept extracting every "Loom for X" card straight off the /use-case hub
+# page, using the bare label as its own "evidence", in all 3 reps. The new example (Fernbridge)
+# models that exact hub-page pattern instead. Prompt-text-only change, same pattern as rules
+# 13-18 -- no EXTRACTION_LOGIC_VERSION bump needed. Unconfirmed until re-run against loom.com.
+# Bumped 13 -> 14 (2026-10-06, B-66): rule 12 now asks for the delivery channels the pages name
+# ("software (web app, desktop app, mobile app, browser extension)") instead of the bare word
+# "software", after the dev set showed 4 of 5 labels carry the channel detail and the system's bare
+# "software" scored incorrect on products.delivery_model. Prompt-text-only change.
+# Bumped 14 -> 15 (2026-10-06, B-69): rule 13 now says customers.segments are customer types or
+# sizes, never an industries list (seen on snowflake.com, simplestores.in, calendly.com). Prompt-text only.
+# Bumped 15 -> 16 (2026-10-06, B-70): the B-69 segments rule made the model abstain on BOTH fields
+# for snowflake.com, whose /solutions/industries page plainly lists eight industries (verified with
+# _diagnostic_clean_text.py: the list is in the cleaned text). Rule 13 now sends that list to
+# customers.industries with a worked example. Prompt-text only.
+prompt_version: "16"

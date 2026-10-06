@@ -1,0 +1,169 @@
+{
+  "site": "https://razorpay.com/",
+  "split": "held_out",
+  "labelled_on": "2026-09-27",
+  "labelled_by": "Claude (draft, researched live via WebFetch/WebSearch 2026-09-27) -- NOT an independent human researcher; needs human review before being treated as frozen ground truth.",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "Quotes were retrieved via an AI-summarizing fetch tool rather than raw HTML, so wording is presented as verbatim by that tool but could not be independently re-verified byte-for-byte; treat quotes as close paraphrase-quality. ISO/SOC2 badges on the about page were described as displayed logos, not linked to a specific certificate number or scope -- flagged for human re-check. named_customers list trimmed to a representative subset; many more logos/case studies exist on razorpay.com/customer-stories and /case-studies. No on-site page was found that names specific competitor companies (the one 'vs other payment gateways' blog post explicitly avoids naming real competitors, using 'Gateway A/B' instead), so comparisons.named_alternatives is not_found. B-51 (2026-09-27), customers.segments re-checked via a fresh live WebFetch: the original value/evidence here was a paraphrase description ('Homepage markets to India's businesses across...'), not text copied verbatim from the page -- a labelling error, since this project's own rule 3 requires literal quotes. The only quotable homepage material actually found ('E-Commerce | Education | BFSI | SaaS | Freelancer') is an industry-vertical tab strip, already captured faithfully by customers.industries below; no separate statement distinguishes a customer TYPE (company size, buyer role, etc.), which is what this field means. Corrected to not_found per rule 4 (prefer not_found over guessing) rather than reuse industries content under a different field name.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Razorpay",
+      "source_url": "https://razorpay.com/about/",
+      "evidence": "About Razorpay and The Team Behind it"
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "Founded by IIT Roorkee alumni, Razorpay aims to revolutionize money management for online businesses by providing clean, developer-friendly APIs and hassle-free integration.",
+      "source_url": "https://razorpay.com/about/",
+      "evidence": "Founded by IIT Roorkee alumni, Razorpay aims to revolutionize money management for online businesses by providing clean, developer-friendly APIs and hassle-free integration."
+    },
+    "company_identity.headquarters": {
+      "status": "extracted",
+      "value": "1st Floor, SJR Cyber, 22, Laskar Hosur Road, Adugodi, Bangalore, Karnataka - 560030",
+      "source_url": "https://razorpay.com/about/",
+      "evidence": "1st Floor, SJR Cyber, 22, Laskar Hosur Road, Adugodi, Bangalore, Karnataka - 560030"
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Payment Gateway",
+        "Payment Links",
+        "Razorpay POS",
+        "RazorpayX Current Accounts",
+        "RazorpayX Payroll",
+        "Line of Credit",
+        "Corporate Cards",
+        "Magic Checkout",
+        "Optimizer",
+        "Subscriptions"
+      ],
+      "source_url": "https://razorpay.com/",
+      "evidence": "Homepage lists payment acceptance products (Payment Gateway, Payment Links, Payment Pages, Razorpay POS, QR Codes, Payment Buttons), payouts and banking products (API & Bulk Payouts, Current Accounts, Escrow Accounts), RazorpayX Payroll, credit products (Line of Credit, Corporate Cards), and Magic Checkout/Optimizer/Subscriptions as named offerings."
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "software (API-based payments/banking platform; also provides Razorpay POS hardware devices and bank-partnered current accounts)",
+      "source_url": "https://razorpay.com/",
+      "evidence": "clean, developer-friendly APIs and hassle-free integration; Razorpay POS device offering listed alongside software payment products"
+    },
+    "customers.segments": {
+      "status": "not_found"
+    },
+    "customers.industries": {
+      "status": "extracted",
+      "value": [
+        "E-commerce",
+        "Education",
+        "BFSI/Financial Services",
+        "SaaS",
+        "Freelance services"
+      ],
+      "source_url": "https://razorpay.com/",
+      "evidence": "Homepage industry-specific sections/solutions for E-commerce, Education, BFSI, SaaS and Freelancers."
+    },
+    "pricing.public_plans": {
+      "status": "extracted",
+      "value": [
+        "Payment Gateway: 2% + GST per transaction",
+        "RazorpayX Payroll: subscription starts at \u20b92499"
+      ],
+      "source_url": "https://razorpay.com/pricing/",
+      "evidence": [
+        "2% + GST",
+        "Subscriptions start at \u20b92499"
+      ]
+    },
+    "pricing.sales_motion": {
+      "status": "extracted",
+      "value": "Self-serve online sign-up for standard Payment Gateway pricing; contact-sales/custom pricing for enterprise merchants (monthly revenue above \u20b95,00,000) and funded startups",
+      "source_url": "https://razorpay.com/pricing/",
+      "evidence": "monthly revenue more than \u20b95,00,000 ... Custom pricing available ... Requires contacting sales team; Get special pricing through custom plan form"
+    },
+    "pricing.free_trial": {
+      "status": "extracted",
+      "value": "0% platform fees for the first 90 days on Payment Gateway; RazorpayX Payroll offers 1 month free plus 20% off with Business Banking+",
+      "source_url": "https://razorpay.com/pricing/",
+      "evidence": "0%* platform fees for first 90 days; 1 month FREE + 20% OFF on subscription with Business Banking+"
+    },
+    "pricing.revenue_model": {
+      "status": "extracted",
+      "value": "Transaction-based (percentage fee per payment processed) for the core Payment Gateway, plus flat subscription pricing for RazorpayX Payroll",
+      "source_url": "https://razorpay.com/pricing/",
+      "evidence": "2% + GST ... Pay-per-transaction model only; Subscriptions start at \u20b92499"
+    },
+    "traction.named_customers": {
+      "status": "extracted",
+      "value": [
+        "Jar",
+        "Doubtnut",
+        "Barosi",
+        "AN Fashions",
+        "Spark Studio",
+        "Treebo",
+        "Marrow",
+        "BreathingRoom",
+        "Licious",
+        "Zerodha",
+        "Akbar Travels",
+        "Goomo",
+        "PaisaBazaar",
+        "RentoMojo",
+        "Furlenco"
+      ],
+      "source_url": "https://razorpay.com/customer-stories/",
+      "evidence": [
+        "Jar named as a homepage customer logo",
+        "Doubtnut named as a homepage customer logo",
+        "Barosi named as a homepage customer logo",
+        "AN Fashions named as a homepage customer logo",
+        "Spark Studio named as a homepage customer logo",
+        "Treebo sees 30% drop in No-shows with Razorpay Payment Links.",
+        "Marrow Achieves 25x Growth in Reach Using Razorpay's Enhanced Payments Experience.",
+        "BreathingRoom achieves shorter sales cycle and faster revenue realisation with Razorpay.",
+        "Switching to Razorpay from our previous gateway was very smooth (Licious)",
+        "Integrating Razorpay was a breeze and we must've spent about 30 mins doing it! (Zerodha)",
+        "The moment we shifted to Razorpay, our conversion hit 90%. (Akbar Travels)",
+        "Goomo increases revenue by 22% with Razorpay Payment Links.",
+        "PaisaBazaar accelerates growth while cutting costs with Razorpay Subscriptions.",
+        "Rentomojo in more control of its predicted revenue with Razorpay Subscriptions.",
+        "Furlenco Reduces Customer Complaints by 70% on Automating Refunds via RazorpayX."
+      ]
+    },
+    "traction.certifications": {
+      "status": "extracted",
+      "value": [
+        "PCI-DSS certification",
+        "RBI Authorised Payment Aggregator",
+        "ISO Certified",
+        "SOC 2 compliant"
+      ],
+      "source_url": "https://razorpay.com/docs/security/",
+      "evidence": [
+        "As a payment service provider dealing with card data, we have PCI-DSS certification",
+        "an RBI Authorised Payment Aggregator",
+        "ISO Certified badge displayed on about page",
+        "SOC 2 compliant badge displayed on about page"
+      ]
+    },
+    "traction.partnerships": {
+      "status": "extracted",
+      "value": [
+        "ICICI Bank",
+        "RBL Bank",
+        "Yes Bank",
+        "n8n",
+        "Replit",
+        "Vercel"
+      ],
+      "source_url": "https://razorpay.com/about/",
+      "evidence": [
+        "Your RazorpayX powered current account is provided by our partner banks i.e, ICICI, RBL, Yes bank.",
+        "Homepage lists n8n, Replit and Vercel as integration partners."
+      ]
+    },
+    "comparisons.named_alternatives": {
+      "status": "not_found"
+    }
+  }
+}

@@ -1,0 +1,172 @@
+{
+  "labeling_metadata": {
+    "company_name": "Loom",
+    "website_url": "https://www.loom.com/",
+    "split": "dev",
+    "labeler": "Uttam",
+    "date_labeled": "2026-09-28",
+    "notes": "Manually labeled from supplied Loom website screenshots; converted from _template.json to _template_v2.json structure and correction pass applied 2026-09-28. products.names length mismatch fixed; pricing.sales_motion evidence combined to a single string; traction.named_customers re-verified live against loom.com homepage (7/10 confirmed, 3 unconfirmed -- see notes); traction.certifications evidence de-duplicated to one string, GDPR/CCPA-as-certification flagged as a rule ambiguity rather than resolved unilaterally."
+  },
+  "labeling_instructions": {
+    "source_policy": "Use only information the company states on its own public website. No outside knowledge, no assumptions.",
+    "statuses": {
+      "extracted": "Directly stated on the site, with a verbatim (or near-verbatim) quote as evidence.",
+      "inferred": "Allowed ONLY on the three whitelisted fields below. A reasonable read of stated evidence, not a direct quote.",
+      "not_found": "The site does not provide sufficient evidence for this field.",
+      "conflicting": "Two pages give genuinely incompatible values for the SAME single-valued attribute (see conflicting_vs_union rule below)."
+    },
+    "evidence_required": true,
+    "do_not_guess": true,
+    "multi_value_evidence_rule": "For any field in this list -- products.names, customers.industries, traction.named_customers, traction.certifications, traction.partnerships, comparisons.named_alternatives, pricing.public_plans -- check every value item against the evidence text individually. If one contiguous quote does not literally contain every item, make 'evidence' a list of quotes in the same order as 'value' (evidence[i] must support value[i]) instead of writing one summary sentence. Never let a paraphrase stand in as evidence for a list.",
+    "conflicting_vs_union_rule": "Use 'conflicting' only for a single-valued field (e.g. company_identity.headquarters) where two pages state incompatible facts. For a list-valued field, do NOT mark it conflicting just because two pages list different or overlapping items -- merge every genuinely-sourced item into one list instead.",
+    "field_specific_rules": {
+      "customers.segments": "Single string. How the company classifies buyers by structure/size (individual, team, SMB, mid-market, enterprise, nonprofit, government). Stays a single string -- do not turn into a list.",
+      "customers.industries": "List. The named verticals, sectors, or professions the site explicitly says it serves. Each item must be a term the site itself uses, not a category you infer.",
+      "products.names": "List. Counts only if the company treats the text as a proper name for something it sells: a nav item linking to its own product page, a product-page title/heading, or explicit 'Introducing X' branding. A descriptive phrase ('our platform') does not count. Tiebreaker: does the term have its own page/URL on the site?",
+      "pricing.sales_motion": "Inference allowed. 'Contact sales' with no public amounts -> sales-led (inferred). Do not infer subscription pricing from 'Contact sales' alone.",
+      "pricing.revenue_model": "Inference allowed, but only from a structural signal the site states outright (per seat, monthly subscription, transaction fee, one-time license). Never infer from company type/category alone.",
+      "products.delivery_model": "Inference allowed, but only from the site's own words describing how the product is delivered (self-serve, managed service, app download, physical + install). Never infer from category assumptions.",
+      "pricing.free_trial": "Single string. Quote the site's own trial/demo phrasing verbatim (e.g. '14-day free trial, no credit card required'). Never normalize to yes/no.",
+      "traction.certifications": "List. Compliance/standards marks (SOC 2, ISO, ...) or named partner-tier badges issued by a third party.",
+      "traction.partnerships": "List. Named companies described as integration, channel, or technology partners.",
+      "traction.named_customers": "List. Entities described as using/buying the product (logos, 'trusted by', case studies, testimonials). A name may legitimately appear in both this field and partnerships/certifications if the site describes it both ways -- that's not an error."
+    }
+  },
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Loom",
+      "source_url": "https://www.loom.com/",
+      "evidence": "Loom"
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "Loom is a video communication platform for recording and sharing AI-powered video messages.",
+      "source_url": "https://www.loom.com/",
+      "evidence": "Easily record and share AI-powered video messages with your teammates and customers to supercharge productivity"
+    },
+    "company_identity.headquarters": {
+      "status": "not_found"
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Loom AI"
+      ],
+      "source_url": "https://www.loom.com/pricing",
+      "evidence": [
+        "Loom AI"
+      ]
+    },
+    "products.delivery_model": {
+      "status": "inferred",
+      "value": "Digital software delivered through web, browser extension, desktop app, and mobile app",
+      "source_url": "https://www.loom.com/",
+      "evidence": "Record on any device using Loom’s Chrome extension, desktop app or mobile app."
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "Teams and individuals",
+      "source_url": "https://www.loom.com/pricing",
+      "evidence": "Loom is built for both teams and individuals"
+    },
+    "customers.industries": {
+      "status": "not_found",
+      "notes": "Corrected 2026-09-28 (final ground-truth verification): live-checked loom.com/ and loom.com/customers, the two most likely source pages -- neither names Education, Technology, Financial Services, or Professional Services as a served vertical (only role/function framing: \"Loom for Design/Engineering/Marketing\", plus customer logos with no stated industry labels). The system's own 22-page real crawl independently reached the same not_found conclusion. Previous 4-item list is unsupported and removed."
+    },
+    "pricing.public_plans": {
+      "status": "extracted",
+      "value": [
+        "Starter",
+        "Business",
+        "Business + AI",
+        "Enterprise"
+      ],
+      "source_url": "https://www.loom.com/pricing",
+      "evidence": [
+        "Starter",
+        "Business",
+        "Business + AI",
+        "Enterprise"
+      ],
+      "notes": "UNVERIFIED this session (bare-word evidence; loom.com/pricing was not successfully re-fetched) -- flagged in audit, not corrected."
+    },
+    "pricing.sales_motion": {
+      "status": "inferred",
+      "value": "Self-serve and sales-led",
+      "source_url": "https://www.loom.com/pricing",
+      "evidence": "Try for free; Sign up; Contact Sales"
+    },
+    "pricing.free_trial": {
+      "status": "extracted",
+      "value": "Business + AI: 14-day free trial; Enterprise: 14-day free trial by contacting sales.",
+      "source_url": "https://www.loom.com/pricing",
+      "evidence": "Yes, you can try our Business + AI plan free for 14 days. If you would like a free 14-day trial of our Enterprise plan please contact sales."
+    },
+    "pricing.revenue_model": {
+      "status": "inferred",
+      "value": "Subscription",
+      "source_url": "https://www.loom.com/pricing",
+      "evidence": "$18 per user / month; $24 per user / month; Bill me: Monthly; Bill me: Annually; You can be billed monthly, but save 17% if you pay annually."
+    },
+    "traction.named_customers": {
+      "status": "extracted",
+      "value": [
+        "HubSpot",
+        "Atlassian",
+        "Juniper",
+        "Lacoste",
+        "LaunchDarkly",
+        "Greenhouse",
+        "MetaLab",
+        "SevenSevenSix",
+        "Pearson",
+        "Typeform"
+      ],
+      "source_url": [
+        "https://www.loom.com/",
+        "https://www.loom.com/enterprise"
+      ],
+      "evidence": [
+        "Confirmed live 2026-09-28 under ‘Millions of people across 400,000 companies choose Loom’ (loom.com homepage)",
+        "Confirmed live 2026-09-28 under ‘Millions of people across 400,000 companies choose Loom’ (loom.com homepage)",
+        "Confirmed live 2026-09-28 under ‘Millions of people across 400,000 companies choose Loom’ (loom.com homepage)",
+        "Confirmed live 2026-09-28 under ‘Millions of people across 400,000 companies choose Loom’ (loom.com homepage)",
+        "Confirmed live 2026-09-28 under ‘Millions of people across 400,000 companies choose Loom’ (loom.com homepage)",
+        "Confirmed live 2026-09-28 under ‘Millions of people across 400,000 companies choose Loom’ (loom.com homepage)",
+        "Confirmed live 2026-09-28 under ‘Millions of people across 400,000 companies choose Loom’ (loom.com homepage)",
+        "UNVERIFIED 2026-09-28: not found in the loom.com homepage logo grid fetched this session; original source_url cited /enterprise, which could not be fetched -- needs direct check.",
+        "UNVERIFIED 2026-09-28: not found in the loom.com homepage logo grid fetched this session; original source_url cited /enterprise, which could not be fetched -- needs direct check.",
+        "UNVERIFIED 2026-09-28: not found in the loom.com homepage logo grid fetched this session; original source_url cited /enterprise, which could not be fetched -- needs direct check."
+      ]
+    },
+    "traction.certifications": {
+      "status": "extracted",
+      "value": [
+        "SOC 2 Type 2",
+        "GDPR",
+        "CCPA"
+      ],
+      "source_url": "https://www.loom.com/enterprise",
+      "evidence": "GDPR, CCPA, and SOC 2 Type 2 compliant",
+      "notes": "RULE AMBIGUITY flagged, not resolved unilaterally: GDPR/CCPA are self-declared regulatory-compliance claims, not third-party-audited certifications like SOC 2 Type 2. The existing field rule ('compliance/standards marks') is worded broadly enough to include this reading, so left unchanged -- see audit report for the ambiguity to confirm/clarify."
+    },
+    "traction.partnerships": {
+      "status": "not_found"
+    },
+    "comparisons.named_alternatives": {
+      "status": "extracted",
+      "value": [
+        "Vidyard",
+        "Zoom Clips",
+        "Microsoft Clipchamp"
+      ],
+      "source_url": "https://www.loom.com/",
+      "evidence": [
+        "vs Vidyard",
+        "vs Zoom Clips",
+        "vs Microsoft Clipchamp"
+      ]
+    }
+  }
+}

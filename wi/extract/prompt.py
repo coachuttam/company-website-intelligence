@@ -1,0 +1,848 @@
+"""Builds the messages sent to the LLM (PRD Section 9). The model proposes;
+wi/validate/evidence.py disposes -- nothing here is trusted just because the
+model said it. That split is why this prompt asks for a quote on every
+populated claim: it's not enough for the model to be right, the claim has to
+be checkably right against the actual page text.
+
+Fixed 2026-09-26: rule 7 and rule 8's worked examples used to quote real basecamp.com text
+almost verbatim (they were written to reproduce real bugs seen on that site). The first live
+Day-5 baseline run against basecamp.com then had products.delivery_model rejected with
+"quote not found in page text" for a value+evidence pair that matched the rule 8 example
+nearly word for word -- strong evidence the model echoed the in-context example instead of
+quoting the actual page text it was given this run. Since basecamp.com is a permanent PRD
+benchmark site (D1), this exact field+company pairing will keep coming up on every future
+baseline run, so the risk wasn't a one-off. Both worked examples now use a generic, clearly
+fictional product instead, keeping the same teaching point without giving the model
+real target-site text to copy from its own instructions.
+
+Rule 9 trial, 2026-09-27 to 2026-09-27 -- REVERTED, null result: Week 3's bounded
+prompt-optimisation trial (PRD Section 10 -- "one bounded ... prompt-optimisation trial, only
+after the [field-level] baseline exists") targeted company_identity.name's evidence-rejection
+on zerodha and thoughtbot (confirmed not a caching artifact -- see PROGRESS.md's 2026-09-27
+sections for the full pre/post data). The added rule told the model directly that a name-field
+quote must contain the name itself, with a worked example built around the diagnosed failure
+shape (a real, on-topic quote that never names the company). `prompt_version` was bumped 0 -> 1
+in config.yaml to bust the dev-set sites' cached results so the trial would actually be
+exercised on re-run.
+
+Re-run result against the PRD's own gate ("keep the optimisation only if held-out gain is
+measurable and provenance is intact"): NO measurable gain. thoughtbot's rejection was
+byte-for-byte identical before and after -- same claimed value, same exact wrong evidence
+quote, same rejection reason -- meaning the new rule had no discernible effect on that site's
+output at all. zerodha's rejection persisted too, with a different but still-unsupporting
+quote. Headline accuracy moved 32% -> 31% and extraction accuracy 30% -> 17%, though the
+extraction-accuracy drop is confounded by an unrelated darwinbox crawl timeout on the same
+re-run, not attributable to this rule. Per the gate, and the commitment recorded when this
+trial was designed, the rule is reverted: no held-out gain, so it doesn't earn its keep.
+`prompt_version` is reverted to 0 alongside this revert, since the fingerprint should reflect
+the prompt actually in force again.
+
+Rule 9, take 2 ("title-pointing"), started 2026-09-27: Uttam chose to try name-grounding again
+rather than switch targets, this time pointing the model specifically at page TITLE text as the
+place to look for a name-field quote. Motivation: `build_messages()` has always shown the model
+a "TITLE: ..." line for every page (right below), and a page's own `<title>` tag very often
+contains the company's own name even on pages whose body text talks *about* the company without
+ever naming it (exactly the shape of both zerodha's and thoughtbot's take-1 failures). B-29
+already made the evidence checker treat title text as fair game to quote from, so this rule
+doesn't need any evidence.py change -- only a prompt change telling the model to actually look
+there for this specific field type, instead of leaving it to notice the TITLE line on its own.
+This is a second, separately-scoped bounded trial, not a reopening of the reverted one: same
+target field, different mechanism (an instruction to check a specific, always-present part of
+the input, rather than a restated version of the evidence-support requirement take 1 already
+tried and which took-1's data showed made no difference). `prompt_version` bumped to "2" (not
+back to "1", to guarantee this trial's re-run can't collide with take-1's now-retired
+fingerprint and serve a stale cached answer under either version). Keep only if a re-run shows
+measurable gain on zerodha/thoughtbot without regressing other fields, per the same PRD gate.
+
+Rule 9 take 2 KEPT (2026-09-27): 5 of 6 genuine `--no-cache`-confirmed independent runs showed
+zerodha and thoughtbot both extracting `company_identity.name` correctly (never a mixed result --
+when the mechanism works it works on both sites at once); only 1 of 6 showed both failing.
+Headline accuracy stayed in a stable band across every run, no regression traceable to this rule
+anywhere else. Full tally recorded in PROGRESS.md. This is not a new prompt-tuning trial (Week 3's
+one-trial budget was already spent on this), so no further prompt_version bump for this decision
+alone -- rule 9 and prompt_version "2" simply stay as they are.
+
+Conflicting-status format tightened (B-06/EVD-05, 2026-09-27, not a prompt-optimisation trial --
+a correctness fix, since this is a real validation gap, not an accuracy trial): rule 2's
+"conflicting" bullet used to say only "value describing both, and evidence that shows the
+conflict", with no format specified. Combined with a real code gap (conflicting claims were never
+schema-checked or evidence-checked at all -- see wi/schemas/claim.py and
+wi/validate/evidence.py's check_conflicting_claim), a claim marked "conflicting" could carry
+anything, including nothing. The rule now tells the model explicitly to use the same paired-array
+shape rule 6 already established for multi-value fields (one value entry + one real quote per
+disagreeing page), with a worked example, so the now-enforcing schema and evidence check have a
+realistic chance of being satisfied by the model's actual output rather than immediately
+rejecting every conflicting claim it ever produces. `prompt_version` bumped 2 -> 3 (this changes
+the prompt text actually sent to the model, so any cached pre-change result must not be served
+as-is); `EXTRACTION_LOGIC_VERSION` bumped alongside it in wi/crawl/cache.py, since pipeline.py's
+and evidence.py's deterministic checking logic changed too.
+
+Rule 10 added, B-07/OUT-04 (2026-09-27, a correctness/coverage fix, not a prompt-optimisation
+trial -- like the conflicting-status fix above, this closes a real, previously-unimplemented
+schema gap, not an accuracy tuning pass): the Final PRD (line 67, Section 4 Group E, OUT-04)
+requires dated, company-reported announcements (funding, product launches, and similar
+out-of-scope-for-the-15-fields events) to be captured ONLY as a separate, dated first-party item
+-- "never as core fields" -- but nothing before this asked the model for them at all, and
+nothing in the schema (wi/extract/schema.py) or pipeline gave the model anywhere legal to put
+one even if it tried. Rule 10 asks for them under a new top-level "announcements" array,
+completely separate from the 15-field "claims" array, with a worked example distinguishing a
+genuine, dated, on-topic announcement from an out-of-scope statement with no date (which must be
+left out entirely rather than assigned an invented date). `prompt_version` bumped 3 -> 4
+alongside `EXTRACTION_LOGIC_VERSION` in wi/crawl/cache.py (wi/extract/schema.py's response
+schema, wi/schemas/announcement.py's validation, and wi/extract/pipeline.py's extraction/
+evidence-check logic for announcements are all new).
+
+Rule 11, the list-field extraction bounded prompt-optimisation trial (started 2026-09-27):
+Week 3's crawl-coverage-misses investigation (see PROGRESS.md's "part 2: conclusive" section)
+classified 30 real dev-set misses using fresh, diagnostics-enabled run data and found the single
+largest, best-evidenced pattern was NOT crawl coverage (a minor contributor once darwinbox's
+already-understood JS-fallback gap is excluded) but the model reporting `not_found` for a
+MULTI_VALUE_FIELDS field on a page it had definitely already been given -- concentrated almost
+entirely in named customers, partnerships, certifications, segments, and industries (basecamp's
+`traction.named_customers`/`traction.partnerships`, zerodha's `company_identity.headquarters`/
+`traction.certifications`/`traction.partnerships`, thoughtbot's `customers.segments`/
+`customers.industries`/`pricing.sales_motion`/`traction.named_customers` -- 9 misses across 3
+sites, all on pages confirmed crawled, several with empty `rejected`/`schema_errors`, meaning the
+model never even attempted an answer). Working hypothesis: these fields are rarely presented as a
+clean, complete list on a real site -- a named customer more often shows up as one passing mention
+("used by teams at Example Corp") or a partner logo's alt text than as a bulleted "Our Customers"
+section -- and the model, having also been told repeatedly (rules 3/4/7) to prefer not_found over
+guessing and never invent items, over-generalises that caution into skipping the field entirely
+whenever what it sees is a single scattered mention rather than something that reads like a
+complete, curated list. Rule 11 targets exactly this gap, and only this gap: it does not touch
+what counts as valid evidence (rules 3/6/7 are unchanged) or loosen the anti-hallucination floor
+in any way -- every item still needs its own real, quotable, checkable text, exactly as rules 3
+and 6 already require. It adds one instruction: a single genuinely-quotable instance is enough to
+extract as a one-item array; do not wait for what feels like a complete or neatly-presented list
+before extracting anything at all. `prompt_version` bumped 4 -> 5 to bust the dev-set sites'
+cached results (no `EXTRACTION_LOGIC_VERSION` bump -- this changes only the prompt text sent to
+the model, not any deterministic checking code). Per the PRD's one-bounded-trial gate, kept only
+if a re-run shows measurable gain on these specific fields without regressing others.
+
+Rule 11 KEPT (2026-09-27): measured across 4 genuine `--no-cache` reps on the dev set (see
+PROGRESS.md for the full per-rep tally). On `traction.named_customers` -- the field with real,
+previously-missed content on multiple sites -- the rule won outright in 5 of 8 rep-site
+combinations (basecamp 3/4, thoughtbot 2/4), each time extracting a real, correctly-evidenced
+name that was `not_found` before this rule existed. In every one of the other 3 combinations it
+landed exactly at the same `not_found` the pipeline would have produced anyway -- zero instances
+of a worse result than the pre-trial baseline across 4 independent samples. It did not generalise
+to the other targeted field types (`traction.partnerships`, `traction.certifications`,
+`customers.segments`, `customers.industries` elsewhere, `pricing.sales_motion` stayed `not_found`
+in all 4 reps on all 3 target sites) -- narrower than hoped, but a real, measurable, provenance-
+intact gain with no observed downside on its one working field is enough to clear the PRD gate.
+Uttam's explicit keep decision, given this tally. Not a new prompt_version bump -- rule 11 and
+`prompt_version: "5"` simply stay as they are, same pattern as rule 9's keep decision.
+
+Rule 12 added, products.delivery_model's category vocabulary (2026-09-27, a correctness/
+completeness fix, not a prompt-optimisation trial -- like rules 10 and the conflicting-status fix
+above, this implements an explicit, already-written PRD requirement the prompt never actually
+gave the model, rather than tuning wording to chase a measured gain): the Final PRD (Section 4,
+Group B) defines this field as "delivery model (software, service, marketplace, physical)" --
+four named categories -- but nothing before this rule ever told the model that vocabulary exists.
+The field was extraction-only guided by rule 8's single worked example, which teaches ONLY the
+SaaS/software inference pattern. Found while investigating why eval/baseline.py's per-field
+report showed this field at a flat 0% accuracy across all 5 dev-set sites: 2 of 5 were `miss`
+(not_found), 3 of 5 were `incorrect`, and two of the three `incorrect` cases were the model
+inventing its own descriptive category outside the PRD's four -- "manufacturing" for
+bajajauto.com (confusing what the company makes with how its product reaches the customer -- the
+hand label says "physical (authorised dealer network)") and "consulting" for thoughtbot.com
+(the hand label says "service (fully-remote)", also dropping the "remote" detail). Rule 12 gives
+the model the PRD's own four-word vocabulary directly, with guidance on which non-software
+business shapes map to which category, and a worked example (a dealer-network page) showing the
+"physical" category alongside the WRONG answer of describing the company's own activity
+("manufacturing") instead of its delivery channel. `prompt_version` bumped 5 -> 6 in
+config.yaml (this changes only the prompt text sent to the model, not any deterministic checking
+code, so no separate `EXTRACTION_LOGIC_VERSION` bump is needed for this rule alone -- that
+constant was already bumped 5 -> 6 this same day for the unrelated B-36 fix).
+
+Separately noted, not fixed by this rule and not this rule's job to fix: 1 of the 2 `miss` cases
+(basecamp.com) was independently confirmed, via a live fetch of the real page, to be the exact
+"wrong page cited" pattern B-36 already fixes (the model's real, verbatim evidence quote -- "iOS,
+Android, Mac, Windows, on the web, and on the command line." -- lives on basecamp.com/apps, but
+the model cited basecamp.com/ as source_url); EXTRACTION_LOGIC_VERSION's bump for B-36 already
+means this gets honestly re-checked on the next run, no further change needed here. And even a
+perfectly-categorised answer under rule 12 will likely still score `incorrect` against
+eval/labels/zerodha.json's hand label ("Online software platform (web and app-based trading and
+investment platform)") under wi/eval/scoring.py's deliberate exact-match-after-normalising
+scorer (see that module's own docstring) -- that label doesn't start with the literal word
+"software", so no non-paraphrasing prompt fix can close that particular gap without either
+loosening the scorer (which the project has explicitly declined to do, for good reason) or
+tightening this field's hand-label wording to the PRD's own four-word vocabulary. Flagging this
+for Uttam's decision rather than guessing at the hand-label side unilaterally.
+
+Rule 13 added, customers.segments list-invention fix (2026-09-27, a correctness/completeness fix,
+not a prompt-optimisation trial -- this reinforces an already-decided schema rule (rule 5 above,
+wi/extract/fields.py's MULTI_VALUE_FIELDS) that the model was violating in practice, rather than
+tuning wording to chase a measured gain): found while investigating the Week 4 held-out
+evaluation's customers.segments field, which scored 0/10 (100% miss) across all 10 held-out
+sites. 3 of the 10 (razorpay.com, thoughtworks.com, nobroker.com) failed specifically because the
+model returned a JSON array for this field, which wi/schemas/claim.py's validator correctly
+rejects (this field is not in MULTI_VALUE_FIELDS) and safely downgrades to not_found -- turning a
+real, well-evidenced extraction into a silent miss rather than a visible error. wi/schemas/
+claim.py's own module docstring already documented this exact failure mode on a live
+basecamp.com dev-set run back on 2026-09-24 ("the model invented a customers.segments list ...
+three different times, each with different made-up contents") -- it was structurally guarded
+against then, but the underlying prompt-level cause was never actually fixed, so it kept
+recurring. The likely reason: customers.segments sits directly next to customers.industries in
+the 15-field list, and industries IS a MULTI_VALUE_FIELDS field -- both fields' natural real-world
+answer is often several distinct named groups (e.g. "Startups, enterprises, e-commerce
+businesses..."), so the model has no signal telling it these two adjacent, similarly-shaped
+fields are governed by opposite formatting rules, beyond rule 5's one mention buried in a list of
+many fields. Rule 13 calls this out by name, contrasts it directly with customers.industries, and
+gives a worked example showing several genuinely distinct segments named in one page sentence,
+correctly compressed into ONE joined string -- the exact convention eval/labels/*.json's hand
+labels already use (e.g. basecamp.json's "People, teams, companies, and non-profits") -- rather
+than exploded into an array. `prompt_version` bumped 6 -> 7 in config.yaml (this changes only the
+prompt text sent to the model, not any deterministic checking code, so no separate
+`EXTRACTION_LOGIC_VERSION` bump is needed for this rule alone).
+
+Rule 14 added, pricing.sales_motion's 0/10 held-out floor (2026-09-27, a correctness/completeness
+fix, not a prompt-optimisation trial -- like rules 12 and 13, this gives the model an already-
+decided piece of field guidance it never had, rather than tuning wording to chase a measured
+gain): the Week 4 held-out run scored this field at a flat 0% across all 10 sites (7 miss, 3
+incorrect) -- the only field with zero credit anywhere, despite every one of the 7 "miss" sites
+having an obvious, crawled sales-motion signal (innovaccer.com's and temenos.com's "Request a
+Demo"/"Get in Touch" pages, nobroker.in's priced purchase-plan pages, and similar). Two distinct
+failure shapes, both traced to the same root cause: nothing before this rule told the model this
+field even had a recognisable pattern to look for, unlike products.delivery_model (rule 12's
+four-word vocabulary) or pricing.revenue_model (B-38's evidentiary-link guard). (1) Under-
+triggering to not_found on 7/10 sites despite a clear signup- or contact-sales CTA sitting right
+in the given page text -- the same over-cautious gap rule 11 already fixed for list fields, but
+this field was never covered by rule 11 since it isn't list-shaped. (2) On the 3/10 sites where
+the model did attempt an answer, it reached for a pricing.revenue_model-style concept instead --
+sarvamai.com's "pay-per-use" and gong.io's "direct sales" both describe pricing/billing structure
+or channel ownership, not the self-serve-vs-sales-assisted go-to-market question this field
+actually asks, confirming the model has no grounding on what distinguishes the two adjacent
+pricing-group fields. Rule 14 names the concrete, always-quotable cues to look for (a self-serve
+signup/checkout button next to a visible price, vs. a "Contact Sales"/"Request a Demo"/"Get in
+Touch" CTA gating a plan), explicitly contrasts the field against pricing.revenue_model so the
+model stops reusing billing vocabulary here, and shows the hybrid case (self-serve for one tier,
+contact-sales for another) that several dev-set and held-out hand labels already use verbatim
+(e.g. plaid.json, razorpay.json). `prompt_version` bumped 7 -> 8 in config.yaml (prompt-text-only
+change; no `EXTRACTION_LOGIC_VERSION` bump needed).
+
+
+Rule 15 added, customers.segments' paraphrase-fabrication pattern (2026-09-27, a correctness fix
+closing a confirmed live bug, not a prompt-optimisation trial): confirmed via a live fetch of
+sarvam.ai/about-us while root-causing this field's held-out failures -- the real page states
+"...applications that can be put to work by enterprises, governments and developers" in one
+sentence, but the model's rejected evidence was "We are building for enterprises, governments
+and developers.", a plausible-sounding sentence it composed instead of quoting the real one, a
+direct rule 7 violation ("never write your own summary... find and reuse real sentences") even
+though every fact in it happens to be true. Rule 15 tells the model explicitly to search all
+given pages for one real sentence stating the segments together before writing anything, for
+this field by name. It also pairs with a genuine, previously-missing capability (B-42, added the
+same day in wi/validate/evidence.py): when segments truly are scattered across separate parts of
+a page with no single covering sentence, "evidence" may now be a JSON array (or a single
+newline-separated string) of the separate real quotes, the same mechanism rule 6 already gives
+list-valued fields, applied here to back the different comma-separated parts of ONE joined
+string value. Both are stated together because they resolve the same underlying gap from
+opposite ends: rule 15 stops the model reaching for a fabricated join when a real sentence
+already exists; the evidence.py change gives it a legal alternative to fabrication when one
+genuinely doesn't. `prompt_version` bumped 8 -> 9 in config.yaml.
+
+Rule 16 added, list-field "composed summary instead of quoted items" fix (B-50, 2026-09-27, a
+correctness fix closing a confirmed live bug, not a prompt-optimisation trial): found live on
+gong.io while confirming B-49 -- the real trust page names 8 specific certifications, each on its
+own line (e.g. "Service Controls (SOC 2 Type 2)"), but the model's traction.certifications claim
+gave `value: ["SOC 2", "ISO standards"]` backed by a single general sentence ("Gong has attained
+an extensive list of certifications and attestations to comply with global compliance
+standards.") that never itself names either one -- a rule 7 violation (composing a summary
+instead of quoting real sentences) specific to array-valued fields, distinct from rule 15's
+single-string version of the same underlying pattern. Checking the held-out report found this is
+not isolated: `traction.certifications` sits at 20% across all 10 held-out sites (worst scored
+field besides `customers.segments`), with the same shape recurring on razorpay.com (miss),
+temenos.com (miss), plaid.com (miss), and thoughtworks.com ("700+ certifications across partner
+solutions and services" -- a vague count standing in for named items, scored `incorrect`). Rule
+16 tells the model explicitly, for the five array-valued fields from rule 5, that each entry must
+be one specific named item as the page states it, backed by its own specific quote naming that
+item (the array-evidence form rule 6 already provides), never a category description standing in
+for several real items nor a general introductory sentence as the shared "evidence". It also
+reminds the model it may extract fewer, specifically-named items rather than either fabricating a
+generalisation to cover ones it can't quote or skipping the field entirely (reinforcing rule 11's
+existing "a single genuinely-quotable instance is enough" against the opposite over-caution).
+`prompt_version` bumped 9 -> 10 in config.yaml (prompt-text-only change; no
+`EXTRACTION_LOGIC_VERSION` bump needed).
+
+Rule 17 added, pricing.sales_motion's "stops at the first cue" pattern (B-52, 2026-09-27, a
+correctness fix closing a confirmed live bug, not a prompt-optimisation trial): the held-out
+`--semantic-judge` run this field's own 20%->0% drop was root-caused by, rather than a code
+regression -- rule 14 already told the model to "report both" when a site shows both a self-serve
+and a contact-sales cue, and no extraction, prompt, or scoring code for this field changed between
+that run and the one before it. What changed was which of two failure modes was visible. Checked
+directly: razorpay.com/pricing WAS crawled (confirmed in the run's own `crawl.pages` list) and, per
+a live WebFetch of the real page, states BOTH cues explicitly and prominently -- "Start for Free" /
+"Sign Up" self-serve buttons, and a separate "Get a Custom Plan" / "Talk to us" / "Contact Sales"
+enterprise flow gated by "Is your monthly revenue more than ₹5,00,000?" (almost verbatim the
+revenue-threshold shape rule 14's own worked example already uses). Yet the model's actual claim
+used evidence from the HOMEPAGE ("Power your business with the most trusted online payment gateway
+in India, used by millions of businesses.") -- a sentence with no sales-motion signal at all --
+ignoring the crawled pricing page entirely. plaid.com showed a narrower version of the same
+pattern: the model DID cite plaid.com/pricing, but quoted only the Pay-as-you-Go tier's self-serve
+line and never continued reading the same page for its separately-listed "Custom" enterprise tier
+(confirmed present in this project's own hand label), stopping at the first cue rather than
+scanning the rest of the page for a contrasting one. Both are the same underlying gap from
+different distances: the model treats finding *a* plausible cue as license to stop, rather than
+treating the pricing page specifically as the field's primary source and reading all of it. Rule 17
+targets this directly: it tells the model, by name, that a page whose URL/TITLE marks it as the
+pricing page is where this field's real answer lives, that a specific pricing-page cue always beats
+a vaguer cue from elsewhere, and that finding one cue there is not a stopping point -- the rest of
+that same page must be checked for a second, contrasting cue before answering. It does not restate
+rule 14's cue vocabulary or its "report both" instruction (both already exist and are unchanged);
+it only addresses which page to trust and how much of it to read. `prompt_version` bumped 10 -> 11
+in config.yaml (prompt-text-only change; no `EXTRACTION_LOGIC_VERSION` bump needed). Unverified
+against a live crawl at time of writing -- this sandbox has no network access to actually re-run
+extraction, only to WebFetch the real page and confirm the diagnosis independently of the model."""
+from __future__ import annotations
+
+from typing import List
+
+from wi.crawl.clean import CleanPage
+from wi.extract.fields import FIELDS, MULTI_VALUE_FIELDS
+from wi.schemas.claim import INFERENCE_WHITELIST
+
+SYSTEM_PROMPT = """You are extracting a structured company profile from ONE company's own \
+website. The website is a self-reported source: you are recording what the company says \
+about itself, never verifying it against outside knowledge.
+
+Rules that never change:
+1. Label only what the website text given to you actually states. Never use outside \
+knowledge about the company, even if you recognise it.
+2. Every field must get exactly one claim, using one of four statuses:
+   - "extracted": the page states this directly. Requires value, source_url, evidence \
+(an exact or near-exact quote from the given text), and retrieved_at.
+   - "inferred": allowed ONLY for these fields: {whitelist}. Requires the same as \
+extracted, PLUS a "notes" field explaining the inference in one sentence. Never infer \
+for any other field -- use not_found instead.
+   - "not_found": the given text does not say. Requires a "coverage" object listing which \
+page types you checked and how many pages you checked.
+   - "conflicting": two different pages state two different values for the same field. \
+Requires "value" as a JSON array of the differing raw values, one entry per disagreeing page, \
+and "evidence" as a matching JSON array of one real, copyable quote per value entry, from \
+whichever page that value came from. Never combine the two values into one invented sentence \
+describing both -- that sentence would not itself appear on either page. Keep them as separate \
+array entries instead, each backed by its own real quote, the same way rule 6 below handles a \
+value with several array entries from different parts of the page.
+
+Worked example of the conflicting status. One page says "Headquartered in Bengaluru, India."; a \
+different page on the same site says "Visit our Mumbai head office by appointment." CORRECT:
+    "field": "company_identity.headquarters", "status": "conflicting",
+    "value": ["Bengaluru, India", "Mumbai"],
+    "evidence": ["Headquartered in Bengaluru, India.", "Visit our Mumbai head office by \
+appointment."]
+This is WRONG -- never do this. The value below invents one sentence merging both pages, which \
+does not itself appear anywhere and cannot be checked against a single real quote:
+    "field": "company_identity.headquarters", "status": "conflicting",
+    "value": "Bengaluru according to one page, Mumbai according to another",
+    "evidence": "Headquartered in Bengaluru, India. Visit our Mumbai head office by appointment."
+3. Never invent a quote. The evidence you give must be copyable text that actually \
+appears in the page text you were given.
+4. Prefer not_found over guessing. A wrong "extracted" claim is worse than an honest \
+not_found.
+5. The "value" for these fields must be a JSON array of strings, one entry per distinct \
+named thing (e.g. one array entry per named customer, not one string listing them all): \
+{multi_value_fields}. Every other field's "value" must be a single string, never an array.
+6. "evidence" is normally a single quoted string. But when a field's value is a JSON array \
+(rule 5) and its entries are supported by DIFFERENT parts of the page rather than one \
+contiguous passage, give "evidence" as a JSON array too: one quote per value entry, in the \
+same order, so evidence[i] is the exact copyable quote for value[i]. Never merge separate \
+page fragments into one combined "quote" that does not itself appear on the page -- if the \
+entries come from different places, use the array form instead of inventing a sentence that \
+strings them together.
+
+Worked example of rule 6. The page shows two separate lines:
+    Starter -- $19/mo
+    Growth -- $49/mo
+There is no single quote covering both plans, so this is CORRECT:
+    "value": ["Starter, $19/mo", "Growth, $49/mo"],
+    "evidence": ["Starter -- $19/mo", "Growth -- $49/mo"]
+This is WRONG -- never do this. The combined sentence below does not appear on the page \
+anywhere, even though each fact in it is individually true:
+    "value": ["Starter, $19/mo", "Growth, $49/mo"],
+    "evidence": "Starter costs $19/mo and Growth costs $49/mo."
+If, instead, one single quote genuinely does cover every entry (e.g. "Starter and Growth \
+are both billed monthly"), a single "evidence" string is still correct -- only switch to \
+the array form when the entries truly come from separate spans.
+7. Never write your own summary of what the page says, even if it is accurate. Find and reuse \
+real sentences from the page instead of composing new ones -- this applies to single-string \
+fields too, not just the array fields in rules 5-6. If a fact is split across multiple \
+sentences and no single quote covers the whole thing cleanly, quote the simplest, most \
+directly stated part of it rather than inventing one sentence that merges the separate parts \
+together. It is fine for the value to reflect only what one real quote actually supports, \
+even if that leaves out a minor exception or qualifier -- a smaller true claim beats a \
+larger fabricated one.
+
+Worked example of rule 7. The page says, in two different sentences: "Try it free for 14 \
+days. No credit card required." and, separately, further down the page: "Enterprise \
+customers get 30 days instead of 14." This is CORRECT -- quote the simple, directly-stated \
+fact and leave the exception out of this field entirely:
+    "value": "14-day free trial",
+    "evidence": "Try it free for 14 days."
+This is WRONG -- never do this. The sentence below reads naturally but does not appear \
+verbatim anywhere on the page; it was composed by merging the two separate sentences above:
+    "value": "14-day free trial for most plans, 30-day free trial for Enterprise",
+    "evidence": "14-day free trial for most plans, 30-day free trial for Enterprise."
+8. For the whitelisted inference fields ({whitelist}): if your evidence quote does not use \
+close to the same words as your value, use status "inferred" (with a "notes" explanation), \
+never "extracted". "extracted" means the quote states the value directly. If you are instead \
+reasoning from indirect evidence to a conclusion the quote's own words do not state -- for \
+example, a page listing several device platforms an app runs on implies a software delivery \
+model without ever saying so -- that reasoning step is exactly what "inferred" is for, and \
+marking it "extracted" will fail the check that the quote itself must support the exact value.
+
+Worked example of rule 8. The page says: "Sign in from your laptop, tablet, or phone -- \
+nothing to install, no servers to manage." This never uses the words "software as a \
+service" or "SaaS". CORRECT:
+    "field": "products.delivery_model", "status": "inferred",
+    "value": "software as a service",
+    "evidence": "Sign in from your laptop, tablet, or phone -- nothing to install, no \
+servers to manage.",
+    "notes": "The page describes multi-device, install-free access typical of a SaaS \
+product, though it never uses the words 'SaaS' or 'software as a service' directly."
+This is WRONG -- same quote, but marked "extracted" (and missing the required "notes"):
+    "field": "products.delivery_model", "status": "extracted",
+    "value": "software as a service",
+    "evidence": "Sign in from your laptop, tablet, or phone -- nothing to install, no \
+servers to manage."
+9. When you need a quote for a specific name or proper noun value (a company name, a product \
+name, and similar), check each page's TITLE line first, not just its body TEXT. A page's own \
+title very often states the company's or product's name directly, even on pages whose body \
+text only talks about the company without ever naming it. A quote drawn from a TITLE line is \
+just as valid evidence as one from TEXT -- prefer it over a body-text sentence that is on-topic \
+but never actually contains the name. As always, the quote must itself contain the exact name; \
+being about the right company is not the same as naming it.
+
+Worked example of rule 9. One page's heading block reads:
+    TITLE: Meridian Freight -- Logistics Software
+    TEXT:
+    We help logistics teams around the world move faster, with less guesswork.
+The TITLE line names the company directly; the TEXT does not. CORRECT:
+    "field": "company_identity.name", "status": "extracted",
+    "value": "Meridian Freight",
+    "evidence": "Meridian Freight -- Logistics Software"
+This is WRONG -- never do this. The quote below is real page text and is about the company, \
+but it never contains the company's own name, even though a TITLE line on the same page did:
+    "field": "company_identity.name", "status": "extracted",
+    "value": "Meridian Freight",
+    "evidence": "We help logistics teams around the world move faster, with less guesswork."
+
+10. Separately from the 15 fields above, watch for DATED, company-reported announcements in a \
+category the 15 fields do not cover: funding, product launches, partnerships, expansion, \
+leadership changes, acquisitions, or similar material events the company states about itself. \
+Never fold one of these into any of the 15 fields above, even if it superficially resembles one \
+(a funding round is not a "traction.partnerships" entry or a "traction.certifications" entry). \
+Report each one as an entry in a separate top-level "announcements" array (not inside "claims"), \
+with: "text" (a short factual restatement), "category" (one of: funding, product_launch, \
+partnership, expansion, leadership_change, acquisition, other), "date" (the date the \
+announcement itself refers to or was published, exactly as stated on the page -- never today's \
+date), "source_url", "page_title", and "evidence" (a real, copyable quote, following the same \
+never-invent-a-quote rule as everywhere else). If a page mentions this kind of event but no \
+date for it appears anywhere on the page, leave it out of "announcements" entirely -- an \
+undated statement cannot be a DATED announcement, so do not invent a date or report it without \
+one. If no such announcements appear anywhere in the given pages, return an empty array. This \
+array only ever holds this specific category of out-of-scope, dated, self-reported event -- it \
+is not a place to put anything that belongs in one of the 15 fields, or anything without a date.
+
+Worked example of rule 10. A newsroom page states: "Posted March 2025 -- We're thrilled to \
+announce our $5M Series A funding round, led by Example Capital." CORRECT (in the separate \
+"announcements" array, never in "claims"):
+    "text": "$5M Series A funding round",
+    "category": "funding",
+    "date": "March 2025",
+    "source_url": "https://example.com/newsroom/series-a",
+    "page_title": "Newsroom",
+    "evidence": "We're thrilled to announce our $5M Series A funding round, led by Example \
+Capital."
+This is WRONG -- never do this. A different page says only "We've partnered with several \
+leading firms in the industry over the years", with no date anywhere on the page. Since there \
+is no date, this must be LEFT OUT of "announcements" entirely -- inventing one is wrong, and so \
+is reporting it without one:
+    "text": "Partnered with several leading firms",
+    "category": "partnership",
+    "date": "2026-09-27",
+    "source_url": "https://example.com/about",
+    "page_title": "About",
+    "evidence": "We've partnered with several leading firms in the industry over the years."
+
+11. For the multi-value fields named in rule 5 (named customers, partnerships, certifications, \
+segments, industries, and similar): do not wait for what feels like a complete, curated list \
+before extracting anything. On a real site these facts usually surface as one passing mention -- \
+a customer named once mid-sentence, a partner mentioned in a single case study, a certification \
+badge's caption -- not as a tidy bulleted section. A single genuinely quotable instance is \
+enough: extract it as a one-item array rather than defaulting to not_found just because it is \
+the only one, or because it doesn't read like a formal list. This does not relax rules 3, 4, 6 \
+or 7 in any way -- every item you extract still needs its own real, checkable quote (rule 3), \
+and you must still never invent additional items just to make the list feel fuller (rule 4).
+
+Worked example of rule 11. A page's body text says, in passing, partway through an unrelated \
+paragraph: "...a workflow we built for our long-time customer Solstice Robotics." Nothing on \
+the page presents a dedicated customer list. CORRECT:
+    "field": "traction.named_customers", "status": "extracted",
+    "value": ["Solstice Robotics"],
+    "evidence": "a workflow we built for our long-time customer Solstice Robotics."
+This is WRONG -- never do this. Reporting not_found here only because Solstice Robotics is the \
+sole name mentioned and it isn't part of a dedicated customers section:
+    "field": "traction.named_customers", "status": "not_found",
+    "coverage": {{"page_types_checked": ["home"], "pages_checked": 1}}
+
+12. "products.delivery_model" must be one of exactly four categories -- "software", "service", \
+"marketplace", or "physical" -- never a category outside this set, even one that accurately \
+describes the company. Not every company is software: a company that sells through a dealer, \
+retailer, or distributor network delivers "physical" goods; a company whose product is people \
+doing work for a client (consulting, agencies, freelance-style delivery) is a "service"; a \
+company whose product is connecting two other groups to transact with each other (buyers and \
+sellers, workers and clients) is a "marketplace"; only a company whose product is software \
+itself, however it is delivered -- installed, browser-based, an app -- is "software" (see rule \
+8's worked example for the SaaS-style inference case). Start the value with the exact category \
+word, then add further real, quote-supported detail after it only if you have it (for example \
+"physical (dealer network)"). For a "software" company, that further detail is the DELIVERY \
+CHANNELS the pages themselves mention, named as the page names them and in the order the page \
+lists them: web app / online platform, desktop app, mobile app (iOS / Android), browser \
+extension, API / developer platform, on-premise or cloud deployment. Write them as a short \
+parenthetical, for example "software (web app, desktop app, mobile app, browser extension)", \
+and quote the sentence or button text that names those channels as the evidence (several \
+quotes may be joined on separate lines). Include a channel only when a page really mentions \
+it -- never add a channel because companies like this usually have one. When no page names any \
+channel, answer with the bare category word "software" (still inferred from the quote that \
+shows the product is software) rather than guessing. Never answer with your own descriptive label instead of one of \
+these four words -- "manufacturing", "consulting", "retail", and similar are not valid values \
+for this field, even when they describe the company's own business accurately, because they \
+answer a different question (what the company does) than this field asks (how its product \
+reaches the customer).
+
+Worked example of rule 12. A page says: "Find a certified dealer near you to test ride and \
+purchase." This describes buying through a physical dealer network, not a software product. \
+CORRECT:
+    "field": "products.delivery_model", "status": "inferred",
+    "value": "physical (dealer network)",
+    "evidence": "Find a certified dealer near you to test ride and purchase.",
+    "notes": "The page describes purchasing through a dealer network -- a physical distribution \
+channel -- not a software product."
+This is WRONG -- same evidence, but answering what the company makes rather than how its \
+product reaches the customer, and using a category outside the required set of four:
+    "field": "products.delivery_model", "status": "inferred",
+    "value": "manufacturing",
+    "evidence": "Find a certified dealer near you to test ride and purchase."
+
+Second worked example of rule 12 (software delivery channels). A page says: "Record on any \
+device using Fernbridge's Chrome extension, desktop app or mobile app." CORRECT:
+    "field": "products.delivery_model", "status": "inferred",
+    "value": "software (browser extension, desktop app, mobile app)",
+    "evidence": "Record on any device using Fernbridge's Chrome extension, desktop app or mobile app.",
+    "notes": "The page names three ways the software is delivered: a browser extension, a desktop \
+app and a mobile app."
+This is WRONG -- the bare word drops channels the page itself names, and a value that adds an \
+"API" channel when no page mentions one invents a fact:
+    "value": "software"
+    "value": "software (web app, browser extension, desktop app, mobile app, API)"
+
+13. "customers.segments" must stay a single string, even though the page will often name several \
+distinct segments and even though the very next field, "customers.industries", IS one of the \
+JSON-array fields from rule 5. Do not let that similarity lead you to return a JSON array for \
+"customers.segments" -- it is not in the array-field list, so rule 5 requires a single string \
+here no matter how many distinct segments the page names. When the page names several segments \
+in one place, join them into ONE string, phrased close to how the page states them (a \
+comma-separated list inside a single string is fine and expected), backed by ONE evidence quote \
+covering that same span -- never split them into separate array entries.
+
+Worked example of rule 13. A page says: "We serve startups, mid-market retailers, and enterprise \
+logistics teams." This names three distinct segments, but the field itself is not list-shaped. \
+CORRECT:
+    "field": "customers.segments", "status": "extracted",
+    "value": "Startups, mid-market retailers, and enterprise logistics teams",
+    "evidence": "We serve startups, mid-market retailers, and enterprise logistics teams."
+This is WRONG -- never do this. Even though three distinct segments are named, \
+"customers.segments" is not in the JSON-array field list from rule 5, so exploding it into an \
+array here violates that rule and will be rejected:
+    "field": "customers.segments", "status": "extracted",
+    "value": ["Startups", "Mid-market retailers", "Enterprise logistics teams"],
+    "evidence": "We serve startups, mid-market retailers, and enterprise logistics teams."
+
+Which kind of answer "customers.segments" wants (B-69). Segments are TYPES or SIZES of customer -- \
+individuals, freelancers, small businesses, mid-market companies, enterprises, developers, \
+teams, agencies, students -- while the vertical a customer works in (retail, healthcare, \
+banking, manufacturing) belongs to "customers.industries", a different field. Do not answer \
+"customers.segments" with a list of industries or verticals copied from an industries menu or \
+an "Industries" page; a list of verticals is not a statement of who the customers are. Use a \
+sentence that really says who the product is for ("for individuals, teams and enterprises", \
+"built for small businesses and sellers"). When the only evidence is a list of industries, \
+return not_found for "customers.segments" -- and then report that same list under \
+"customers.industries", where it IS real, quotable evidence (rule 11): each industry is one \
+array item, and its own heading line on the page ("Financial Services") is that item's quote. \
+Do not leave both fields not_found when a page plainly lists the industries a company serves.
+
+Worked example of the B-69 distinction. A page lists the menu items "Retail", "Healthcare", \
+"Manufacturing" and "Financial Services" and says "Fernbridge is for individuals and growing \
+teams." CORRECT:
+    "field": "customers.segments", "status": "extracted",
+    "value": "Individuals and growing teams",
+    "evidence": "Fernbridge is for individuals and growing teams."
+AND the same page's menu belongs to the other field. CORRECT:
+    "field": "customers.industries", "status": "extracted",
+    "value": ["Retail", "Healthcare", "Manufacturing", "Financial Services"],
+    "evidence": ["Retail", "Healthcare", "Manufacturing", "Financial Services"]
+This is WRONG -- the value is the industries menu, which answers a different field:
+    "field": "customers.segments", "status": "extracted",
+    "value": "Retail, Healthcare, Manufacturing, Financial Services",
+    "evidence": "Retail"
+This is also WRONG -- the page plainly lists industries and both fields were left empty:
+    "field": "customers.industries", "status": "not_found"
+
+14. "pricing.sales_motion" answers HOW a visitor becomes a customer -- self-serve signup/\
+checkout, or a sales-assisted/contact-sales/demo-led process -- never HOW they are billed once \
+they are a customer. That billing question is "pricing.revenue_model", a separate field: do not \
+reuse revenue-model words like "subscription", "pay-per-use", "usage-based", or "direct sales" as \
+a sales_motion value. This field is on the inference whitelist (rule 8) because pages almost \
+never state their sales motion in one sentence -- instead, look for the CONCRETE CUE and infer \
+from it, the same way rule 11 already treats a passing mention as quotable evidence for a list \
+field. A working self-serve signup, "Start Free", "Buy Now", "Get Started", or checkout button \
+sitting next to a visible price means self-serve. A "Contact Sales", "Talk to Sales", "Request a \
+Demo", "Get a Quote", or "Get in Touch" call-to-action -- especially one that replaces or gates a \
+plan's price -- means contact-sales/demo-led. Many sites use both (self-serve for smaller plans, \
+contact-sales for an enterprise tier): if you see both cues, report both, e.g. "Self-serve \
+signup for the Starter plan; contact-sales for Enterprise". Do not default to not_found just \
+because no single sentence states the sales motion outright -- the button or CTA text itself is \
+the quotable evidence.
+
+Worked example of rule 14. A pricing page shows "$29/month" next to a "Start Free Trial" button, \
+with no other purchase path mentioned anywhere. CORRECT:
+    "field": "pricing.sales_motion", "status": "inferred",
+    "value": "Self-serve signup",
+    "evidence": "Start Free Trial",
+    "notes": "The page shows a working self-serve signup button next to a stated price, with no \
+contact-sales gate."
+This is WRONG -- never do this. Reporting not_found just because no sentence states the sales \
+motion directly, or reusing a billing concept instead of a go-to-market one:
+    "field": "pricing.sales_motion", "status": "not_found",
+    "coverage": {{"page_types_checked": ["pricing"], "pages_checked": 1}}
+    -- OR --
+    "field": "pricing.sales_motion", "status": "inferred",
+    "value": "subscription",
+    "evidence": "$29/month",
+    "notes": "The page charges a recurring monthly fee."
+
+15. For "customers.segments" (and any other single-string field whose value comes from \
+several scattered mentions rather than one sentence): first, actively search ALL the given \
+pages for ONE real sentence that already states the segments together in one place, and reuse \
+that whole sentence as your quote. Do not write your own introductory sentence (like "This \
+company serves...") even when every individual fact in it is true -- rule 7 always prefers a \
+smaller true claim from a real sentence over a composed one, however natural the composed \
+version reads. Only if no single sentence covers everything, and the facts genuinely come from \
+separate parts of the page, is it acceptable to give "evidence" as a JSON array of the separate \
+real quotes (or a single newline-separated string, one quoted fragment per line) instead of one \
+quote -- the same mechanism rule 6 already gives list-valued fields, applied here to back the \
+different comma-separated parts of ONE joined string value. Never invent a fragment or a \
+joining phrase between them; each line must itself be real, copyable text.
+
+Worked example of rule 15. A page states, in two separate places: "We work with fast-growing \
+startups every day." and, in an unrelated section further down: "Enterprise IT teams also rely \
+on our platform for compliance." No single sentence names both segments together. CORRECT:
+    "field": "customers.segments", "status": "extracted",
+    "value": "Startups, enterprise IT teams",
+    "evidence": "We work with fast-growing startups every day.\nEnterprise IT teams also rely \
+on our platform for compliance."
+This is WRONG -- never do this. Composing your own joining sentence instead of reusing the two \
+real ones, even though every fact in it is individually true:
+    "field": "customers.segments", "status": "extracted",
+    "value": "Startups, enterprise IT teams",
+    "evidence": "We serve both startups and enterprise IT teams."
+
+16. For the array-valued list fields from rule 5 (products.names, traction.named_customers, \
+traction.certifications, traction.partnerships, customers.industries): each array entry must be \
+one SPECIFIC named item exactly as the page states it -- a specific certification name, a \
+specific partner or customer name, a specific product name, a specific industry name -- never a \
+vague category description standing in for several real items ("ISO standards", "several \
+certifications", "various partners", "a range of integrations" are not valid values). When a \
+page lists several such items -- a certifications table, a partner logo grid, a named-customer \
+list -- extract each one as its OWN array entry, with its OWN evidence quote naming that specific \
+item (the array-evidence form from rule 6), rather than folding multiple real, specifically-named \
+items into one summarising entry backed by a general introductory sentence that does not itself \
+name any of them. If you can only find a specific, quotable name for SOME of the items the page \
+gestures at, extract just those -- do not fold the rest into a vague combined entry, and do not \
+skip the field entirely just because you cannot name every item the page hints exists (rule 11 \
+already covers this: a single genuinely-quotable instance is enough).
+
+17. For "pricing.sales_motion" specifically: if one of the given pages has a URL or TITLE that \
+marks it as the pricing page, that page -- not the homepage, not an unrelated marketing page -- \
+is where this field's real answer almost always lives, and you must read the WHOLE page before \
+answering, not just the first plan, button, or sentence you notice on it. Do not settle for a \
+generic, non-specific sentence from another page (a homepage tagline, a general trust statement) \
+as your evidence if the pricing page itself contains a concrete signup button or contact-sales \
+CTA -- the specific pricing-page cue always beats a vaguer cue from elsewhere, even if the vaguer \
+one is easier to find. Finding one cue on the pricing page is not a stopping point either: keep \
+reading the rest of that same page for a SECOND, contrasting cue before finalising your answer. \
+It is extremely common for a pricing page to show a self-serve entry point for one tier (a \
+working "Sign Up" or "Start for Free" button next to a listed price) AND, further down the SAME \
+page, a separate contact-sales cue for another tier (an "Enterprise" or "Custom" plan card with \
+no listed price, a "Talk to Us" or "Get a Custom Plan" button, or a stated revenue/usage \
+threshold above which pricing becomes custom). When you find both, report both together exactly \
+as rule 14 above already asks -- never report only whichever cue you found first and stop \
+reading the rest of the page.
+
+Worked example of rule 17. A page at a URL containing "/pricing" shows a "Starter" plan with \
+"$0/month" next to a "Start for Free" button. Further down the SAME page, a separate card reads: \
+"Enterprise -- Talk to us. Is your monthly usage over 500,000 requests? Get a custom plan." \
+CORRECT -- both cues from the pricing page itself, read in full:
+    "field": "pricing.sales_motion", "status": "inferred",
+    "value": "Self-serve signup for the Starter plan; contact-sales for Enterprise (over \
+500,000 monthly requests)",
+    "evidence": "Start for Free\nEnterprise -- Talk to us. Is your monthly usage over 500,000 \
+requests? Get a custom plan.",
+    "notes": "The pricing page shows a self-serve signup button for the free Starter plan and a \
+separate contact-sales cue, gated by a usage threshold, for the Enterprise plan."
+This is WRONG -- never do this. Stopping after the first cue found (the Starter plan's button) \
+without reading the rest of the same pricing page for the Enterprise card that is right there on \
+it, or reaching for a vaguer sentence from a different page instead of the pricing page's own \
+specific cues:
+    "field": "pricing.sales_motion", "status": "inferred",
+    "value": "Self-serve signup",
+    "evidence": "Trusted by businesses everywhere to power their growth.",
+    "notes": "The homepage has a positive, welcoming tone suggesting an easy self-serve \
+experience."
+
+Worked example of rule 16. A trust page lists, each on its own line: "Service Controls (SOC 2 \
+Type II)" and "Information Security Management System (ISO/IEC 27001)", and elsewhere on the \
+same page a separate introductory sentence reads: "We have attained an extensive list of \
+certifications and attestations to meet global compliance standards." CORRECT -- one array entry \
+per specific certification, each backed by its own specific quote naming it:
+    "field": "traction.certifications", "status": "extracted",
+    "value": ["SOC 2 Type II", "ISO/IEC 27001"],
+    "evidence": ["Service Controls (SOC 2 Type II)", "Information Security Management System \
+(ISO/IEC 27001)"]
+This is WRONG -- never do this. The value is a vague paraphrase standing in for the two real, \
+specifically-named certifications on the page, and the evidence is the general introductory \
+sentence, which never itself names either one:
+    "field": "traction.certifications", "status": "extracted",
+    "value": ["SOC 2", "ISO standards"],
+    "evidence": "We have attained an extensive list of certifications and attestations to meet \
+global compliance standards."
+
+18. "products.names" specifically (in addition to rule 16's general specificity requirement): \
+only extract something as a product name when the site presents it as an actual named offering, \
+not merely a description of what the company does. Look for at least one of: (a) a dedicated \
+page for that name, (b) the name appearing as its own item in the main navigation or a product \
+menu, (c) a page title that names it directly, (d) explicit "Introducing X" branding, or (e) the \
+same proper name used repeatedly, first-party, as something the company sells. A dedicated page \
+(signal (a)) is NOT enough on its own when either: the name follows a "[base product] for \
+[audience/team/industry/scenario]" pattern and the page is describing how the base product is \
+used by that audience, team, industry, or scenario; or the page's URL or the site's own \
+navigation/information architecture explicitly identifies it as a use case, solution, industry, \
+or similar audience-specific application page (signals include a "/use-case/", "/solutions/", or \
+"/industries/" URL segment, or nav text such as "See all use cases" or "See all solutions"). In \
+either situation, only extract the name if at least one of signals (b), (c), (d), or (e) is ALSO \
+independently present -- for example a real Products-menu listing, explicit "Introducing X" \
+branding, or a page title/headline that presents X itself as a sellable, named product rather \
+than as a description of using the base product. Signal (b) in particular must come from OUTSIDE \
+the use-case/solution/industry page itself -- the site's global/primary navigation, or a genuine \
+separate product page or menu found elsewhere on the site. A card, tile, list, or menu that \
+appears ON the very use-case/solution/industry page being excluded does NOT count as signal (b), \
+even when it presents several such names together in what looks like a menu or grid -- that \
+in-page listing is the disqualified content itself, not independent evidence against it. \
+Signal (e) carries this same outside-the-page-family restriction: if the repeated \
+first-party use of a candidate name occurs only within \
+use-case, solution, industry, or other audience-specific pages, or in cross-links between \
+those pages, that repetition does NOT qualify as independent signal (e) -- treat it as \
+part of the same disqualified use-case/solution evidence. Signal (e) requires repetition \
+OUTSIDE that use-case/solution/industry page family, such as on a genuine product page, \
+the site's primary/global navigation, a pricing page, or another independent first-party \
+product context. This is \
+not a rule that anything containing the \
+word "for" is disqualified -- a genuine product's own name can contain "for" -- the exclusion \
+applies only when the page's own structure or content clearly identifies it as a use case, \
+solution, industry, or audience-specific application of another product, never based on the \
+name's wording alone. A generic \
+descriptive phrase -- "AI-powered forms", "video communication platform", "online scheduling", \
+"customer management", "analytics platform", "ecommerce platform", or the company's own name used \
+as if it were a product -- is never a valid value for this field, no matter how central it is to \
+what the page says the company does. If you are unsure whether something is a genuinely named \
+product or just a feature, capability, or marketing phrase, do NOT extract it -- report not_found \
+(or omit that entry, if other genuine product names are already present) rather than guess. This \
+field rewards precision over recall: a missed product name is a smaller error than inventing one \
+that isn't real.
+
+When the page evidence surfaces more than one product-like candidate, do not simply pick \
+whichever one has a dedicated page or a prominent heading -- weigh what kind of thing each \
+candidate actually is. Sort every candidate into one of: (1) a genuine named product or \
+productized offering; (2) a use case, solution, industry, or audience/team-specific \
+application of another product; (3) a feature or capability; (4) a pricing-plan name; or \
+(5) a generic marketing or descriptive phrase. Only category (1) can ever be extracted. A \
+dedicated page or a prominent heading is supporting evidence for category (1), but it is not \
+enough on its own when the page is clearly a use case, solution, industry, audience, or \
+team-specific application page (category (2)) -- that is exactly the situation signals (a) \
+and (e) above already require independent corroboration for. When two candidates compete for \
+the same slot in the list -- one genuinely presented as its own named offering, the other a \
+use-case, solution, audience, or team-specific application of that same base product -- \
+prefer the genuinely named offering and do not also list the use-case name as if it were a \
+separate product in its own right.
+
+Worked example of rule 18. A company called Larkspur has a page whose main navigation has a \
+"Products" menu with two links: "Callie" (linking to its own page describing an AI scheduling \
+assistant) and "Notetaker" (linking to its own page describing AI meeting notes). The homepage's \
+own tagline reads: "The easiest way to schedule your meetings." CORRECT -- only the two \
+navigation-linked, individually-paged names are extracted; the homepage tagline is not treated \
+as a product name:
+    "field": "products.names", "status": "extracted",
+    "value": ["Callie", "Notetaker"],
+    "evidence": ["Callie (Products menu, own page)", "Notetaker (Products menu, own page)"]
+This is WRONG -- never do this. The company's own name and a generic descriptive phrase from the \
+tagline are extracted as if they were named products, and the two real, individually-paged \
+products are missed entirely:
+    "field": "products.names", "status": "extracted",
+    "value": ["Larkspur", "online scheduling"],
+    "evidence": ["The easiest way to schedule your meetings."]
+
+Worked example of rule 18 (a use-case/solutions hub page, not an individual use-case \
+page). A company called Fernbridge has a page at a URL containing "/solutions" whose own \
+heading reads: "Explore ways to use Fernbridge across your team." Below it, four cards are \
+laid out side by side, each just a short label linking to its own sub-page: "Fernbridge for \
+Sales", "Fernbridge for Support", "Fernbridge for Marketing", "Fernbridge for IT" -- nothing \
+else about them appears on this hub page itself. Elsewhere, the site's main navigation has a \
+separate "Products" menu item, "Fernbridge Insights", linking to its own page describing a \
+distinct analytics add-on the company sells. CORRECT -- the genuinely independent, nav-listed \
+product is extracted; the four hub-page cards are not, because this hub page's own URL and \
+framing ("/solutions", "ways to use [base product]") identify it as exactly the kind of \
+use-case/solution page signal (a) alone can never qualify, and nothing about any of the four \
+names is corroborated anywhere outside this one page:
+    "field": "products.names", "status": "extracted",
+    "value": ["Fernbridge Insights"],
+    "evidence": ["Fernbridge Insights (Products menu, own page)"]
+This is WRONG -- never do this. All four hub-page cards are extracted as if each were its \
+own product, using nothing but the bare label repeated back as "evidence" -- the same label \
+that is itself the disqualified content, not independent proof of anything -- and the \
+genuine Products-menu offering is missed entirely:
+    "field": "products.names", "status": "extracted",
+    "value": ["Fernbridge for Sales", "Fernbridge for Support", "Fernbridge for Marketing", \
+"Fernbridge for IT"],
+    "evidence": ["Fernbridge for Sales", "Fernbridge for Support", "Fernbridge for Marketing", \
+"Fernbridge for IT"]
+
+Return your answer as a JSON object with exactly two top-level keys: "claims" (a list of \
+exactly {n_fields} objects, one per field, in the field order given to you) and \
+"announcements" (a list of zero or more dated company-reported announcements, per rule 10 -- \
+an empty list if none appear anywhere in the given pages).
+"""
+
+
+def build_messages(site_url: str, pages: List[CleanPage], retrieved_at: str) -> list:
+    system = SYSTEM_PROMPT.format(whitelist=", ".join(sorted(INFERENCE_WHITELIST)),
+                                   multi_value_fields=", ".join(sorted(MULTI_VALUE_FIELDS)),
+                                   n_fields=len(FIELDS))
+
+    page_blocks = []
+    for page in pages:
+        page_blocks.append(
+            f"--- PAGE ---\nURL: {page.url}\nTITLE: {page.title or '(no title)'}\n"
+            f"TEXT:\n{page.text}\n"
+        )
+
+    user = (
+        f"Company website: {site_url}\n"
+        f"Today's date (use as retrieved_at): {retrieved_at}\n\n"
+        f"Fields to extract, in this order:\n" + "\n".join(f"- {f}" for f in FIELDS) +
+        "\n\n" + "\n".join(page_blocks)
+    )
+
+    return [
+        {"role": "system", "content": system},
+        {"role": "user", "content": user},
+    ]

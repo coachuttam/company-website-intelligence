@@ -1,0 +1,88 @@
+{
+  "candidates": [
+    {
+      "name": "Loom",
+      "source_url": "https://www.loom.com/",
+      "quote": "Easily record and share AI-powered video messages with your teammates and customers to supercharge productivity.",
+      "reason": "Loom appears to be the primary product offering of the company, providing video messaging capabilities."
+    },
+    {
+      "name": "Loom AI",
+      "source_url": "https://www.loom.com/",
+      "quote": "With new Loom AI workflows, you turn any Loom into a written doc to draft SOPs, file Jira tickets, and more.",
+      "reason": "Loom AI seems to be a feature or enhancement of the Loom product that utilizes artificial intelligence for various workflows."
+    },
+    {
+      "name": "Loom for Enterprise",
+      "source_url": "https://www.loom.com/",
+      "quote": "Loom for Enterprise helps teams securely manage and organize async video communication at scale.",
+      "reason": "This offering appears to be a tailored version of Loom for larger organizations, focusing on security and management."
+    },
+    {
+      "name": "Starter Plan",
+      "source_url": "https://www.loom.com/pricing",
+      "quote": "Get started with video communication.",
+      "reason": "This is a pricing tier that suggests a specific set of features for new users."
+    },
+    {
+      "name": "Team Workspace",
+      "source_url": "https://www.loom.com/pricing",
+      "quote": "Team Workspace - Personal Library, Shared Library, Team Library.",
+      "reason": "This indicates a collaborative feature set designed for teams using Loom."
+    },
+    {
+      "name": "Business Plan",
+      "source_url": "https://www.loom.com/pricing",
+      "quote": "Move work forward faster with unlimited videos and basic editing.",
+      "reason": "This is another pricing tier that suggests enhanced features for business users."
+    },
+    {
+      "name": "Business + AI Plan",
+      "source_url": "https://www.loom.com/pricing",
+      "quote": "Communicate your best with videos instantly enhanced and edited with Loom AI.",
+      "reason": "This plan combines the business features with AI enhancements, indicating a premium offering."
+    },
+    {
+      "name": "Enterprise Plan",
+      "source_url": "https://www.loom.com/pricing",
+      "quote": "Control and securely manage your video content for the entire organization.",
+      "reason": "This is a high-tier offering aimed at large organizations with specific needs."
+    },
+    {
+      "name": "Chrome Screen Recorder",
+      "source_url": "https://www.loom.com/products/chrome-screen-recorder",
+      "quote": "Chrome’s most popular screen recorder. Quick to install, easy to use, and free.",
+      "reason": "This suggests a specific product offering that integrates with the Chrome browser."
+    },
+    {
+      "name": "iPhone Screen Recorder",
+      "source_url": "https://www.loom.com/products/ios-screen-recorder",
+      "quote": "Loom’s iPhone screen recorder is your all-in-one solution for recording and sharing videos on the go.",
+      "reason": "This indicates a mobile application specifically for iPhone users."
+    },
+    {
+      "name": "Loom for Sales",
+      "source_url": "https://www.loom.com/use-case/sales",
+      "quote": "Sell faster and smarter with Loom.",
+      "reason": "This appears to be a specific use case or offering tailored for sales teams."
+    },
+    {
+      "name": "Loom for Engineering",
+      "source_url": "https://www.loom.com/use-case/engineering",
+      "quote": "Build and ship faster with Loom.",
+      "reason": "This indicates a specific offering or use case designed for engineering teams."
+    },
+    {
+      "name": "Loom for Support",
+      "source_url": "https://www.loom.com/use-case/support",
+      "quote": "Elevate customer service with video messaging.",
+      "reason": "This suggests a tailored offering for customer support teams."
+    },
+    {
+      "name": "Loom for Design",
+      "source_url": "https://www.loom.com/use-case/design",
+      "quote": "Design together with video.",
+      "reason": "This indicates a specific use case or offering for design teams."
+    }
+  ]
+}

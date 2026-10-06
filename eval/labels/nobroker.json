@@ -1,0 +1,125 @@
+{
+  "site": "https://www.nobroker.in/",
+  "split": "held_out",
+  "labelled_on": "2026-09-27",
+  "labelled_by": "Claude (draft, researched live via WebFetch/WebSearch 2026-09-27) -- NOT an independent human researcher; needs human review before being treated as frozen ground truth.",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "pricing.public_plans is sourced from a NoBroker blog post (nobroker.in/blog/nobroker-seller-plans) rather than the live nobroker.in/seller/plans page itself, because that plans page appears to render its pricing table via JavaScript and the numbers did not appear in the fetched static content; the blog post is on the same domain and describes the same seller plans, but a human reviewer should verify current prices on the live plans page since these can change. No headquarters address was found on any fetched nobroker.in page (about-us, prophub about-us, or NRI about-us). customers.industries marked not_found because NoBroker is a consumer-facing marketplace and its site does not present a 'served industries' list in the B2B sense (its product lines -- packers & movers, home services, home loans -- were instead captured under products.names). The bank names on the home-loan page are loan-comparison/aggregation listings rather than a stated strategic-partnership relationship; flagged as a judgment call for traction.partnerships. No certifications, named case-study customers, or named competitors were found stated on the site itself. B-51 (2026-09-27): customers.segments' evidence was a paraphrase list ('Property owners and NRIs...; Tenants/renters...; Buyers and sellers...; Corporate employees...'), not literal quotes -- of that list, only the owners/NRI portion could be re-confirmed live via a genuine short on-site label ('Owners & NRI') plus the homepage tagline ('100% Owner Properties | Zero Brokerage'); the tenants/buyers/sellers/corporate-relocation portion was not independently reverified this pass and has been dropped rather than left unsupported. A human should re-check whether that broader claim is quotable elsewhere on-site before treating this narrower value as final.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "NoBroker",
+      "source_url": "https://www.nobroker.in/about/about-us",
+      "evidence": "NoBroker is a disruptive real-estate platform that makes it possible to buy/sell/rent a house without paying any brokerage"
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "NoBroker is a disruptive real-estate platform that makes it possible to buy/sell/rent a house without paying any brokerage",
+      "source_url": "https://www.nobroker.in/about/about-us",
+      "evidence": "NoBroker is a disruptive real-estate platform that makes it possible to buy/sell/rent a house without paying any brokerage"
+    },
+    "company_identity.headquarters": {
+      "status": "not_found"
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Property Listings (Buy/Rent/Sell)",
+        "Packers & Movers",
+        "Rent Agreement",
+        "Property Management & Registration",
+        "Home Services (painting, cleaning, plumbing, carpentry, electrician)",
+        "Legal Services",
+        "Home Loan"
+      ],
+      "source_url": "https://www.nobroker.in/",
+      "evidence": [
+        "100% Owner Properties | Zero Brokerage",
+        "NoBroker Packers and Movers Bangalore account profile (Packers & Movers service line)",
+        "Rent Agreement services (site navigation)",
+        "Property Management & Registration services (site navigation)",
+        "Home services (painting, cleaning, plumbing, carpentry, electrician)",
+        "Legal Services by NoBroker",
+        "Apply home loan @ lowest interest rates from SBI, HDFC bank"
+      ]
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "marketplace (broker-free property listings marketplace, plus paid add-on services such as packers & movers, home services, legal and home-loan facilitation)",
+      "source_url": "https://www.nobroker.in/",
+      "evidence": "100% Owner Properties | Zero Brokerage"
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "Property owners and NRIs (Non-Resident Indians)",
+      "source_url": "https://www.nobroker.in/",
+      "evidence": ["Owners & NRI", "100% Owner Properties | Zero Brokerage"]
+    },
+    "customers.industries": {
+      "status": "not_found"
+    },
+    "pricing.public_plans": {
+      "status": "extracted",
+      "value": [
+        "Relax Plan - \u20b97,499 + 18% GST (valid 3 months)",
+        "Super Relax Plan - \u20b911,499 + 18% GST (valid 3 months)",
+        "Money Back Plan - \u20b916,499 + 18% GST (valid 6 months)",
+        "Super Money Back Plan - \u20b920,999 + 18% GST (valid 6 months)"
+      ],
+      "source_url": "https://www.nobroker.in/blog/nobroker-seller-plans",
+      "evidence": [
+        "Relax Plan: \u20b97,499 plus 18% GST, valid for 3 months",
+        "Super Relax Plan: \u20b911,499 plus 18% GST, valid for 3 months",
+        "Money Back Plan: \u20b916,499 plus 18% GST, valid for 6 months",
+        "Super Money Back Plan: \u20b920,999 plus 18% GST, valid for 6 months"
+      ]
+    },
+    "pricing.sales_motion": {
+      "status": "extracted",
+      "value": "Self-serve online plan purchase for owners/sellers, plus an assisted 'Property Expert' consultative option",
+      "source_url": "https://www.nobroker.in/blog/nobroker-seller-plans",
+      "evidence": "a fifth option called the Property Expert Plan ... a consultative advisory program"
+    },
+    "pricing.free_trial": {
+      "status": "inferred",
+      "value": "Core property listing/browsing is free (zero brokerage); paid plans are optional add-ons for enhanced/assisted service",
+      "source_url": "https://www.nobroker.in/",
+      "evidence": "100% Owner Properties | Zero Brokerage"
+    },
+    "pricing.revenue_model": {
+      "status": "extracted",
+      "value": "Fixed-term subscription/plan fees for premium seller, tenant and owner plans (e.g. \u20b97,499-\u20b920,999 plus GST for a set validity period), layered on top of a free core listing service",
+      "source_url": "https://www.nobroker.in/blog/nobroker-seller-plans",
+      "evidence": "Relax Plan: \u20b97,499 plus 18% GST, valid for 3 months"
+    },
+    "traction.named_customers": {
+      "status": "not_found"
+    },
+    "traction.certifications": {
+      "status": "not_found"
+    },
+    "traction.partnerships": {
+      "status": "extracted",
+      "value": [
+        "State Bank of India (SBI)",
+        "HDFC Bank",
+        "Axis Bank",
+        "Kotak Mahindra Bank",
+        "Union Bank",
+        "Punjab National Bank"
+      ],
+      "source_url": "https://www.nobroker.in/home-loan/",
+      "evidence": [
+        "SBI",
+        "HDFC Bank",
+        "Axis Bank",
+        "Kotak mahindra bank",
+        "Union bank",
+        "Punjab national bank"
+      ]
+    },
+    "comparisons.named_alternatives": {
+      "status": "not_found"
+    }
+  }
+}

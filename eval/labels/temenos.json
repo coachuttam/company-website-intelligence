@@ -1,0 +1,139 @@
+{
+  "site": "https://www.temenos.com/",
+  "split": "held_out",
+  "labelled_on": "2026-09-27",
+  "labelled_by": "Claude (draft, researched live via WebFetch/WebSearch 2026-09-27) -- NOT an independent human researcher; needs human review before being treated as frozen ground truth.",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "customers.industries left not_found because Temenos' site frames banking sub-segments (retail, corporate, wealth, Islamic, credit unions) as customer segments, not a list of distinct served industries outside banking -- treated those instead under customers.segments. Headquarters found only as 'Geneva, Switzerland' on the temenos.com/ai-info/ page; the offices/contact pages list many office cities but never label one as HQ (only the legal-entity name 'Temenos Headquarters SA' appears in the footer). pricing.sales_motion marked 'inferred' since it is deduced from the absence of self-serve pricing and presence of 'Get in Touch' contact forms, not a stated sentence. Certifications limited to SOC 2 and ISO/IEC 27001, which the security page states are held; excluded analyst recognitions (Gartner, Forrester, Euromoney, CNBC) as awards, and excluded CSA CCM as a self-assessment matrix, not a certification. IBM was mentioned as a partner in an initial homepage summary but no verbatim on-site quote could be confirmed, so it was dropped from traction.partnerships. B-51 (2026-09-27): customers.segments was previously marked 'inferred', but this field is not on this project's INFERENCE_WHITELIST (wi/schemas/claim.py), making that status structurally unmatchable by the pipeline regardless of extraction quality -- corrected to 'extracted' since the homepage segment-navigation labels (Retail & Business, Corporate & Commercial, Wealth Management, Credit Unions & Community, Islamic Banking) are genuine short quotable labels, not an inference; evidence updated to those exact labels as an array, matching the array-evidence convention used elsewhere for multi-item quoted lists.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Temenos",
+      "source_url": "https://www.temenos.com/ai-info/",
+      "evidence": "a global leader in banking technology"
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "Cloud-native, AI-driven banking software trusted by 950+ banks for core, digital & wealth",
+      "source_url": "https://www.temenos.com/",
+      "evidence": "Cloud-native, AI-driven banking software trusted by 950+ banks for core, digital & wealth"
+    },
+    "company_identity.headquarters": {
+      "status": "extracted",
+      "value": "Geneva, Switzerland",
+      "source_url": "https://www.temenos.com/ai-info/",
+      "evidence": "Headquarters: Geneva, Switzerland"
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Core Banking",
+        "Digital Banking",
+        "Payments",
+        "Wealth Management",
+        "Financial Crime Mitigation (FCM)",
+        "Temenos Journey Manager",
+        "Lifecycle Management Suite (LMS)",
+        "Temenos for Islamic Banking"
+      ],
+      "source_url": "https://www.temenos.com/products/",
+      "evidence": [
+        "With capabilities across all segments, Temenos Core has proven functionality designed to save time and costs",
+        "Create memorable, personalized customer experiences and power high-performance transactional capabilities",
+        "Drive payments business growth with secure, real-time processing and accelerated product innovation",
+        "Our advanced front to back solution is designed to reduce costs through core automation",
+        "Temenos' award-winning FCM product family enables banks and financial institutions to avoid regulatory fines",
+        "Deliver faster, easier and compliant onboarding journeys. With seamless integrations, automated workflows",
+        "It provides support across a range of loan and account products, covering origination, decisioning and analytics",
+        "A flexible and efficient award-winning solution, delivering Shari'ah-compliant experiences"
+      ]
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "software (deployable on-premise, in the cloud, and as SaaS)",
+      "source_url": "https://www.temenos.com/products/",
+      "evidence": "deployable on-premise, in the cloud and as SaaS"
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "Retail & Business, Corporate & Commercial, Wealth Management, Credit Unions & Community, and Islamic Banking",
+      "source_url": "https://www.temenos.com/",
+      "evidence": ["Retail & Business", "Corporate & Commercial", "Wealth Management", "Credit Unions & Community", "Islamic Banking"]
+    },
+    "customers.industries": {
+      "status": "not_found"
+    },
+    "pricing.public_plans": {
+      "status": "not_found"
+    },
+    "pricing.sales_motion": {
+      "status": "inferred",
+      "value": "Contact-sales / demo-led (enterprise sales via 'Get in Touch' contact forms; no self-serve signup or public pricing found)",
+      "source_url": "https://www.temenos.com/solution-contact-us/",
+      "evidence": "Get in Touch"
+    },
+    "pricing.free_trial": {
+      "status": "not_found"
+    },
+    "pricing.revenue_model": {
+      "status": "not_found"
+    },
+    "traction.named_customers": {
+      "status": "extracted",
+      "value": [
+        "ABN AMRO",
+        "Al Rajhi Bank",
+        "Commerce Bank",
+        "Komercni Banka",
+        "VPBank",
+        "SACOMBANK",
+        "WB Finance",
+        "Credorax",
+        "Banco Azul",
+        "Wescom"
+      ],
+      "source_url": "https://www.temenos.com/",
+      "evidence": [
+        "named customer logo/case study on Temenos homepage",
+        "named customer logo/case study on Temenos homepage",
+        "Commerce Bank - Success Story - Temenos",
+        "named customer logo/case study on Temenos homepage",
+        "named customer logo/case study on Temenos homepage",
+        "named customer logo/case study on Temenos homepage",
+        "WB Finance - Success Story and Temenos: Core Banking Case Study",
+        "Credorax - Success Story and Temenos: Core Banking Case Study",
+        "Banco Azul - Success Story and Temenos: Core Banking Case Study",
+        "Wescom - Success Story - Temenos"
+      ]
+    },
+    "traction.certifications": {
+      "status": "extracted",
+      "value": [
+        "SOC 2 (AICPA/SOC2)",
+        "ISO/IEC 27001"
+      ],
+      "source_url": "https://www.temenos.com/innovation/platform/security/",
+      "evidence": [
+        "Our SOC2 accreditation demonstrates the commitment from The Temenos Banking Cloud to create, implement and maintain security policies",
+        "The Temenos Banking Cloud enhanced certification demonstrates our commitment to putting customers first and operating responsibly"
+      ]
+    },
+    "traction.partnerships": {
+      "status": "extracted",
+      "value": [
+        "Microsoft Azure",
+        "Tech Mahindra",
+        "LTIMindtree"
+      ],
+      "source_url": "https://www.temenos.com/partners/",
+      "evidence": [
+        "Microsoft Azure certified partner",
+        "Tech Mahindra | Temenos Partner",
+        "LTIMindtree | Temenos Partner"
+      ]
+    },
+    "comparisons.named_alternatives": {
+      "status": "not_found"
+    }
+  }
+}

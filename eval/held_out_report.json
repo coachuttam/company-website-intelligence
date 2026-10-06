@@ -1,0 +1,369 @@
+{
+  "generated_at": "2026-10-03",
+  "held_out_set": [
+    "razorpay",
+    "buffer",
+    "innovaccer",
+    "sarvamai",
+    "temenos",
+    "thoughtworks",
+    "nobroker",
+    "gong",
+    "plaid",
+    "renaissancetech"
+  ],
+  "per_site": {
+    "razorpay": {
+      "counts": {
+        "correct": 1,
+        "incorrect": 6,
+        "correct_abstention": 2,
+        "miss": 3,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 3,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.4
+    },
+    "buffer": {
+      "counts": {
+        "correct": 1,
+        "incorrect": 8,
+        "correct_abstention": 2,
+        "miss": 3,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 1
+      },
+      "accuracy": 0.26666666666666666
+    },
+    "innovaccer": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 5,
+        "correct_abstention": 4,
+        "miss": 3,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 3,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.4666666666666667
+    },
+    "sarvamai": {
+      "counts": {
+        "correct": 2,
+        "incorrect": 7,
+        "correct_abstention": 2,
+        "miss": 2,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 2,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.4
+    },
+    "temenos": {
+      "counts": {
+        "correct": 1,
+        "incorrect": 4,
+        "correct_abstention": 5,
+        "miss": 5,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.4
+    },
+    "thoughtworks": {
+      "counts": {
+        "correct": 1,
+        "incorrect": 2,
+        "correct_abstention": 4,
+        "miss": 5,
+        "unsupported": 1,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 2
+      },
+      "accuracy": 0.4666666666666667
+    },
+    "nobroker": {
+      "counts": {
+        "correct": 1,
+        "incorrect": 3,
+        "correct_abstention": 5,
+        "miss": 5,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 1
+      },
+      "accuracy": 0.4666666666666667
+    },
+    "gong": {
+      "counts": {
+        "correct": 1,
+        "incorrect": 3,
+        "correct_abstention": 3,
+        "miss": 3,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 2,
+        "correct_semantic": 3
+      },
+      "accuracy": 0.6
+    },
+    "plaid": {
+      "counts": {
+        "correct": 1,
+        "incorrect": 3,
+        "correct_abstention": 1,
+        "miss": 8,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 2,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.26666666666666666
+    },
+    "renaissancetech": {
+      "counts": {
+        "correct": 1,
+        "incorrect": 1,
+        "correct_abstention": 8,
+        "miss": 4,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 1
+      },
+      "accuracy": 0.6666666666666666
+    }
+  },
+  "per_field": {
+    "company_identity.name": {
+      "counts": {
+        "correct": 8,
+        "incorrect": 1,
+        "correct_abstention": 0,
+        "miss": 1,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.8
+    },
+    "company_identity.description": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 5,
+        "correct_abstention": 0,
+        "miss": 2,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 3
+      },
+      "accuracy": 0.3
+    },
+    "company_identity.headquarters": {
+      "counts": {
+        "correct": 1,
+        "incorrect": 3,
+        "correct_abstention": 1,
+        "miss": 3,
+        "unsupported": 1,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 1
+      },
+      "accuracy": 0.3
+    },
+    "products.names": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 4,
+        "correct_abstention": 1,
+        "miss": 1,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 4,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.5
+    },
+    "products.delivery_model": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 6,
+        "correct_abstention": 0,
+        "miss": 2,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 2
+      },
+      "accuracy": 0.2
+    },
+    "customers.segments": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 3,
+        "correct_abstention": 2,
+        "miss": 4,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 1
+      },
+      "accuracy": 0.3
+    },
+    "customers.industries": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 1,
+        "correct_abstention": 4,
+        "miss": 4,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 1,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.5
+    },
+    "pricing.public_plans": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 2,
+        "correct_abstention": 5,
+        "miss": 2,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 1,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.6
+    },
+    "pricing.sales_motion": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 5,
+        "correct_abstention": 0,
+        "miss": 4,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 1
+      },
+      "accuracy": 0.1
+    },
+    "pricing.free_trial": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 3,
+        "correct_abstention": 5,
+        "miss": 2,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.5
+    },
+    "pricing.revenue_model": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 3,
+        "correct_abstention": 4,
+        "miss": 3,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.4
+    },
+    "traction.named_customers": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 3,
+        "correct_abstention": 2,
+        "miss": 2,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 3,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.5
+    },
+    "traction.certifications": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 1,
+        "correct_abstention": 2,
+        "miss": 6,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 1,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.3
+    },
+    "traction.partnerships": {
+      "counts": {
+        "correct": 1,
+        "incorrect": 2,
+        "correct_abstention": 1,
+        "miss": 4,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 2,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.4
+    },
+    "comparisons.named_alternatives": {
+      "counts": {
+        "correct": 0,
+        "incorrect": 0,
+        "correct_abstention": 9,
+        "miss": 1,
+        "unsupported": 0,
+        "conflicting": 0,
+        "correct_partial": 0,
+        "correct_semantic": 0
+      },
+      "accuracy": 0.9
+    }
+  },
+  "overall": {
+    "counts": {
+      "correct": 10,
+      "incorrect": 42,
+      "correct_abstention": 36,
+      "miss": 41,
+      "unsupported": 1,
+      "conflicting": 0,
+      "correct_partial": 12,
+      "correct_semantic": 8
+    },
+    "total": 150,
+    "accuracy": 0.44,
+    "extraction_accuracy": 0.4909090909090909,
+    "inference_accuracy": 0.17647058823529413,
+    "conflicting_count": 0
+  },
+  "semantic_judge": {
+    "model": "gpt-4o-mini",
+    "calls": 30,
+    "prompt_tokens": 9991,
+    "completion_tokens": 1933,
+    "estimated_cost_usd": 0.0026584499999999997,
+    "fields_upgraded_to_correct_semantic": 8
+  }
+}

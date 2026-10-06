@@ -1,0 +1,10 @@
+# Optional tools — add ONLY when the baseline shows a specific need (per the PRD).
+# Nothing here is required for Week 1.
+
+# scrapy>=2.11          # Week 2: controlled crawler, only if httpx alone is not enough
+# playwright>=1.45      # JavaScript-only pages. Fallback only. After install run: playwright install chromium
+# dspy>=2.5             # Week 3: one bounded optimisation trial, only after a labelled baseline exists
+# feedparser>=6.0       # P1 latest-news module only (company and publisher RSS)
+# httpx is already in requirements.txt; GDELT is an HTTP API and needs no extra package
+
+# Deliberately NOT used in the MVP: LangChain, CrewAI, FastAPI, production databases, web-search APIs.

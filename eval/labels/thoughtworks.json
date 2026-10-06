@@ -1,0 +1,144 @@
+{
+  "site": "https://www.thoughtworks.com/",
+  "split": "held_out",
+  "labelled_on": "2026-09-27",
+  "labelled_by": "Claude (draft, researched live via WebFetch/WebSearch 2026-09-27) -- NOT an independent human researcher; needs human review before being treated as frozen ground truth.",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "Headquarters marked not_found: the About Us page states Thoughtworks was 'established in Chicago in 1993' and operates '47 offices across 18 countries' as a distributed multinational, but never designates a current single HQ; the office-locations page lists many addresses (New York, San Francisco, Chicago, etc.) with none labeled headquarters. 'Great Place to Work-Certified' was excluded from traction.certifications as an employer-branding award rather than a compliance/security certification. traction.partnerships evidence is a single shared quote from the partnerships page since individual per-company quotes weren't distinctly captured beyond category groupings. No page found where Thoughtworks names a specific competitor (its 'Why Thoughtworks is Different' post explicitly avoids naming competitors, only naming Google once as an unrelated scale comparison, not as a competitor). B-51 (2026-09-27): customers.segments was previously marked 'inferred' (also structurally unmatchable, since this field isn't on INFERENCE_WHITELIST) and its evidence was actually the industries list duplicated from customers.industries, not a distinct customer-TYPE statement; re-checked live and found a genuine segment-type sentence on the clients page ('from high-growth scale-ups to Fortune 500 enterprises') distinguishing company size/maturity as its own claim -- corrected status to 'extracted' and evidence to that real quote, dropping the industry-vertical elaboration which correctly belongs only under customers.industries.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Thoughtworks",
+      "source_url": "https://www.thoughtworks.com/about-us",
+      "evidence": "We're a leading global technology consultancy that delivers extraordinary impact by blending design, engineering and AI expertise."
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "We're a leading global technology consultancy that delivers extraordinary impact by blending design, engineering and AI expertise.",
+      "source_url": "https://www.thoughtworks.com/about-us",
+      "evidence": "We're a leading global technology consultancy that delivers extraordinary impact by blending design, engineering and AI expertise."
+    },
+    "company_identity.headquarters": {
+      "status": "not_found"
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "AI/works (Agentic Development Platform)"
+      ],
+      "source_url": "https://www.thoughtworks.com/",
+      "evidence": "AI/works\u2122 ... an 'Agentic Development Platform' that packs decades of engineering IP into a platform"
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "service (technology consulting / professional-services engagements, plus a proprietary AI/works platform)",
+      "source_url": "https://www.thoughtworks.com/",
+      "evidence": "a global technology consultancy delivering extraordinary impact through industry-leading practices, blending design, engineering and AI expertise"
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "From high-growth scale-ups to Fortune 500 enterprises",
+      "source_url": "https://www.thoughtworks.com/clients",
+      "evidence": "from high-growth scale-ups to Fortune 500 enterprises"
+    },
+    "customers.industries": {
+      "status": "extracted",
+      "value": [
+        "Automotive",
+        "Public Sector",
+        "Energy",
+        "Media and Publishing",
+        "Retail and E-commerce",
+        "Financial Services",
+        "Not-for-profit",
+        "Travel and Transport",
+        "Utilities",
+        "Manufacturing and Engineering",
+        "Life Sciences and Medtech"
+      ],
+      "source_url": "https://www.thoughtworks.com/clients",
+      "evidence": "Automotive, Energy, Financial Services, Life Sciences and Medtech, Manufacturing and Engineering, Media and Publishing, Not-for-profit, Public Sector, Retail and E-commerce, Travel and Transport, and Utilities"
+    },
+    "pricing.public_plans": {
+      "status": "not_found"
+    },
+    "pricing.sales_motion": {
+      "status": "extracted",
+      "value": "Contact-sales / consultative (project-based engagements via inquiry form; no self-serve pricing)",
+      "source_url": "https://www.thoughtworks.com/contact-us",
+      "evidence": "Ask us about our services and how we can help you. Our team is ready to assist with your sales inquiries."
+    },
+    "pricing.free_trial": {
+      "status": "not_found"
+    },
+    "pricing.revenue_model": {
+      "status": "not_found"
+    },
+    "traction.named_customers": {
+      "status": "extracted",
+      "value": [
+        "BMW Group",
+        "VAKT",
+        "Saxo Bank",
+        "Bayer AG",
+        "Spotify",
+        "NHS England",
+        "Etsy",
+        "Airpro",
+        "Bosch",
+        "Credit Suisse",
+        "PayPal",
+        "Porsche",
+        "Qantas",
+        "British Airways",
+        "Standard Chartered",
+        "Walmart"
+      ],
+      "source_url": "https://www.thoughtworks.com/clients",
+      "evidence": [
+        "Bringing connected AI to life at a leading automobile manufacturer",
+        "Building the world's first enterprise-level blockchain platform",
+        "Enabling data democratization at a global investment bank",
+        "Using AI to unleash the potential of preclinical data",
+        "Five year trusted partnership empowers Spotify's Creator Marketplace",
+        "An innovative approach to re-registration saves millions while improving care outcomes",
+        "Keeping human connection at the heart of commerce",
+        "Enhancing efficiency with data-driven optimization",
+        "featured client logo on the Thoughtworks clients page",
+        "featured client logo on the Thoughtworks clients page",
+        "featured client logo on the Thoughtworks clients page",
+        "featured client logo on the Thoughtworks clients page",
+        "featured client logo on the Thoughtworks clients page",
+        "featured client logo on the Thoughtworks clients page",
+        "featured client logo on the Thoughtworks clients page",
+        "featured client logo on the Thoughtworks clients page"
+      ]
+    },
+    "traction.certifications": {
+      "status": "extracted",
+      "value": [
+        "ISO/IEC 27001:2022 (all office locations globally)"
+      ],
+      "source_url": "https://www.thoughtworks.com/about-us/compliance/global-iso-certification",
+      "evidence": "all its office locations globally have achieved ISO 27001:2022 certification, the latest international standard for information security management systems (ISMS)"
+    },
+    "traction.partnerships": {
+      "status": "extracted",
+      "value": [
+        "AWS",
+        "Google Cloud",
+        "Microsoft",
+        "Databricks",
+        "Snowflake",
+        "NVIDIA",
+        "Mechanical Orchard",
+        "Anthropic"
+      ],
+      "source_url": "https://www.thoughtworks.com/en-us/about-us/partnerships",
+      "evidence": "Together with our partners, we help organizations rebuild legacy cores, rewire for agentic AI and reimagine new ways to drive value from technology."
+    },
+    "comparisons.named_alternatives": {
+      "status": "not_found"
+    }
+  }
+}

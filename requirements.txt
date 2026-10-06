@@ -1,0 +1,16 @@
+# Company Website Intelligence Prototype — core runtime requirements
+# Install:  pip install -r requirements.txt
+# All tools are free and open-source. The only running cost is the LLM API (see requirements-llm.txt).
+
+# --- Fetching and parsing (no AI involved) ---
+httpx>=0.27            # HTTP client. Static pages first.
+beautifulsoup4>=4.12   # HTML parsing (links, metadata, schema.org)
+lxml>=5.0              # Fast parser backend for BeautifulSoup
+trafilatura>=1.12      # Main-text extraction: removes menus and boilerplate before any model call
+lxml_html_clean>=0.4.0 # trafilatura's dependency chain needs this separately on newer lxml versions
+
+# --- Contracts and validation ---
+pydantic>=2.6          # Typed claim and profile schemas
+rapidfuzz>=3.6         # Near-verbatim quote matching for the evidence check
+pyyaml>=6.0            # Reads config.yaml
+python-dotenv>=1.0     # Loads API keys from .env (never commit .env)

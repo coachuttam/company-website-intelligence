@@ -1,0 +1,169 @@
+{
+  "labeling_metadata": {
+    "company_name": "Notion",
+    "website_url": "https://www.notion.com/",
+    "split": "dev",
+    "labeler": "Uttam",
+    "date_labeled": "2026-09-28",
+    "notes": "Manually labeled from supplied Notion website images; converted from _template.json to _template_v2.json structure and correction pass applied 2026-09-28. customers.segments downgraded to not_found (unsupported synthesis); pricing.sales_motion evidence combined to a single string; pricing.free_trial confirmed live and evidence enriched; traction.named_customers re-verified live (Lovable->Slack correction, heading context added)."
+  },
+  "labeling_instructions": {
+    "source_policy": "Use only information the company states on its own public website. No outside knowledge, no assumptions.",
+    "statuses": {
+      "extracted": "Directly stated on the site, with a verbatim (or near-verbatim) quote as evidence.",
+      "inferred": "Allowed ONLY on the three whitelisted fields below. A reasonable read of stated evidence, not a direct quote.",
+      "not_found": "The site does not provide sufficient evidence for this field.",
+      "conflicting": "Two pages give genuinely incompatible values for the SAME single-valued attribute (see conflicting_vs_union rule below)."
+    },
+    "evidence_required": true,
+    "do_not_guess": true,
+    "multi_value_evidence_rule": "For any field in this list -- products.names, customers.industries, traction.named_customers, traction.certifications, traction.partnerships, comparisons.named_alternatives, pricing.public_plans -- check every value item against the evidence text individually. If one contiguous quote does not literally contain every item, make 'evidence' a list of quotes in the same order as 'value' (evidence[i] must support value[i]) instead of writing one summary sentence. Never let a paraphrase stand in as evidence for a list.",
+    "conflicting_vs_union_rule": "Use 'conflicting' only for a single-valued field (e.g. company_identity.headquarters) where two pages state incompatible facts. For a list-valued field, do NOT mark it conflicting just because two pages list different or overlapping items -- merge every genuinely-sourced item into one list instead.",
+    "field_specific_rules": {
+      "customers.segments": "Single string. How the company classifies buyers by structure/size (individual, team, SMB, mid-market, enterprise, nonprofit, government). Stays a single string -- do not turn into a list.",
+      "customers.industries": "List. The named verticals, sectors, or professions the site explicitly says it serves. Each item must be a term the site itself uses, not a category you infer.",
+      "products.names": "List. Counts only if the company treats the text as a proper name for something it sells: a nav item linking to its own product page, a product-page title/heading, or explicit 'Introducing X' branding. A descriptive phrase ('our platform') does not count. Tiebreaker: does the term have its own page/URL on the site?",
+      "pricing.sales_motion": "Inference allowed. 'Contact sales' with no public amounts -> sales-led (inferred). Do not infer subscription pricing from 'Contact sales' alone.",
+      "pricing.revenue_model": "Inference allowed, but only from a structural signal the site states outright (per seat, monthly subscription, transaction fee, one-time license). Never infer from company type/category alone.",
+      "products.delivery_model": "Inference allowed, but only from the site's own words describing how the product is delivered (self-serve, managed service, app download, physical + install). Never infer from category assumptions.",
+      "pricing.free_trial": "Single string. Quote the site's own trial/demo phrasing verbatim (e.g. '14-day free trial, no credit card required'). Never normalize to yes/no.",
+      "traction.certifications": "List. Compliance/standards marks (SOC 2, ISO, ...) or named partner-tier badges issued by a third party.",
+      "traction.partnerships": "List. Named companies described as integration, channel, or technology partners.",
+      "traction.named_customers": "List. Entities described as using/buying the product (logos, 'trusted by', case studies, testimonials). A name may legitimately appear in both this field and partnerships/certifications if the site describes it both ways -- that's not an error."
+    }
+  },
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Notion",
+      "source_url": "https://www.notion.com/",
+      "evidence": "Notion"
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "Notion is an AI workspace for teams to capture context, find answers, and automate tasks.",
+      "source_url": "https://www.notion.com/",
+      "evidence": "Capture context, find answers, and automate tasks with AI built for your team."
+    },
+    "company_identity.headquarters": {
+      "status": "not_found"
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Notion AI"
+      ],
+      "source_url": "https://www.notion.com/",
+      "evidence": "Notion AI",
+      "notes": "UNVERIFIED this session (bare-word evidence, no richer nav context obtained via live fetch) -- flagged in audit, not corrected."
+    },
+    "products.delivery_model": {
+      "status": "inferred",
+      "value": "Digital software delivered online with a downloadable app",
+      "source_url": "https://www.notion.com/",
+      "evidence": "Download the Notion App"
+    },
+    "customers.segments": {
+      "status": "not_found",
+      "notes": "Downgraded from 'extracted' during correction pass 2026-09-28: original value was synthesised from 9 separate persona/plan-tier snippets rather than one supported segment statement, and customers.segments is not on the inference whitelist -- per the approved rule, use not_found when no single statement is supported."
+    },
+    "customers.industries": {
+      "status": "not_found"
+    },
+    "pricing.public_plans": {
+      "status": "extracted",
+      "value": [
+        "Free",
+        "Plus",
+        "Business",
+        "Enterprise"
+      ],
+      "source_url": "https://www.notion.com/pricing",
+      "evidence": [
+        "Free",
+        "Plus",
+        "Business",
+        "Enterprise"
+      ],
+      "notes": "UNVERIFIED this session beyond plan names (bare-word evidence; live fetch of notion.com/pricing confirmed trial wording but did not return a clean per-plan price breakdown) -- flagged in audit, not corrected."
+    },
+    "pricing.sales_motion": {
+      "status": "inferred",
+      "value": "Self-serve and sales-led",
+      "source_url": "https://www.notion.com/pricing",
+      "evidence": "Sign up; Get started; Contact Sales; Request a demo"
+    },
+    "pricing.free_trial": {
+      "status": "extracted",
+      "value": "Trial of Notion AI",
+      "source_url": "https://www.notion.com/pricing",
+      "evidence": "Trial of Notion AI (Trial AI capabilities on the Free plan; Limited Trial status for Meeting Notes, Enterprise Search, and Research Mode on Free and Plus plans)",
+      "notes": "Confirmed live 2026-09-28 on notion.com/pricing -- genuine trial wording, not inferred from the existence of a free plan. Duration/terms beyond this are not stated on the pricing page itself."
+    },
+    "pricing.revenue_model": {
+      "status": "inferred",
+      "value": "Subscription",
+      "source_url": "https://www.notion.com/pricing",
+      "evidence": "$10 per member / month; $20 per member / month; Pay monthly; Pay yearly; Save up to 20% with yearly"
+    },
+    "traction.named_customers": {
+      "status": "extracted",
+      "value": [
+        "OpenAI",
+        "Figma",
+        "Ramp",
+        "Cursor",
+        "Vercel",
+        "NVIDIA",
+        "Volvo",
+        "L'Oréal",
+        "Discord",
+        "Slack",
+        "1Password",
+        "Affirm",
+        "Riot Games",
+        "Clay",
+        "Remote",
+        "Faire",
+        "Toyota"
+      ],
+      "source_url": "https://www.notion.com/",
+      "evidence": "Trusted by 98% of the Forbes Cloud 100 (logo grid, confirmed live 2026-09-28)",
+      "notes": "Corrected 2026-09-28: 'Lovable' (in the original label) does not appear in this position in the live logo grid; 'Slack' does, and every other name matched exactly. Replaced Lovable with Slack based on live re-verification; site content can change over time, so if Uttam's original screenshot genuinely showed Lovable at the time of labeling, that is also plausible -- flagged for confirmation."
+    },
+    "traction.certifications": {
+      "status": "extracted",
+      "value": [
+        "ISO 27001",
+        "ISO 27701",
+        "ISO 27017",
+        "ISO 27018",
+        "PCI-DSS Merchant Level 2",
+        "K-FSI CSP Security and Safety Evaluation"
+      ],
+      "source_url": [
+        "https://www.notion.com/security",
+        "https://www.notion.com/security",
+        "https://www.notion.com/security",
+        "https://www.notion.com/security",
+        "https://www.notion.com/help/security-and-privacy",
+        "https://www.notion.com/help/security-and-privacy"
+      ],
+      "evidence": [
+        "Notion has achieved certifications for four ISO standards: ISO 27001, ISO 27701, ISO 27017, and ISO 27018.",
+        "Notion has achieved certifications for four ISO standards: ISO 27001, ISO 27701, ISO 27017, and ISO 27018.",
+        "Notion has achieved certifications for four ISO standards: ISO 27001, ISO 27701, ISO 27017, and ISO 27018.",
+        "Notion has achieved certifications for four ISO standards: ISO 27001, ISO 27701, ISO 27017, and ISO 27018.",
+        "Notion is compliant with PCI-DSS Merchant Level 2 requirements, ensuring secure handling of payment card data.",
+        "Notion has successfully completed the Korean Financial Security Institute (K-FSI) Cloud Service Provider (CSP) Security and Safety Evaluation."
+      ],
+      "notes": "Corrected 2026-09-28 (final ground-truth verification): live-verified on notion.com/security and notion.com/help/security-and-privacy. SOC 2 Type 2 was investigated but NOT included -- the page has a section titled \"SOC 2 Type 2\" that defines the standard, but no sentence found explicitly ties achieved SOC 2 Type 2 status to Notion itself (only a separate, unrelated \"attested by independent third-party auditors\" sentence that does not name SOC 2). Also investigated and excluded: BSI C5 (described, not claimed as achieved), GDPR/CCPA (stated as policy alignment/mapping, not a third-party-issued certification), HIPAA (a workspace-capability statement, not a certification Notion holds). Flagged for human follow-up: whether SOC 2 Type 2 should be added once a Notion-specific quote is located (e.g. via their Trust Center)."
+    },
+    "traction.partnerships": {
+      "status": "not_found"
+    },
+    "comparisons.named_alternatives": {
+      "status": "not_found"
+    }
+  }
+}

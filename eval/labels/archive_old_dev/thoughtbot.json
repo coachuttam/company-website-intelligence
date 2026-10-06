@@ -1,0 +1,143 @@
+{
+  "site": "https://thoughtbot.com/",
+  "split": "dev",
+  "labelled_on": "2026-09-26",
+  "labelled_by": "Claude (draft; independently re-checked against live pages by Claude via WebFetch/WebSearch 2026-09-27, see review_notes); independently human-reviewed by Uttam against the live site 2026-09-27, all values/evidence/not_found calls confirmed as-is, no corrections",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "Drafted by Claude, the same assistant building the extraction pipeline this label set will score -- NOT an independent human researcher. products.names lists thoughtbot's named services/technologies rather than product SKUs, which fits a services firm but is a judgment call worth a second look. traction.named_customers evidence is a section heading rather than a single quote naming every logo individually -- the client names come from a logo strip, not prose text, so treat this list as a reasonable reading rather than a single verbatim sentence. Independent re-check (2026-09-27, via WebFetch/WebSearch against live thoughtbot.com pages, a separate process from the original drafting and the extraction pipeline): company description, delivery-model quote, and a sample of named customers (12 of 33, including Real Chemistry, Postmates, MoMA, Vimeo, Hilton, Disney) all matched exactly. Confirmed pricing.public_plans/free_trial/revenue_model correctly stay not_found -- an independent fetch of /services explicitly found no pricing or engagement-cost information anywhere on the site. Also confirmed the site is remote-first with no stated single headquarters (a 'best company for remote workers' mention and distributed-team language, no address anywhere), supporting company_identity.headquarters' not_found rather than it being a missed field. One real correction: customers.industries was missing 'Technical and Business Assistance (TABA)', listed alongside Healthcare/Finance/Insurance/Government under the site's own industry-expertise heading -- added. Human review (Uttam, 2026-09-27): checked against the live site independently of the pipeline and of Claude; confirmed as-is, no corrections needed. This satisfies the PRD Section 12 ground-truth requirement.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "thoughtbot",
+      "source_url": "https://thoughtbot.com/",
+      "evidence": "thoughtbot"
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "A leading design, development, and product management consultancy who bring clients' product visions to fruition.",
+      "source_url": "https://thoughtbot.com/about",
+      "evidence": "A leading design, development, and product management consultancy who bring clients' product visions to fruition."
+    },
+    "company_identity.headquarters": {
+      "status": "not_found"
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Ruby on Rails",
+        "Hotwire",
+        "React",
+        "AI and Machine Learning",
+        "Web Development",
+        "Mobile Development",
+        "Support and Maintenance",
+        "Shaping Sprints",
+        "UX, UI, and Product Design",
+        "Design Systems",
+        "MVP",
+        "Product Management",
+        "Accessibility",
+        "Team Augmentation",
+        "Fractional Leadership",
+        "Platform Engineering and Site Reliability"
+      ],
+      "source_url": "https://thoughtbot.com/services",
+      "evidence": "Senior Product Strategy, Design, and Development services for web apps, mobile apps, and websites"
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "service (fully-remote)",
+      "source_url": "https://thoughtbot.com/services",
+      "evidence": "We are equipped to partner with teams around the world with our fully-remote delivery model."
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "clients across all industries and sizes",
+      "source_url": "https://thoughtbot.com/services",
+      "evidence": "We partner with clients across all industries and sizes to provide Senior Product Strategy, Design, and Development services for web apps, mobile apps, and websites, including healthtech, edTech, FinTech, B2B and B2C companies."
+    },
+    "customers.industries": {
+      "status": "extracted",
+      "value": [
+        "Healthcare",
+        "Finance",
+        "Insurance",
+        "Government / Public Sector",
+        "Technical and Business Assistance (TABA)",
+        "healthtech",
+        "edTech",
+        "FinTech"
+      ],
+      "source_url": "https://thoughtbot.com/services",
+      "evidence": [
+        "Industry Expertise and Experience: Healthcare, Finance, Insurance, Government / Public Sector",
+        "Technical and Business Assistance (TABA)",
+        "including healthtech, edTech, FinTech, B2B and B2C companies"
+      ]
+    },
+    "pricing.public_plans": {
+      "status": "not_found"
+    },
+    "pricing.sales_motion": {
+      "status": "extracted",
+      "value": "Contact/quote-based: fill in project details to get in touch with a designer or developer",
+      "source_url": "https://thoughtbot.com/hire-us",
+      "evidence": "Fill in a few details to get in-touch with one of our local designers or developers."
+    },
+    "pricing.free_trial": {
+      "status": "not_found"
+    },
+    "pricing.revenue_model": {
+      "status": "not_found"
+    },
+    "traction.named_customers": {
+      "status": "extracted",
+      "value": [
+        "Real Chemistry",
+        "Postmates",
+        "MoMA",
+        "Groups Recover Together",
+        "Harvard Business Review",
+        "LevelUp",
+        "Lola",
+        "Vimeo",
+        "Airrosti",
+        "DigitalOcean",
+        "Planned Parenthood",
+        "Everlane",
+        "Hilton",
+        "Blinkist",
+        "Gov.uk",
+        "MassChallenge",
+        "Mailchimp",
+        "Tile",
+        "Mindler",
+        "Merck",
+        "Harry's",
+        "BarkBox",
+        "Kickstarter",
+        "Disney",
+        "CloseKnit Health",
+        "Neighborhood Alerts",
+        "Vestmark",
+        "JoyDrive",
+        "Teikametrics",
+        "Underdog Fantasy",
+        "British Business Bank",
+        "Folio",
+        "Knect"
+      ],
+      "source_url": "https://thoughtbot.com/",
+      "evidence": "Trusted by teams building software in high-stakes and regulated environments"
+    },
+    "traction.certifications": {
+      "status": "not_found"
+    },
+    "traction.partnerships": {
+      "status": "not_found"
+    },
+    "comparisons.named_alternatives": {
+      "status": "not_found"
+    }
+  }
+}

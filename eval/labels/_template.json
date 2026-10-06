@@ -1,0 +1,29 @@
+{
+  "site": "https://REPLACE-WITH-SITE/",
+  "split": "dev",
+  "labelled_on": "YYYY-MM-DD",
+  "labelled_by": "Uttam",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "",
+      "source_url": "",
+      "evidence": ""
+    },
+    "company_identity.description": { "status": "not_found" },
+    "company_identity.headquarters": { "status": "not_found" },
+    "products.names": { "status": "not_found" },
+    "products.delivery_model": { "status": "not_found" },
+    "customers.segments": { "status": "not_found" },
+    "customers.industries": { "status": "not_found" },
+    "pricing.public_plans": { "status": "not_found" },
+    "pricing.sales_motion": { "status": "not_found" },
+    "pricing.free_trial": { "status": "not_found" },
+    "pricing.revenue_model": { "status": "not_found" },
+    "traction.named_customers": { "status": "not_found" },
+    "traction.certifications": { "status": "not_found" },
+    "traction.partnerships": { "status": "not_found" },
+    "comparisons.named_alternatives": { "status": "not_found" }
+  }
+}

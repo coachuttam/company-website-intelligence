@@ -1,0 +1,139 @@
+{
+  "site": "https://zerodha.com/",
+  "split": "dev",
+  "labelled_on": "2026-09-26",
+  "labelled_by": "Claude (draft; independently re-checked against live pages by Claude via WebFetch/WebSearch 2026-09-27, see review_notes); independently human-reviewed by Uttam against the live site 2026-09-27, all values/evidence/not_found calls confirmed as-is, no corrections",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "Drafted by Claude, the same assistant building the extraction pipeline this label set will score -- NOT an independent human researcher. Uttam or Abhishek should still spot-check before formally treating this as ground truth. Independent re-check (2026-09-27, via WebFetch/WebSearch against live zerodha.com pages, a separate process from the original drafting and the extraction pipeline): the registered address, SEBI/DP registration numbers, all named products, and every brokerage/AMC/DP fee line were re-fetched and matched byte-for-byte. One real correction: pricing.public_plans' Kite Connect API line only listed the paid \u20b9500/month 'Connect' tier; zerodha.com/products/api actually offers two tiers -- a free 'Personal' tier and the paid 'Connect' tier -- so both are now listed. Also confirmed comparisons.named_alternatives correctly stays not_found: the only comparison-flavoured content found (a support article on MTF interest rates) explicitly refers to rivals only as 'Other brokers', never by name. Human review (Uttam, 2026-09-27): checked against the live site independently of the pipeline and of Claude; confirmed as-is, no corrections needed. This satisfies the PRD Section 12 ground-truth requirement.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Zerodha",
+      "source_url": "https://zerodha.com/about",
+      "evidence": "We named the company Zerodha, a combination of Zero and \"Rodha\", the Sanskrit word for barrier."
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "Online platform to invest in stocks, IPOs, derivatives, mutual funds, ETFs, bonds, and more; pioneered the discount broking model in India and is the biggest stock broker in India.",
+      "source_url": "https://zerodha.com/about",
+      "evidence": "We pioneered the discount broking model in India. Now, we are breaking ground with our technology."
+    },
+    "company_identity.headquarters": {
+      "status": "extracted",
+      "value": "Bengaluru, Karnataka, India",
+      "source_url": "https://zerodha.com/about",
+      "evidence": "#153/154, 4th Cross, Dollars Colony, Opp. Clarence Public School, J.P Nagar 4th Phase, Bengaluru - 560078, Karnataka, India"
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Kite",
+        "Console",
+        "Kite Connect",
+        "Coin",
+        "Varsity",
+        "Trading Q&A"
+      ],
+      "source_url": "https://zerodha.com/",
+      "evidence": "Kite (Trading platform); Console (Backoffice); Kite Connect (Trading APIs); Coin (Mutual funds); Varsity; Trading Q&A"
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "Online software platform (web and app-based trading and investment platform)",
+      "source_url": "https://zerodha.com/",
+      "evidence": "Online platform to invest in stocks, IPOs, derivatives, mutual funds, ETFs, bonds, and more."
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "Individual retail traders and investors in India",
+      "source_url": "https://zerodha.com/about",
+      "evidence": "Over 1.8+ crore clients place billions of orders every year through our powerful ecosystem of investment platforms, contributing over 15% of all Indian retail trading volumes."
+    },
+    "customers.industries": {
+      "status": "not_found"
+    },
+    "pricing.public_plans": {
+      "status": "extracted",
+      "value": [
+        "Equity Delivery: \u20b90 brokerage (free)",
+        "Intraday equity/currency/commodity: Flat \u20b920 or 0.03% (whichever is lower) per executed order",
+        "F&O (Futures): 0.03% or \u20b920 per order (whichever is lower)",
+        "F&O (Options): Flat \u20b920 per executed order",
+        "Direct Mutual Funds: \u20b90 commissions & DP charges",
+        "Account Opening (Individual): free",
+        "Account Opening (NRI/Corporate/Partnership/LLP): \u20b9500",
+        "AMC (BSDA, up to \u20b94 lakh): free",
+        "AMC (BSDA, \u20b94-10 lakh): \u20b9100 per year + 18% GST, charged quarterly",
+        "AMC (BSDA, above \u20b910 lakh / Non-BSDA): \u20b9300 per year + 18% GST, charged quarterly",
+        "DP Charges: \u20b915.34 per scrip",
+        "Kite Connect API (Personal tier): free",
+        "Kite Connect API (Connect tier): \u20b9500/month"
+      ],
+      "source_url": "https://zerodha.com/pricing",
+      "evidence": [
+        "All equity delivery investments (NSE, BSE), are absolutely free \u2014 \u20b9 0 brokerage.",
+        "Flat \u20b9 20 or 0.03% (whichever is lower) per executed order",
+        "0.03% or \u20b920 per order (whichever is lower)",
+        "Flat Rs. 20 per executed order",
+        "All direct mutual fund investments are absolutely free \u2014 \u20b9 0 commissions & DP charges.",
+        "free",
+        "\u20b9500",
+        "free",
+        "\u20b9100 per year + 18% GST, charged quarterly",
+        "\u20b9300 per year + 18% GST, charged quarterly",
+        "\u20b915.34 per scrip (\u20b93.5 CDSL fee + \u20b99.5 Zerodha fee + \u20b92.34 GST)",
+        "Full fledged order, GTT, alerts management. Margin computation, portfolio management etc.",
+        "Full suite of APIs with realtime WebSocket streaming and historical candle data for \u20b9 500 / month"
+      ]
+    },
+    "pricing.sales_motion": {
+      "status": "extracted",
+      "value": "Self-serve (online account opening and trading, no sales contact required)",
+      "source_url": "https://zerodha.com/",
+      "evidence": "Try Kite demo"
+    },
+    "pricing.free_trial": {
+      "status": "extracted",
+      "value": "Free demo of the Kite trading platform is available",
+      "source_url": "https://zerodha.com/",
+      "evidence": "Try Kite demo"
+    },
+    "pricing.revenue_model": {
+      "status": "extracted",
+      "value": "Transaction/usage-based fees (flat per-order brokerage on intraday/F&O trades, plus account and service charges); equity delivery and direct mutual funds are free",
+      "source_url": "https://zerodha.com/pricing",
+      "evidence": "Flat \u20b9 20 or 0.03% (whichever is lower) per executed order"
+    },
+    "traction.named_customers": {
+      "status": "not_found"
+    },
+    "traction.certifications": {
+      "status": "extracted",
+      "value": [
+        "SEBI Registration no.: INZ000031633",
+        "NSE",
+        "BSE",
+        "MCX",
+        "MSEI",
+        "Depository registration IN-DP-431-2019"
+      ],
+      "source_url": "https://zerodha.com/about",
+      "evidence": "SEBI Registration no.: INZ000031633"
+    },
+    "traction.partnerships": {
+      "status": "extracted",
+      "value": [
+        "Ditto (Tacterial Consulting Private Limited)",
+        "Blostem Fintech Private Limited"
+      ],
+      "source_url": "https://zerodha.com/about",
+      "evidence": [
+        "Customers availing insurance advisory services offered by Ditto (Tacterial Consulting Private Limited | IRDAI Registered Corporate Agent (Composite) License No CA0738)",
+        "Fixed deposit products offered on this platform are third-party products (TPP) and are not Exchange traded products. These are offered through Blostem Fintech Private Limited."
+      ]
+    },
+    "comparisons.named_alternatives": {
+      "status": "not_found"
+    }
+  }
+}

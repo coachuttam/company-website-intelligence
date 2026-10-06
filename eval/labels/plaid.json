@@ -1,0 +1,192 @@
+{
+  "site": "https://plaid.com/",
+  "split": "held_out",
+  "labelled_on": "2026-09-27",
+  "labelled_by": "Claude (draft, researched live via WebFetch/WebSearch 2026-09-27) -- NOT an independent human researcher; needs human review before being treated as frozen ground truth.",
+  "rules": "Label only what the website states. No outside knowledge. Copy quotes exactly. If pages disagree, record both as conflicting. If the site does not say, use not_found.",
+  "review_notes": "Headquarters address on plaid.com/legal/ is a PO Box mailing address ('PO Box 7775 #35278 San Francisco, California 94120-7775 U.S.A.') rather than a street office address; Plaid's careers pages separately label San Francisco as 'San Francisco HQ', corroborating the city but not adding a street address. products.names is a representative subset of a much longer list of named Plaid products shown in the site's own navigation (Enrich, Assets, LendScore, Layer, Investments Move, Cash Advance Index, Core Exchange, Permissions Manager, App Directory, etc. also appear on-site but were omitted here for brevity -- a human should decide whether to include the full list). Plaid's Partner Directory lists 100+ named companies; traction.partnerships here is a representative sample, not exhaustive. pricing.public_plans includes real plan NAMES ('Pay as You Go', 'Growth', 'Custom') published on the pricing page, but no public dollar figures are shown -- flagged since the field instructions treat named plans as sufficient for 'extracted' even without numbers. B-51 (2026-09-27): customers.segments' evidence quote was already correct and literal, but the value over-elaborated beyond it ('of all sizes', 'fintechs, banks, and other businesses' were not stated in the quote) -- tightened the value to track the actual quote closely.",
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "Plaid",
+      "source_url": "https://plaid.com/",
+      "evidence": "Plaid helps all companies build fintech solutions by making it easy, safe and reliable for people to connect their financial data to apps and services."
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "Plaid helps all companies build fintech solutions by making it easy, safe and reliable for people to connect their financial data to apps and services.",
+      "source_url": "https://plaid.com/",
+      "evidence": "Plaid helps all companies build fintech solutions by making it easy, safe and reliable for people to connect their financial data to apps and services."
+    },
+    "company_identity.headquarters": {
+      "status": "extracted",
+      "value": "San Francisco, California, USA",
+      "source_url": "https://plaid.com/legal/",
+      "evidence": "PO Box 7775 #35278 San Francisco, California 94120-7775 U.S.A."
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Auth",
+        "Identity",
+        "Balance",
+        "Signal",
+        "Transfer",
+        "Identity Verification",
+        "Transactions",
+        "Investments",
+        "Liabilities",
+        "Income",
+        "Plaid Link",
+        "Monitor",
+        "Protect",
+        "Beacon",
+        "Layer"
+      ],
+      "source_url": "https://plaid.com/",
+      "evidence": "Auth, Identity, Balance, Signal, Transfer, Identity Verification, Beacon, Monitor, Protect, Transactions, Investments, Liabilities, Enrich, Assets, Income & Underwriting, LendScore, Plaid Link, Layer -- named products listed in Plaid's site navigation"
+    },
+    "products.delivery_model": {
+      "status": "extracted",
+      "value": "software (API/developer platform)",
+      "source_url": "https://plaid.com/",
+      "evidence": "Plaid helps all companies build fintech solutions by making it easy, safe and reliable for people to connect their financial data to apps and services."
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "All companies building fintech solutions",
+      "source_url": "https://plaid.com/",
+      "evidence": "Plaid helps all companies build fintech solutions by making it easy, safe and reliable for people to connect their financial data to apps and services."
+    },
+    "customers.industries": {
+      "status": "extracted",
+      "value": [
+        "AI companies",
+        "Auto",
+        "Banks & credit unions",
+        "Billing & recurring payments",
+        "Consumer lending",
+        "Gaming",
+        "Government & public sector",
+        "Healthcare",
+        "Insurance",
+        "Mortgage",
+        "Platforms & marketplaces",
+        "Property management"
+      ],
+      "source_url": "https://plaid.com/",
+      "evidence": "AI companies, Auto, Banks & credit unions, Billing & recurring payments, Consumer lending, Gaming, Government & public sector, Healthcare, Insurance, Mortgage, Platforms & marketplaces, Property management -- named industries listed in Plaid's site navigation"
+    },
+    "pricing.public_plans": {
+      "status": "extracted",
+      "value": [
+        "Pay as You Go",
+        "Growth",
+        "Custom"
+      ],
+      "source_url": "https://plaid.com/pricing/",
+      "evidence": [
+        "Pay as You Go -- unlimited usage, no commitments upfront, only pay for what you use",
+        "Growth -- 12-month commitment with discounted product rates and a platform support package",
+        "Custom -- enterprise option with volume-based pricing and integration assistance"
+      ]
+    },
+    "pricing.sales_motion": {
+      "status": "extracted",
+      "value": "Self-serve signup for Sandbox/Pay-as-you-go; contact-sales for Growth and Custom enterprise plans",
+      "source_url": "https://plaid.com/pricing/",
+      "evidence": "Sandbox testing available for free; Custom enterprise option with volume-based pricing and integration assistance -- specific dollar amounts are not publicly listed, customers must contact sales for detailed pricing"
+    },
+    "pricing.free_trial": {
+      "status": "extracted",
+      "value": "Free Sandbox testing, plus limited free Production usage (up to 200 live API calls per available product)",
+      "source_url": "https://plaid.com/pricing/",
+      "evidence": "make up to 200 API calls with each available product using live data"
+    },
+    "pricing.revenue_model": {
+      "status": "extracted",
+      "value": "Usage-based: one-time fees per connected account, monthly subscription fees per account, or flat fees per successful API call, depending on plan",
+      "source_url": "https://plaid.com/pricing/",
+      "evidence": "one-time fees per connected account, monthly subscription fees per account, or flat fees per successful API call"
+    },
+    "traction.named_customers": {
+      "status": "extracted",
+      "value": [
+        "Venmo",
+        "Carvana",
+        "Robinhood",
+        "HealthEquity",
+        "H&R Block",
+        "Gemini",
+        "GoFundMe",
+        "Ramp",
+        "T-Mobile",
+        "Brex",
+        "Affirm",
+        "Databricks"
+      ],
+      "source_url": "https://plaid.com/customer-stories/library/",
+      "evidence": [
+        "named customer logo on Plaid homepage (Venmo)",
+        "named customer logo on Plaid homepage (Carvana)",
+        "named customer logo on Plaid homepage (Robinhood)",
+        "Learn how HealthEquity secures HSA access without adding friction",
+        "How H&R Block turns data into financial confidence",
+        "How Gemini speeds up their onboarding",
+        "How GoFundMe is transforming charitable giving",
+        "Ramp rethinks how business finance gets done",
+        "How T-Mobile is building customer loyalty",
+        "How Brex is designing reliable AI agents",
+        "Maintaining the human in credit risk models",
+        "How Databricks is turning AI governance into an accelerator"
+      ]
+    },
+    "traction.certifications": {
+      "status": "extracted",
+      "value": [
+        "ISO 27001",
+        "ISO 27701",
+        "SSAE18 SOC 2"
+      ],
+      "source_url": "https://plaid.com/en-eu/safety/",
+      "evidence": "Plaid is certified in internationally-recognized security standards, like ISO 27001, ISO 27701, and is SSAE18 SOC 2 compliant."
+    },
+    "traction.partnerships": {
+      "status": "extracted",
+      "value": [
+        "Stripe",
+        "Dwolla",
+        "Sila",
+        "Checkout.com",
+        "Modern Treasury",
+        "Unit",
+        "Synctera",
+        "Treasury Prime",
+        "Marqeta",
+        "Highnote",
+        "nCino",
+        "Q2",
+        "Jack Henry"
+      ],
+      "source_url": "https://plaid.com/partner-directory/",
+      "evidence": [
+        "Stripe",
+        "Dwolla",
+        "Sila",
+        "Checkout.com",
+        "Modern Treasury",
+        "Unit",
+        "Synctera",
+        "Treasury Prime",
+        "Marqeta",
+        "Highnote",
+        "nCino",
+        "Q2",
+        "Plaid and Jack Henry partner to enable Plaid Exchange for over 350 banks"
+      ]
+    },
+    "comparisons.named_alternatives": {
+      "status": "not_found"
+    }
+  }
+}

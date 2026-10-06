@@ -1,0 +1,166 @@
+{
+  "labeling_metadata": {
+    "company_name": "SimpleStores",
+    "website_url": "https://simplestores.in/",
+    "split": "dev",
+    "labeler": "Uttam",
+    "date_labeled": "2026-09-28",
+    "notes": "Manually labeled from the SimpleStores website; converted from _template.json to _template_v2.json structure and correction pass applied 2026-09-28. headquarters kept as extracted with strengthened Main/Branch-office evidence (live-confirmed, flagged as a judgment call); pricing.sales_motion evidence combined to a single string. products.names and pricing.public_plans bare-word evidence could not be re-verified this session (fetch timeout)."
+  },
+  "labeling_instructions": {
+    "source_policy": "Use only information the company states on its own public website. No outside knowledge, no assumptions.",
+    "statuses": {
+      "extracted": "Directly stated on the site, with a verbatim (or near-verbatim) quote as evidence.",
+      "inferred": "Allowed ONLY on the three whitelisted fields below. A reasonable read of stated evidence, not a direct quote.",
+      "not_found": "The site does not provide sufficient evidence for this field.",
+      "conflicting": "Two pages give genuinely incompatible values for the SAME single-valued attribute (see conflicting_vs_union rule below)."
+    },
+    "evidence_required": true,
+    "do_not_guess": true,
+    "multi_value_evidence_rule": "For any field in this list -- products.names, customers.industries, traction.named_customers, traction.certifications, traction.partnerships, comparisons.named_alternatives, pricing.public_plans -- check every value item against the evidence text individually. If one contiguous quote does not literally contain every item, make 'evidence' a list of quotes in the same order as 'value' (evidence[i] must support value[i]) instead of writing one summary sentence. Never let a paraphrase stand in as evidence for a list.",
+    "conflicting_vs_union_rule": "Use 'conflicting' only for a single-valued field (e.g. company_identity.headquarters) where two pages state incompatible facts. For a list-valued field, do NOT mark it conflicting just because two pages list different or overlapping items -- merge every genuinely-sourced item into one list instead.",
+    "field_specific_rules": {
+      "customers.segments": "Single string. How the company classifies buyers by structure/size (individual, team, SMB, mid-market, enterprise, nonprofit, government). Stays a single string -- do not turn into a list.",
+      "customers.industries": "List. The named verticals, sectors, or professions the site explicitly says it serves. Each item must be a term the site itself uses, not a category you infer.",
+      "products.names": "List. Counts only if the company treats the text as a proper name for something it sells: a nav item linking to its own product page, a product-page title/heading, or explicit 'Introducing X' branding. A descriptive phrase ('our platform') does not count. Tiebreaker: does the term have its own page/URL on the site?",
+      "pricing.sales_motion": "Inference allowed. 'Contact sales' with no public amounts -> sales-led (inferred). Do not infer subscription pricing from 'Contact sales' alone.",
+      "pricing.revenue_model": "Inference allowed, but only from a structural signal the site states outright (per seat, monthly subscription, transaction fee, one-time license). Never infer from company type/category alone.",
+      "products.delivery_model": "Inference allowed, but only from the site's own words describing how the product is delivered (self-serve, managed service, app download, physical + install). Never infer from category assumptions.",
+      "pricing.free_trial": "Single string. Quote the site's own trial/demo phrasing verbatim (e.g. '14-day free trial, no credit card required'). Never normalize to yes/no.",
+      "traction.certifications": "List. Compliance/standards marks (SOC 2, ISO, ...) or named partner-tier badges issued by a third party.",
+      "traction.partnerships": "List. Named companies described as integration, channel, or technology partners.",
+      "traction.named_customers": "List. Entities described as using/buying the product (logos, 'trusted by', case studies, testimonials). A name may legitimately appear in both this field and partnerships/certifications if the site describes it both ways -- that's not an error."
+    }
+  },
+  "fields": {
+    "company_identity.name": {
+      "status": "extracted",
+      "value": "simplestores",
+      "source_url": "https://simplestores.in/",
+      "evidence": "simplestores"
+    },
+    "company_identity.description": {
+      "status": "extracted",
+      "value": "An India-first commerce and business operating platform for product and service businesses.",
+      "source_url": "https://simplestores.in/",
+      "evidence": "An India-first commerce and business operating platform for product and service businesses."
+    },
+    "company_identity.headquarters": {
+      "status": "extracted",
+      "value": "Chennai, India",
+      "source_url": "https://simplestores.in/platform",
+      "evidence": "Main Office · India — No. 8, Vaishnava College Road, Shanthi Nagar, Chrompet, Chennai 600044 (site also separately lists a Branch Office — UAE — Al Jazeera Towers, Hamdan Street, Abu Dhabi, confirming Main vs Branch is the site's own primary/secondary designation)",
+      "notes": "Kept as extracted, not downgraded: confirmed live 2026-09-28 that the site itself distinguishes a 'Main Office' from a 'Branch Office' (UAE), which reads as an unambiguous primary-office designation even though the literal word 'headquarters' isn't used. This is a judgment call, not a certainty -- flagged in the audit for Uttam to confirm or override."
+    },
+    "products.names": {
+      "status": "extracted",
+      "value": [
+        "Cart Vault"
+      ],
+      "source_url": "https://simplestores.in/pricing",
+      "evidence": [
+        "Cart Vault"
+      ],
+      "notes": "UNVERIFIED this session (single item, bare-word evidence; live re-fetch of simplestores.in/pricing timed out) -- flagged in audit, not corrected."
+    },
+    "products.delivery_model": {
+      "status": "inferred",
+      "value": "Digital software delivered through an online platform, storefronts, and mobile applications",
+      "source_url": "https://simplestores.in/platform",
+      "evidence": "Sellers launch a complete online store from any device; works on mobile, tablet, laptop, Android and iOS."
+    },
+    "customers.segments": {
+      "status": "extracted",
+      "value": "Product and service businesses",
+      "source_url": "https://simplestores.in/",
+      "evidence": "An India-first commerce and business operating platform for product and service businesses."
+    },
+    "customers.industries": {
+      "status": "extracted",
+      "value": [
+        "Event management",
+        "Retail and D2C",
+        "Pharmacy",
+        "Service businesses",
+        "Hospitality",
+        "Consultancy",
+        "Arts and Gifting",
+        "Technology",
+        "Textiles",
+        "Construction"
+      ],
+      "source_url": [
+        "https://simplestores.in/solutions",
+        "https://simplestores.in/customers"
+      ],
+      "evidence": [
+        "Event management",
+        "Retail and D2C",
+        "Pharmacy",
+        "Service businesses",
+        "Hostels and hospitality",
+        "Consultancy",
+        "Arts & Gifting",
+        "Technology",
+        "Textiles",
+        "Construction"
+      ]
+    },
+    "pricing.public_plans": {
+      "status": "extracted",
+      "value": [
+        "Standard",
+        "Business",
+        "Professional",
+        "Enterprise"
+      ],
+      "source_url": "https://simplestores.in/pricing",
+      "evidence": [
+        "Standard",
+        "Business",
+        "Professional",
+        "Enterprise"
+      ],
+      "notes": "UNVERIFIED this session (bare-word evidence; live re-fetch of simplestores.in/pricing timed out) -- flagged in audit, not corrected."
+    },
+    "pricing.sales_motion": {
+      "status": "inferred",
+      "value": "Self-serve and sales-led",
+      "source_url": "https://simplestores.in/pricing",
+      "evidence": "Choose plan; Sign in to pay; Start 7-day trial; Talk to sales"
+    },
+    "pricing.free_trial": {
+      "status": "extracted",
+      "value": "7-day trial",
+      "source_url": "https://simplestores.in/platform",
+      "evidence": "Start 7-day trial"
+    },
+    "pricing.revenue_model": {
+      "status": "inferred",
+      "value": "Subscription with flat platform transaction fees",
+      "source_url": "https://simplestores.in/pricing",
+      "evidence": "Four clear plans. Monthly or annual. Standard — ₹499 / month; Business — ₹1,499 / month; Professional — ₹2,499 / month; Enterprise — Custom pricing; simplestores charges you a flat platform fee — ₹3 per order (Commerce) or ₹5 per booking (Services). No % skim."
+    },
+    "traction.named_customers": {
+      "status": "not_found"
+    },
+    "traction.certifications": {
+      "status": "not_found"
+    },
+    "traction.partnerships": {
+      "status": "not_found"
+    },
+    "comparisons.named_alternatives": {
+      "status": "extracted",
+      "value": [
+        "Shopify",
+        "Dukaan"
+      ],
+      "source_url": "https://simplestores.in/platform",
+      "evidence": [
+        "vs Shopify",
+        "vs Dukaan"
+      ]
+    }
+  }
+}
