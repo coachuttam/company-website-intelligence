@@ -1,0 +1,4 @@
+# Sites the pipeline has already been run on outside the dev set.
+# Exclude these when choosing the fresh held-out set: their output has been seen.
+# One domain per line, with the date it was first run.
+freshworks.com  2026-10-06
