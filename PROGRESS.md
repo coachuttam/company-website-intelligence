@@ -2099,3 +2099,5 @@ but cannot run Uttam's actual crawler/LLM pipeline against the real sites.
 - [ ] Fix tests/BEHAVIOURS.md row order (B-53 to B-65 are reversed) and the duplicate B-69 row
 
 - 2026-10-06 correction to the open item above: there is no duplicate B-69. The single B-69 row covers both the non-English locale skip in the crawl and the rule 13 `customers.segments` change (`prompt_version` 14 -> 15). The rest of that item (row order) is done in commit 4568493, which also removed a blank line that split the table.
+
+- 2026-10-06: B-73 done (`limit_reached` now also true when the page cap is hit; verified on a Calendly replay). Dev baseline recorded at 68% with the semantic judge (51 of 75; 55% without it); the Calendly single-site report was scored without the judge.
