@@ -42,6 +42,7 @@ from wi.crawl.clean import clean_page, resolve_char_cap
 from wi.crawl.fetch import crawl_diagnostics, crawl_site
 from wi.crawl.js_fallback import render_with_playwright
 from wi.crawl.url import validate_company_url
+from wi.eval.latency import PhaseTimer
 from wi.extract.llm import OpenAIChatCompleter
 from wi.classify.decisions import apply_classifier
 from wi.extract.focus import focus_retry
@@ -53,6 +54,9 @@ ROOT = Path(__file__).resolve().parent
 
 
 def main(raw_url: str, use_cache: bool = True) -> int:
+    # B-74 (AC-10): wall-clock seconds per stage plus the end-to-end total, written to the run
+    # JSON's "timing" key; eval/latency_report.py turns those into p50/p95 per website.
+    timer = PhaseTimer()
     load_dotenv(ROOT / ".env")
     config = load_config()
 
@@ -67,8 +71,9 @@ def main(raw_url: str, use_cache: bool = True) -> int:
     # rather than erroring if it isn't, but there's no reason to even try the import path
     # when the config says the feature is off.
     js_renderer = render_with_playwright if config["crawl"].get("js_fallback_enabled", False) else None
-    crawl_result = crawl_site(validated.url, validated.approved_domains, config,
-                               js_renderer=js_renderer)
+    with timer.phase("crawl"):
+        crawl_result = crawl_site(validated.url, validated.approved_domains, config,
+                                   js_renderer=js_renderer)
     js_rendered_count = sum(1 for p in crawl_result.pages if p.js_rendered)
     unsupported_count = sum(1 for p in crawl_result.pages if p.error_code == "UNSUPPORTED_CONTENT_TYPE")
     print(f"  fetched {len(crawl_result.pages)} page(s), "
@@ -93,9 +98,10 @@ def main(raw_url: str, use_cache: bool = True) -> int:
             if p.status != "ok":
                 print(f"    - {p.url}: {p.error_code or 'ERROR'} - {p.error}")
 
-    clean_pages = [
-        clean_page(p.url, p.html, resolve_char_cap(p.url, config)) for p in ok_pages
-    ]
+    with timer.phase("clean"):
+        clean_pages = [
+            clean_page(p.url, p.html, resolve_char_cap(p.url, config)) for p in ok_pages
+        ]
     default_cap = config["crawl"]["max_clean_chars"]
     for cp in clean_pages:
         flags = []
@@ -127,14 +133,16 @@ def main(raw_url: str, use_cache: bool = True) -> int:
     # "as of" date can never disagree just because each function called date.today() separately
     # across a midnight boundary -- a real, if rare, way for the two outputs to silently drift.
     retrieved_at = date.today().isoformat()
-    run = extract_claims(validated.url, clean_pages, config, completer, cache=cache,
-                          retrieved_at=retrieved_at)
+    with timer.phase("extract"):
+        run = extract_claims(validated.url, clean_pages, config, completer, cache=cache,
+                              retrieved_at=retrieved_at)
 
     # B-71 (2026-10-06): focused second pass for fields the full run left not_found (industries,
     # certifications, named customers, partnerships, named alternatives, headquarters): the same
     # extraction on only the best-matching pages, same evidence gate. Off unless
     # config.yaml's focus_retry.enabled; any failure leaves the first-pass result unchanged.
-    focus_report = focus_retry(run, clean_pages, config, completer, retrieved_at, cache=cache)
+    with timer.phase("second_pass"):
+        focus_report = focus_retry(run, clean_pages, config, completer, retrieved_at, cache=cache)
     if focus_report.get("enabled") and focus_report.get("fields"):
         for e in focus_report["fields"]:
             print(f"  second pass: {e['field']} -> "
@@ -145,7 +153,8 @@ def main(raw_url: str, use_cache: bool = True) -> int:
     # B-62 (2026-10-06): optional Jev decision for pricing.sales_motion, off unless config.yaml's
     # classifier.provider is "jev". Runs after extraction (and after the run cache was written), so
     # extraction results and cache keys are unchanged either way.
-    classifier_report = apply_classifier(run, clean_pages, config, retrieved_at)
+    with timer.phase("classifier"):
+        classifier_report = apply_classifier(run, clean_pages, config, retrieved_at)
     if classifier_report.get("enabled"):
         for d in classifier_report["decisions"]:
             print(f"  classifier (jev): {d.get('choice', '-')} "
@@ -224,6 +233,10 @@ def main(raw_url: str, use_cache: bool = True) -> int:
     if profile_doc["limit_reached"]:
         print("  limit_reached: true (a hard crawl or token-budget cap was hit this run)")
 
+    timing = timer.as_dict()
+    print(f"  time: {timing['total_s']:.1f}s total ("
+          + ", ".join(f"{k[:-2]} {v:.1f}s" for k, v in timing.items() if k != "total_s") + ")")
+
     out_dir = ROOT / "data" / "runs"
     out_dir.mkdir(parents=True, exist_ok=True)
     slug = (validated.approved_domains[0] if validated.approved_domains else "site").replace(".", "_")
@@ -263,6 +276,7 @@ def main(raw_url: str, use_cache: bool = True) -> int:
                 "elapsed_s": run.usage.elapsed_s,
                 "estimated_cost_usd": cost_usd,
             } if run.usage else None,
+            "timing": timing,                   # B-74 (AC-10), see the PhaseTimer above
         }, indent=2),
         encoding="utf-8",
     )
