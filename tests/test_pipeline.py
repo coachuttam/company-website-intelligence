@@ -1125,3 +1125,25 @@ def test_b79_pages_dropped_by_the_input_budget_are_not_counted_as_checked():
 
     assert len(run.dropped_pages) == 2
     assert {c.coverage.pages_checked for c in run.claims} == {1}
+
+
+# --- B-81: delivery_model detail the quote does not mention is dropped, not the claim ----------
+
+def test_b81_pipeline_keeps_the_claim_and_drops_only_the_unsupported_detail():
+    page = CleanPage(url="https://example.com/", title="Example",
+                     text="Example Co makes AI-powered customer service software.")
+    claims = _all_not_found_claims()
+    claims[FIELDS.index("products.delivery_model")] = {
+        "field": "products.delivery_model", "status": "inferred", "value": "software (cloud-based)",
+        "confidence": 0.8, "source_url": "https://example.com/", "page_title": "Example",
+        "evidence": "AI-powered customer service software",
+        "notes": "The product is software sold as a service.", "coverage": None,
+    }
+    run = extract_claims("https://example.com/", [page], CONFIG, FakeCompleter({"claims": claims}),
+                          retrieved_at="2026-10-07")
+
+    claim = next(c for c in run.claims if c.field == "products.delivery_model")
+    assert claim.status == Status.inferred          # the claim is kept, not rejected
+    assert claim.value == "software"
+    assert run.rejected == []
+    assert any("B-81" in e and "cloud-based" in e for e in run.schema_errors)

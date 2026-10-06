@@ -155,7 +155,9 @@ from wi.crawl.fetch import content_hash
 # source_url.
 # 21 (2026-10-07, B-79): a not_found field's coverage now records the pages actually sent to the
 # model instead of the model's own account, so a stale cached claim would keep the model's numbers.
-EXTRACTION_LOGIC_VERSION = 21
+# 22 (2026-10-07, B-81): products.delivery_model drops any bracketed detail its evidence quote does
+# not mention, so a stale cached claim would keep the unsupported detail.
+EXTRACTION_LOGIC_VERSION = 22
 
 
 def run_fingerprint(site_url: str, pages: List[CleanPage], config: dict) -> str:

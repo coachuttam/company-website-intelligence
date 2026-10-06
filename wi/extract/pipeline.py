@@ -130,7 +130,7 @@ from wi.schemas.announcement import Announcement
 from wi.schemas.claim import Claim, Status
 from wi.validate.evidence import (
     check_claim, check_claim_items, check_conflicting_claim, evidence_home, quote_in_page,
-    realign_list_evidence,
+    realign_list_evidence, trim_delivery_model_details,
 )
 
 
@@ -534,6 +534,18 @@ def extract_claims(
                 claim = partial_claim if partial_claim is not None else _not_found_replacement(
                     field_name, pages_checked=len(llm_pages)
                 )
+            if (claim.status in (Status.extracted, Status.inferred)
+                    and claim.field == "products.delivery_model" and isinstance(claim.value, str)):
+                # B-81: keep the category, drop any bracketed detail the quote does not mention.
+                trimmed, dropped = trim_delivery_model_details(claim.value, claim.evidence)
+                if dropped:
+                    data = claim.model_dump()
+                    data["value"] = trimmed
+                    claim = Claim(**data)
+                    run.schema_errors.append(
+                        f"claim #{i} ({field_name}): B-81: dropped detail(s) not in the evidence "
+                        f"quote: {', '.join(dropped)} (value now {trimmed!r})"
+                    )
             if claim.status in (Status.extracted, Status.inferred):
                 # B-77: the evidence check may have found a quote on another crawled page (B-36
                 # fallback); cite the page the evidence is actually on. Acceptance is unchanged.

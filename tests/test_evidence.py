@@ -1178,3 +1178,34 @@ def test_b67_realign_still_uses_a_real_sentence_for_products_names():
     fixed, moved = realign_list_evidence(claim, page)
     assert moved == 1 and fixed.evidence[0] == "Meet Notion AI, your assistant inside every page."
 
+
+
+# --- B-81: delivery_model keeps only the bracketed detail its quote mentions --------------------
+
+def test_b81_trims_details_the_quote_never_mentions():
+    from wi.validate.evidence import trim_delivery_model_details
+    # Loom: the quote names a Chrome extension, desktop app and mobile app, but no web app.
+    value, dropped = trim_delivery_model_details(
+        "software (web app, desktop app, mobile app)",
+        "Record on any device using Loom's Chrome extension, desktop app or mobile app.")
+    assert value == "software (desktop app, mobile app)"
+    assert dropped == ["web app"]
+
+
+def test_b81_all_details_unsupported_leaves_the_bare_category():
+    from wi.validate.evidence import trim_delivery_model_details
+    # Freshworks: "cloud-based" is nowhere in the quote.
+    value, dropped = trim_delivery_model_details(
+        "software (cloud-based)", "AI-powered customer service software")
+    assert value == "software"
+    assert dropped == ["cloud-based"]
+
+
+def test_b81_supported_details_plurals_and_list_evidence_are_kept_unchanged():
+    from wi.validate.evidence import trim_delivery_model_details
+    assert trim_delivery_model_details(
+        "software (desktop app, mobile app)", ["Get the desktop apps", "and our mobile apps"]
+    ) == ("software (desktop app, mobile app)", [])
+    assert trim_delivery_model_details("software", "Anything at all") == ("software", [])
+    assert trim_delivery_model_details("physical (dealer network)", "Visit our dealer network") \
+        == ("physical (dealer network)", [])

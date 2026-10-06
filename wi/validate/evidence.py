@@ -942,3 +942,46 @@ def evidence_home(
         return None, (f"B-77: evidence spans more than one page ({len(on_cited)} quote(s) on the "
                       f"cited page, {len(off_cited)} elsewhere); citation left as it was")
     return homes[0], None
+
+
+_DELIVERY_DETAIL_RE = re.compile(r"^\s*([^()]+?)\s*\((.*)\)\s*$")
+
+
+def _word_in(word: str, words: set) -> bool:
+    """A singular/plural difference ("app" / "apps") is not a different word."""
+    return word in words or word + "s" in words or (word.endswith("s") and word[:-1] in words)
+
+
+def trim_delivery_model_details(
+    value: Optional[str], evidence: Union[str, List[str], None]
+) -> Tuple[Optional[str], List[str]]:
+    """B-81: products.delivery_model is "<category> (<detail>, <detail>)" (prompt rule 12), and
+    the details must come from the quote. They often do not: all 7 run files on disk with a
+    detail list had at least one detail the quote never mentions ("software (web app)" quoting a
+    security sentence; "software (cloud-based)" quoting "AI-powered customer service software").
+    The claim is inferred, so check_claim() only confirms the quote is real page text and never
+    compared the value with it.
+
+    Returns (value, dropped): the category kept as it is, followed only by the details whose
+    significant words all appear in the evidence; `dropped` lists the details removed. A value
+    with no bracketed detail is returned unchanged. The category word itself is not judged here:
+    the four-category choice is the field's whitelisted inference."""
+    if not value:
+        return value, []
+    match = _DELIVERY_DETAIL_RE.match(value)
+    if not match:
+        return value, []
+    category, inner = match.group(1).strip(), match.group(2)
+    details = [d.strip() for d in inner.split(",") if d.strip()]
+    quote = " ".join(evidence) if isinstance(evidence, list) else (evidence or "")
+    quote_words = set(_significant_words(quote))
+    kept, dropped = [], []
+    for detail in details:
+        words = _significant_words(detail)
+        if words and all(_word_in(w, quote_words) for w in words):
+            kept.append(detail)
+        else:
+            dropped.append(detail)
+    if not dropped:
+        return value, []
+    return (f"{category} ({', '.join(kept)})" if kept else category), dropped
