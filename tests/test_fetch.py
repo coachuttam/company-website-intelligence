@@ -731,3 +731,27 @@ def test_b69_english_variants_and_non_language_segments_are_kept():
     assert result.skipped_as_other_locale == []
     assert {"https://s.example/en-gb/pricing", "https://s.example/us/plans"} <= {p.url for p in result.pages}
 
+
+def test_crawl_site_flags_page_cap_reached_when_links_are_left_unfetched():
+    # B-73: found on razorpay.com, which stopped at exactly max_pages (40) with links still
+    # queued, yet limit_reached came out false because budget_exhausted only covers the time
+    # budget. Here the homepage links to /about, which max_pages=1 leaves unfetched.
+    config = {**BASE_CONFIG, "crawl": {**BASE_CONFIG["crawl"], "max_pages": 1}}
+    with make_client() as client:
+        result = crawl_site("https://example.com/", ["example.com"], config, client=client)
+
+    assert len(result.pages) == 1
+    assert result.page_cap_reached is True
+    assert result.budget_exhausted is False  # the time budget is a separate limit
+    assert crawl_diagnostics(result)["page_cap_reached"] is True
+
+
+def test_crawl_site_does_not_flag_page_cap_when_the_site_runs_out_of_pages_first():
+    # B-73: a site smaller than max_pages (25 here) fetches everything it discovers; nothing was
+    # cut off, so the flag stays false.
+    with make_client() as client:
+        result = crawl_site("https://example.com/", ["example.com"], BASE_CONFIG, client=client)
+
+    assert len(result.pages) < BASE_CONFIG["crawl"]["max_pages"]
+    assert result.page_cap_reached is False
+    assert crawl_diagnostics(result)["page_cap_reached"] is False

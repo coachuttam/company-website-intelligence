@@ -78,7 +78,8 @@ def main(raw_url: str, use_cache: bool = True) -> int:
              if crawl_result.skipped_as_other_locale else "")
           + (f", {unsupported_count} non-HTML (PDF/image/etc.) skipped" if unsupported_count else "")
           + (f", {js_rendered_count} JS-rendered" if js_rendered_count else "")
-          + (", budget exhausted" if crawl_result.budget_exhausted else ""))
+          + (", budget exhausted" if crawl_result.budget_exhausted else "")
+          + (", page cap reached" if crawl_result.page_cap_reached else ""))
 
     ok_pages = [p for p in crawl_result.pages if p.status == "ok" and p.html]
     if not ok_pages:
@@ -213,11 +214,12 @@ def main(raw_url: str, use_cache: bool = True) -> int:
     # Week 3 (2026-09-27): the canonical profile (OUT-01's second, product-facing output,
     # derived from the already-validated claims -- see wi/profile/builder.py) is written
     # alongside the ledger, not instead of it. `limit_reached` (B-19/CST-03) is true if either
-    # hard limit was actually hit: the crawl's own page/depth caps (crawl_result.budget_exhausted)
-    # or the LLM input-token budget guard (run.dropped_pages, already computed above).
+    # hard limit was actually hit: the crawl's time budget (crawl_result.budget_exhausted), its
+    # page cap (crawl_result.page_cap_reached, B-73) or the LLM input-token budget guard
+    # (run.dropped_pages, already computed above).
     profile_doc = build_profile(
         run, pages_scanned=len(clean_pages), retrieved_at=retrieved_at,
-        crawl_budget_exhausted=crawl_result.budget_exhausted,
+        crawl_budget_exhausted=crawl_result.budget_exhausted or crawl_result.page_cap_reached,
     )
     if profile_doc["limit_reached"]:
         print("  limit_reached: true (a hard crawl or token-budget cap was hit this run)")

@@ -124,7 +124,10 @@ class CrawlResult:
     skipped_as_duplicate: List[str] = field(default_factory=list)
     # Links not queued because they point at another-language copy of the site (B-60).
     skipped_as_other_locale: List[str] = field(default_factory=list)
-    budget_exhausted: bool = False
+    budget_exhausted: bool = False  # the total time budget (crawl.total_budget_s) ran out
+    # B-73: the crawl stopped at crawl.max_pages with URLs still queued, so some discovered pages
+    # were never fetched. Separate from budget_exhausted, which only ever meant the time budget.
+    page_cap_reached: bool = False
 
 
 def crawl_diagnostics(result: CrawlResult) -> dict:
@@ -157,6 +160,7 @@ def crawl_diagnostics(result: CrawlResult) -> dict:
         "skipped_as_duplicate": result.skipped_as_duplicate,
         "skipped_as_other_locale": result.skipped_as_other_locale,
         "budget_exhausted": result.budget_exhausted,
+        "page_cap_reached": result.page_cap_reached,  # B-73
     }
 
 
@@ -498,6 +502,11 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
                             queue,
                             (_priority_rank(link, keywords), depth + 1, next(counter), link),
                         )
+
+        # B-73: the loop above also exits when the page budget is full. If URLs are still queued
+        # at that point, the cap (not the site running out of pages) ended the crawl.
+        if queue and (len(result.pages) - failed_count) >= cfg["max_pages"]:
+            result.page_cap_reached = True
     finally:
         if owns_client:
             client.close()
