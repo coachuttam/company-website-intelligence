@@ -910,3 +910,33 @@ def test_b78_crawl_skips_login_links_before_fetching_them():
     assert not any("signin" in u or "login." in u for u in fetched)
     assert "https://example.com/signup" in [p.url for p in result.pages]
     assert crawl_diagnostics(result)["skipped_as_auth"] == result.skipped_as_auth
+
+
+def test_b80_redirect_ending_off_domain_or_on_a_disallowed_path_is_dropped_with_a_reason():
+    # B-80: robots.txt and the domain scope were only checked on the address asked for; a
+    # redirect could still land outside them.
+    pages = {
+        "https://example.com/robots.txt": (200, "User-agent: *\nDisallow: /private/\n"),
+        "https://example.com/": (200, '<html><body><a href="/go-out">Out</a> <a href="/go-private">Priv</a> '
+                                      '<a href="/go-about">About</a></body></html>'),
+        "https://elsewhere.org/landing": (200, '<html><body>Other company <a href="/more">More</a></body></html>'),
+        "https://example.com/private/area": (200, "<html><body>Private</body></html>"),
+        "https://example.com/about": (200, "<html><head><title>About</title></head><body>About us</body></html>"),
+    }
+    redirects = {
+        "https://example.com/go-out": "https://elsewhere.org/landing",
+        "https://example.com/go-private": "https://example.com/private/area",
+        "https://example.com/go-about": "https://example.com/about",
+    }
+    with _redirect_client(pages, redirects) as client:
+        result = crawl_site("https://example.com/", ["example.com"], BASE_CONFIG, client=client)
+
+    kept = [p.url for p in result.pages]
+    assert kept == ["https://example.com/", "https://example.com/about"]   # in-scope redirect kept
+    assert result.dropped_after_redirect == [
+        {"requested_url": "https://example.com/go-out", "final_url": "https://elsewhere.org/landing",
+         "reason": "final URL outside the approved domains"},
+        {"requested_url": "https://example.com/go-private", "final_url": "https://example.com/private/area",
+         "reason": "final URL disallowed by robots.txt"},
+    ]
+    assert crawl_diagnostics(result)["dropped_after_redirect"] == result.dropped_after_redirect

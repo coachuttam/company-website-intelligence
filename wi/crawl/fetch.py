@@ -133,6 +133,9 @@ class CrawlResult:
     skipped_as_other_locale: List[str] = field(default_factory=list)
     # Links not queued because they point at a login / sign-in / SSO page (B-78).
     skipped_as_auth: List[str] = field(default_factory=list)
+    # Pages fetched but dropped because the redirect chain ended outside the approved domains or
+    # on a robots.txt-disallowed path (B-80): {"requested_url", "final_url", "reason"}.
+    dropped_after_redirect: List[dict] = field(default_factory=list)
     budget_exhausted: bool = False  # the total time budget (crawl.total_budget_s) ran out
     # B-73: the crawl stopped at crawl.max_pages with URLs still queued, so some discovered pages
     # were never fetched. Separate from budget_exhausted, which only ever meant the time budget.
@@ -170,6 +173,7 @@ def crawl_diagnostics(result: CrawlResult) -> dict:
         "skipped_as_duplicate": result.skipped_as_duplicate,
         "skipped_as_other_locale": result.skipped_as_other_locale,
         "skipped_as_auth": result.skipped_as_auth,  # B-78
+        "dropped_after_redirect": result.dropped_after_redirect,  # B-80
         "budget_exhausted": result.budget_exhausted,
         "page_cap_reached": result.page_cap_reached,  # B-73
     }
@@ -510,6 +514,21 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
             last_request = time.monotonic()
 
             page = fetch_page(client, url, cfg["max_raw_bytes"], cfg["request_timeout_s"])
+
+            # B-80: the robots.txt and domain checks above ran on the address that was asked for.
+            # When a redirect ended somewhere else, check where it ended too; a page outside the
+            # approved domains or on a disallowed path is dropped (it does not use a page slot,
+            # and its links are not followed) and the reason is recorded.
+            if page.requested_url is not None:
+                reason = None
+                if not _same_domain(page.url, approved_domains):
+                    reason = "final URL outside the approved domains"
+                elif cfg["respect_robots"] and not robots.can_fetch(page.url):
+                    reason = "final URL disallowed by robots.txt"
+                if reason:
+                    result.dropped_after_redirect.append(
+                        {"requested_url": url, "final_url": page.url, "reason": reason})
+                    continue
 
             if (page.status == "ok" and js_renderer is not None
                     and needs_fallback(page.html, cfg.get("js_fallback_min_text_chars",
