@@ -90,7 +90,7 @@ from urllib.parse import urljoin, urlsplit, urlunsplit
 import httpx
 from bs4 import BeautifulSoup
 
-from wi.crawl.clean import is_priority_url
+from wi.crawl.clean import _title, is_priority_url, main_text
 from wi.crawl.js_fallback import DEFAULT_MIN_TEXT_CHARS, DEFAULT_TIMEOUT_S, needs_fallback
 
 USER_AGENT = "CompanyWebsiteIntelBot/0.1 (+https://samkhya.ai/bot)"
@@ -108,8 +108,8 @@ class FetchResult:
                                          # HTTP errors -- see fetch_page's docstring
     truncated: bool = False
     js_rendered: bool = False   # True when the JS fallback replaced the static fetch (B-16)
-    content_hash: Optional[str] = None  # sha256 of the fetched body, set on success (CLN-01,
-                                         # also reused by the run cache -- see wi/crawl/cache.py)
+    content_hash: Optional[str] = None  # sha256 of the fetched body, set on success; crawl_site
+                                         # replaces it with the cleaned-text hash (B-75) for dedup
 
 
 @dataclass
@@ -209,6 +209,20 @@ class RobotsGate:
     def crawl_delay(self, url: str) -> Optional[float]:
         delay = self._parser_for(url).crawl_delay(USER_AGENT)
         return float(delay) if delay else None
+
+
+def dedup_hash(url: str, html: str) -> str:
+    """B-75: the hash crawl_site() uses to spot a page it already has. Two fetches of one page
+    (a redirect target reached from several URLs, an http and an https link) carry different
+    nonces and tokens in their raw HTML, so a raw-HTML hash never matched them: on freshworks.com
+    nine URLs that redirect to four pages were all kept. The page's <title> plus its main cleaned
+    text (wi/crawl/clean.py main_text, before any cap) is the same for both. A page with no text
+    at all (an empty JS shell) falls back to the raw-HTML hash, so two different empty shells are
+    not merged into one."""
+    text = main_text(url, html)
+    if not text.strip():
+        return content_hash(html)
+    return content_hash(f"{_title(html) or ''}\n{text}")
 
 
 def _same_domain(url: str, approved_domains: List[str]) -> bool:
@@ -475,9 +489,12 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
                 # in place -- degrade gracefully, never lose a page just because the
                 # fallback itself failed.
 
-            # Two different normalised URLs can still serve byte-identical content (a mirror
-            # path, a print-friendly copy). The URL-level `seen` set above can't catch that --
-            # only the fetched content can. Keep the first copy, drop the rest.
+            # Two different normalised URLs can still serve the same page (a mirror path, a
+            # print-friendly copy, several URLs that redirect to one page). The URL-level `seen`
+            # set above can't catch that -- only the fetched content can. Keep the first copy,
+            # drop the rest. B-75: compared on cleaned text, not raw HTML (see dedup_hash).
+            if page.status == "ok" and page.html:
+                page.content_hash = dedup_hash(url, page.html)
             if page.status == "ok" and page.content_hash and page.content_hash in content_hashes:
                 result.skipped_as_duplicate.append(url)
             else:

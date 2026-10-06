@@ -755,3 +755,61 @@ def test_crawl_site_does_not_flag_page_cap_when_the_site_runs_out_of_pages_first
     assert len(result.pages) < BASE_CONFIG["crawl"]["max_pages"]
     assert result.page_cap_reached is False
     assert crawl_diagnostics(result)["page_cap_reached"] is False
+
+
+def _dup_client(pages):
+    def handler(request: httpx.Request) -> httpx.Response:
+        key = str(request.url)
+        if key in pages:
+            status, body = pages[key]
+            return httpx.Response(status, text=body)
+        return httpx.Response(404, text="not found")
+    return httpx.Client(transport=httpx.MockTransport(handler))
+
+
+def test_b75_same_page_with_different_raw_html_is_a_duplicate():
+    # B-75: found on freshworks.com, where /customers, http://.../customers and
+    # /360-customer-engagement all serve the same page but each response carries its own nonce,
+    # so the raw-HTML hash never matched and all three used a page slot.
+    def page(nonce):
+        return (f'<html><head><title>Customers</title><script nonce="{nonce}">x()</script></head>'
+                f'<body><p>Thousands of teams run their support on our platform every day.</p></body></html>')
+    pages = {
+        "https://example.com/": (200, '<html><body><a href="/customers">C</a> <a href="/stories">S</a></body></html>'),
+        "https://example.com/customers": (200, page("a1b2")),
+        "https://example.com/stories": (200, page("c3d4")),
+    }
+    with _dup_client(pages) as client:
+        result = crawl_site("https://example.com/", ["example.com"], BASE_CONFIG, client=client)
+
+    assert {p.url for p in result.pages} == {"https://example.com/", "https://example.com/customers"}
+    assert result.skipped_as_duplicate == ["https://example.com/stories"]
+
+
+def test_b75_same_body_under_a_different_title_is_kept():
+    # The title is page text the evidence check searches, so pages that differ only there are
+    # not merged.
+    body = "<body><p>Thousands of teams run their support on our platform every day.</p></body>"
+    pages = {
+        "https://example.com/": (200, '<html><body><a href="/a">A</a> <a href="/b">B</a></body></html>'),
+        "https://example.com/a": (200, f"<html><head><title>Plan A</title></head>{body}</html>"),
+        "https://example.com/b": (200, f"<html><head><title>Plan B</title></head>{body}</html>"),
+    }
+    with _dup_client(pages) as client:
+        result = crawl_site("https://example.com/", ["example.com"], BASE_CONFIG, client=client)
+
+    assert len(result.pages) == 3
+    assert result.skipped_as_duplicate == []
+
+
+def test_b75_two_different_empty_shells_are_not_merged():
+    # No text at all to compare: fall back to the raw-HTML hash, so two different JS shells stay.
+    pages = {
+        "https://example.com/": (200, '<html><body><a href="/a">A</a> <a href="/b">B</a></body></html>'),
+        "https://example.com/a": (200, '<html><body><div id="app-a"></div></body></html>'),
+        "https://example.com/b": (200, '<html><body><div id="app-b"></div></body></html>'),
+    }
+    with _dup_client(pages) as client:
+        result = crawl_site("https://example.com/", ["example.com"], BASE_CONFIG, client=client)
+
+    assert len(result.pages) == 3

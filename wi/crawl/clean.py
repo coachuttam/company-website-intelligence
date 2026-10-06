@@ -141,7 +141,10 @@ def _address_text(html: str) -> Optional[str]:
     return min(candidates, key=len)
 
 
-def clean_page(url: str, html: str, max_clean_chars: int) -> CleanPage:
+def main_text(url: str, html: str) -> str:
+    """The page's main text before any per-page cap or call-to-action block is applied: what
+    clean_page() starts from. Also what the crawl hashes to spot duplicate pages (B-75), since two
+    fetches of the same page differ in their raw HTML (nonces, tokens) but not in this text."""
     text = trafilatura.extract(html, url=url, include_tables=True, include_links=False) or ""
     if not text.strip():
         text = _fallback_text(html)
@@ -157,6 +160,11 @@ def clean_page(url: str, html: str, max_clean_chars: int) -> CleanPage:
     address = _address_text(html)
     if address and address not in text:
         text = text + "\n" + address
+    return text
+
+
+def clean_page(url: str, html: str, max_clean_chars: int) -> CleanPage:
+    text = main_text(url, html)
 
     truncated = len(text) > max_clean_chars
     if truncated:
