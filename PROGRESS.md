@@ -2089,7 +2089,7 @@ but cannot run Uttam's actual crawler/LLM pipeline against the real sites.
 
 ### Open items
 
-- [ ] Abhishek's approval for Jev (B-62, B-68)
+- [ ] Abhishek's approval for Jev (B-62, B-68): approved verbally in meeting 2026-10-06; written confirmation pending
 - [ ] 3-run `--no-cache` dev mean on the current build
 - [ ] Fresh held-out set (hand-labelled before any run, code tagged, run once)
 - [ ] Git tag (none exist yet, including `schema-v1`)
@@ -2103,3 +2103,5 @@ but cannot run Uttam's actual crawler/LLM pipeline against the real sites.
 - 2026-10-06: B-73 done (`limit_reached` now also true when the page cap is hit; verified on a Calendly replay). Dev baseline recorded at 68% with the semantic judge (51 of 75; 55% without it); the Calendly single-site report was scored without the judge.
 
 - 2026-10-06: B-74 done (per-stage timing in each run JSON; `eval/latency_report.py` gives p50/p95 latency, tokens and cost per site against the targets). 3-round `--no-cache` dev measurement, no failed runs or JSON retries: headline 68.0 / 70.7 / 68.0, mean 68.9% (with semantic judge); weakest fields `products.names` 20% (0-40, least stable), `delivery_model`, `segments`, `named_customers` 40%. Latency p50 93 s (target 60 s, NOT met), p95 146 s (target 180 s, met); mean cost $0.0063, p95 $0.0093 (targets met). The crawl is most of the time (42-127 s vs 11-40 s for the LLM step, at `rate_limit_rps: 1`). SimpleStores hits the 120 s `total_budget_s` after 14-16 pages; Loom spends 37 of 60 fetches on 404s. Reports in `eval/baseline_report_nc1-3.json` and `eval/latency_report_nc1-3.json` (commit 9c755ea).
+
+- 2026-10-07: Jev approved as classifier provider (B-62, B-68) by Abhishek, verbally in a meeting on 2026-10-06, as reported by Uttam; no written confirmation yet. Post-B-81 3-round `--no-cache` dev measurement (B-75 to B-81, `EXTRACTION_LOGIC_VERSION` 22, Jev on), 15 runs, no failures or JSON retries: headline 69.3 / 66.7 / 66.7, mean 67.6% vs 68.9% before (68.0 / 70.7 / 68.0), -1.3, within the +/-3 noise. Every per-field change is +/-7 points, i.e. one site in one round: `products.names` 20 -> 27, `public_plans` 87 -> 80, `free_trial` 60 -> 53, `revenue_model` 80 -> 73, `certifications` 67 -> 60; `delivery_model` (40) and `named_customers` (40) unchanged. B-81 trimmed "web app" from `delivery_model` in 11 of 15 runs without changing its score. Loom now crawls 25 pages, not 60 fetches: B-80 drops 15 links that redirect to atlassian.com. Latency p50 87 s (target 60 s, not met; was 93 s), p95 182 s (target 180 s, just missed; was 146 s) because of one 136 s LLM call on SimpleStores in round 2 (other rounds' p95 132-134 s). Mean cost $0.0062, p95 $0.0089 (targets met). Reports: `eval/baseline_report_b81_nc1-3.json`, `eval/latency_report_b81_nc1-3.json`.

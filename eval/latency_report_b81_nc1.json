@@ -1,0 +1,112 @@
+{
+  "sites": [
+    {
+      "site": "calendly_com",
+      "total_s": 87.719,
+      "phases": {
+        "crawl_s": 61.86,
+        "clean_s": 7.206,
+        "extract_s": 17.401,
+        "second_pass_s": 0.0,
+        "classifier_s": 0.626
+      },
+      "llm_tokens": 35714,
+      "jev_tokens": 3178,
+      "cost_usd": 0.006224,
+      "pages": 40
+    },
+    {
+      "site": "loom_com",
+      "total_s": 89.629,
+      "phases": {
+        "crawl_s": 68.7,
+        "clean_s": 2.514,
+        "extract_s": 17.197,
+        "second_pass_s": 0.0,
+        "classifier_s": 0.641
+      },
+      "llm_tokens": 30094,
+      "jev_tokens": 3289,
+      "cost_usd": 0.005465,
+      "pages": 25
+    },
+    {
+      "site": "typeform_com",
+      "total_s": 77.408,
+      "phases": {
+        "crawl_s": 51.312,
+        "clean_s": 6.738,
+        "extract_s": 18.136,
+        "second_pass_s": 0.0,
+        "classifier_s": 0.628
+      },
+      "llm_tokens": 43452,
+      "jev_tokens": 1901,
+      "cost_usd": 0.007314,
+      "pages": 45
+    },
+    {
+      "site": "notion_com",
+      "total_s": 74.126,
+      "phases": {
+        "crawl_s": 49.292,
+        "clean_s": 5.714,
+        "extract_s": 18.023,
+        "second_pass_s": 0.0,
+        "classifier_s": 0.481
+      },
+      "llm_tokens": 54194,
+      "jev_tokens": 4764,
+      "cost_usd": 0.009044,
+      "pages": 41
+    },
+    {
+      "site": "simplestores_in",
+      "total_s": 145.085,
+      "phases": {
+        "crawl_s": 125.995,
+        "clean_s": 0.952,
+        "extract_s": 17.115,
+        "second_pass_s": 0.0,
+        "classifier_s": 0.428
+      },
+      "llm_tokens": 15058,
+      "jev_tokens": 964,
+      "cost_usd": 0.003017,
+      "pages": 14
+    }
+  ],
+  "skipped": [],
+  "summary": {
+    "sites_measured": 5,
+    "latency_p50_s": 87.719,
+    "latency_p95_s": 133.9938,
+    "llm_tokens_p50": 35714.0,
+    "llm_tokens_p95": 52045.6,
+    "cost_mean_usd": 0.0062128,
+    "cost_p95_usd": 0.008698,
+    "sites_with_unknown_cost": 0
+  },
+  "targets": {
+    "latency_p50_s": {
+      "value": 87.719,
+      "target": 60,
+      "met": false
+    },
+    "latency_p95_s": {
+      "value": 133.9938,
+      "target": 180,
+      "met": true
+    },
+    "cost_mean_usd": {
+      "value": 0.0062128,
+      "target": 0.1,
+      "met": true
+    },
+    "cost_p95_usd": {
+      "value": 0.008698,
+      "target": 0.25,
+      "met": true
+    }
+  }
+}
