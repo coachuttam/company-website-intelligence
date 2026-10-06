@@ -2097,3 +2097,5 @@ but cannot run Uttam's actual crawler/LLM pipeline against the real sites.
 - [ ] Error review
 - [ ] Handoff docs
 - [ ] Fix tests/BEHAVIOURS.md row order (B-53 to B-65 are reversed) and the duplicate B-69 row
+
+- 2026-10-06 correction to the open item above: there is no duplicate B-69. The single B-69 row covers both the non-English locale skip in the crawl and the rule 13 `customers.segments` change (`prompt_version` 14 -> 15). The rest of that item (row order) is done in commit 4568493, which also removed a blank line that split the table.
