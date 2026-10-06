@@ -131,6 +131,8 @@ class CrawlResult:
     skipped_as_duplicate: List[str] = field(default_factory=list)
     # Links not queued because they point at another-language copy of the site (B-60).
     skipped_as_other_locale: List[str] = field(default_factory=list)
+    # Links not queued because they point at a login / sign-in / SSO page (B-78).
+    skipped_as_auth: List[str] = field(default_factory=list)
     budget_exhausted: bool = False  # the total time budget (crawl.total_budget_s) ran out
     # B-73: the crawl stopped at crawl.max_pages with URLs still queued, so some discovered pages
     # were never fetched. Separate from budget_exhausted, which only ever meant the time budget.
@@ -167,6 +169,7 @@ def crawl_diagnostics(result: CrawlResult) -> dict:
         "skipped_by_robots": result.skipped_by_robots,
         "skipped_as_duplicate": result.skipped_as_duplicate,
         "skipped_as_other_locale": result.skipped_as_other_locale,
+        "skipped_as_auth": result.skipped_as_auth,  # B-78
         "budget_exhausted": result.budget_exhausted,
         "page_cap_reached": result.page_cap_reached,  # B-73
     }
@@ -231,6 +234,24 @@ def dedup_hash(url: str, html: str) -> str:
     if not text.strip():
         return content_hash(html)
     return content_hash(f"{_title(html) or ''}\n{text}")
+
+
+# B-78: login / sign-in / single-sign-on addresses. A host whose first label is one of these
+# (login.example.com) or a path with one of these as a whole segment (/signin, /sso/start) is an
+# account screen, never company information. Whole segments only, so /authors or /logins-guide
+# are kept.
+_AUTH_HOST_LABELS = frozenset({"login", "signin", "sso", "auth"})
+_AUTH_PATH_SEGMENTS = frozenset({"login", "log-in", "signin", "sign-in", "sso", "auth", "oauth",
+                                 "logout", "log-out"})
+
+
+def is_auth_url(url: str) -> bool:
+    """True for a login / sign-in / SSO page (B-78), which the crawl skips before fetching."""
+    parts = urlsplit(url)
+    host = (parts.hostname or "").lower()
+    if host.split(".", 1)[0] in _AUTH_HOST_LABELS:
+        return True
+    return any(seg in _AUTH_PATH_SEGMENTS for seg in parts.path.lower().split("/") if seg)
 
 
 def _same_domain(url: str, approved_domains: List[str]) -> bool:
@@ -442,6 +463,7 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
     deadline = time.monotonic() + cfg["total_budget_s"]
     min_interval = 1.0 / cfg["rate_limit_rps"] if cfg.get("rate_limit_rps") else 0.0
     skip_other_locales = cfg.get("skip_other_locales", True)  # B-60, see module docstring
+    skip_auth_pages = cfg.get("skip_auth_pages", True)        # B-78, see is_auth_url
 
     owns_client = client is None
     client = client or httpx.Client(follow_redirects=True, max_redirects=cfg["max_redirects"])
@@ -535,6 +557,11 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
                         seen.add(link)
                         if skip_other_locales and english_locale_site and is_non_english_locale_url(link):
                             result.skipped_as_other_locale.append(link)
+                            continue
+                        if skip_auth_pages and is_auth_url(link):
+                            # B-78: found on freshworks.com, where login.freshworks.com/email-login
+                            # took a page slot and a Playwright render for a sign-in form.
+                            result.skipped_as_auth.append(link)
                             continue
                         heapq.heappush(
                             queue,

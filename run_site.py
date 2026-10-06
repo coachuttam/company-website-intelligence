@@ -81,6 +81,8 @@ def main(raw_url: str, use_cache: bool = True) -> int:
           f"{len(crawl_result.skipped_as_duplicate)} duplicate(s) dropped"
           + (f", {len(crawl_result.skipped_as_other_locale)} other-language link(s) skipped"
              if crawl_result.skipped_as_other_locale else "")
+          + (f", {len(crawl_result.skipped_as_auth)} login/sign-in link(s) skipped"
+             if crawl_result.skipped_as_auth else "")
           + (f", {unsupported_count} non-HTML (PDF/image/etc.) skipped" if unsupported_count else "")
           + (f", {js_rendered_count} JS-rendered" if js_rendered_count else "")
           + (", budget exhausted" if crawl_result.budget_exhausted else "")

@@ -871,3 +871,42 @@ def test_b76_redirect_to_a_page_already_kept_is_a_duplicate_and_links_resolve_fr
     assert "https://example.com/company/team/board" in urls
     assert crawl_diagnostics(result)["pages"][urls.index("https://example.com/company/team")]["requested_url"] \
         == "https://example.com/old-team"
+
+
+def test_b78_is_auth_url_matches_login_hosts_and_whole_path_segments_only():
+    from wi.crawl.fetch import is_auth_url
+    for url in ["https://login.example.com/email-login", "https://sso.example.com/",
+                "https://example.com/signin", "https://example.com/sign-in?next=/",
+                "https://example.com/sso/start", "https://example.com/app/login",
+                "https://example.com/LOGIN"]:
+        assert is_auth_url(url), url
+    for url in ["https://example.com/authors", "https://example.com/blog/logins-guide",
+                "https://example.com/signup", "https://example.com/pricing",
+                "https://www.example.com/customers"]:
+        assert not is_auth_url(url), url
+
+
+def test_b78_crawl_skips_login_links_before_fetching_them():
+    # Found on freshworks.com: login.freshworks.com/email-login took a page slot and a Playwright
+    # render. Signup links are kept: they are a sales cue, not an account screen.
+    fetched = []
+    pages = {
+        "https://example.com/": (200, '<html><body><a href="https://login.example.com/email-login">Log in</a> '
+                                      '<a href="/signin">Sign in</a> <a href="/signup">Sign up</a></body></html>'),
+        "https://example.com/signup": (200, "<html><body>Start for free</body></html>"),
+    }
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        fetched.append(str(request.url))
+        if str(request.url) in pages:
+            status, body = pages[str(request.url)]
+            return httpx.Response(status, text=body)
+        return httpx.Response(200, text="<html><body>Sign in to your account</body></html>")
+
+    with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+        result = crawl_site("https://example.com/", ["example.com"], BASE_CONFIG, client=client)
+
+    assert result.skipped_as_auth == ["https://login.example.com/email-login", "https://example.com/signin"]
+    assert not any("signin" in u or "login." in u for u in fetched)
+    assert "https://example.com/signup" in [p.url for p in result.pages]
+    assert crawl_diagnostics(result)["skipped_as_auth"] == result.skipped_as_auth
