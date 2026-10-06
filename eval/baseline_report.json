@@ -11,15 +11,15 @@
     "calendly": {
       "counts": {
         "correct": 2,
-        "incorrect": 3,
+        "incorrect": 2,
         "correct_abstention": 3,
         "miss": 2,
         "unsupported": 3,
         "conflicting": 0,
         "correct_partial": 2,
-        "correct_semantic": 0
+        "correct_semantic": 1
       },
-      "accuracy": 0.4666666666666667
+      "accuracy": 0.5333333333333333
     },
     "loom": {
       "counts": {
@@ -50,15 +50,15 @@
     "notion": {
       "counts": {
         "correct": 4,
-        "incorrect": 1,
+        "incorrect": 0,
         "correct_abstention": 5,
         "miss": 2,
         "unsupported": 0,
         "conflicting": 0,
         "correct_partial": 2,
-        "correct_semantic": 1
+        "correct_semantic": 2
       },
-      "accuracy": 0.8
+      "accuracy": 0.8666666666666667
     },
     "simplestores": {
       "counts": {
@@ -91,15 +91,15 @@
     "company_identity.description": {
       "counts": {
         "correct": 1,
-        "incorrect": 2,
+        "incorrect": 1,
         "correct_abstention": 0,
         "miss": 1,
         "unsupported": 0,
         "conflicting": 0,
         "correct_partial": 0,
-        "correct_semantic": 1
+        "correct_semantic": 2
       },
-      "accuracy": 0.4
+      "accuracy": 0.6
     },
     "company_identity.headquarters": {
       "counts": {
@@ -130,15 +130,15 @@
     "products.delivery_model": {
       "counts": {
         "correct": 0,
-        "incorrect": 2,
+        "incorrect": 1,
         "correct_abstention": 0,
         "miss": 0,
         "unsupported": 1,
         "conflicting": 0,
         "correct_partial": 0,
-        "correct_semantic": 2
+        "correct_semantic": 3
       },
-      "accuracy": 0.4
+      "accuracy": 0.6
     },
     "customers.segments": {
       "counts": {
@@ -274,26 +274,26 @@
   "overall": {
     "counts": {
       "correct": 14,
-      "incorrect": 9,
+      "incorrect": 7,
       "correct_abstention": 19,
       "miss": 13,
       "unsupported": 4,
       "conflicting": 0,
       "correct_partial": 8,
-      "correct_semantic": 8
+      "correct_semantic": 10
     },
     "total": 75,
-    "accuracy": 0.6533333333333333,
-    "extraction_accuracy": 0.8,
-    "inference_accuracy": 0.7142857142857143,
+    "accuracy": 0.68,
+    "extraction_accuracy": 0.84,
+    "inference_accuracy": 0.7857142857142857,
     "conflicting_count": 0
   },
   "semantic_judge": {
     "model": "gpt-4o-mini",
     "calls": 13,
     "prompt_tokens": 4218,
-    "completion_tokens": 836,
-    "estimated_cost_usd": 0.0011343,
-    "fields_upgraded_to_correct_semantic": 8
+    "completion_tokens": 848,
+    "estimated_cost_usd": 0.0011415000000000002,
+    "fields_upgraded_to_correct_semantic": 10
   }
 }

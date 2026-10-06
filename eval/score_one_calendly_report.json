@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28",
+  "generated_at": "2026-10-06",
   "calendly": [
     "calendly"
   ],
@@ -7,15 +7,15 @@
     "calendly": {
       "counts": {
         "correct": 2,
-        "incorrect": 5,
-        "correct_abstention": 4,
+        "incorrect": 3,
+        "correct_abstention": 3,
         "miss": 2,
-        "unsupported": 2,
+        "unsupported": 3,
         "conflicting": 0,
-        "correct_partial": 0,
+        "correct_partial": 2,
         "correct_semantic": 0
       },
-      "accuracy": 0.4
+      "accuracy": 0.4666666666666667
     }
   },
   "per_field": {
@@ -61,15 +61,15 @@
     "products.names": {
       "counts": {
         "correct": 0,
-        "incorrect": 1,
+        "incorrect": 0,
         "correct_abstention": 0,
         "miss": 0,
         "unsupported": 0,
         "conflicting": 0,
-        "correct_partial": 0,
+        "correct_partial": 1,
         "correct_semantic": 0
       },
-      "accuracy": 0.0
+      "accuracy": 1.0
     },
     "products.delivery_model": {
       "counts": {
@@ -87,9 +87,9 @@
     "customers.segments": {
       "counts": {
         "correct": 0,
-        "incorrect": 1,
+        "incorrect": 0,
         "correct_abstention": 0,
-        "miss": 0,
+        "miss": 1,
         "unsupported": 0,
         "conflicting": 0,
         "correct_partial": 0,
@@ -113,15 +113,15 @@
     "pricing.public_plans": {
       "counts": {
         "correct": 0,
-        "incorrect": 1,
+        "incorrect": 0,
         "correct_abstention": 0,
         "miss": 0,
         "unsupported": 0,
         "conflicting": 0,
-        "correct_partial": 0,
+        "correct_partial": 1,
         "correct_semantic": 0
       },
-      "accuracy": 0.0
+      "accuracy": 1.0
     },
     "pricing.sales_motion": {
       "counts": {
@@ -165,9 +165,9 @@
     "traction.named_customers": {
       "counts": {
         "correct": 0,
-        "incorrect": 0,
+        "incorrect": 1,
         "correct_abstention": 0,
-        "miss": 1,
+        "miss": 0,
         "unsupported": 0,
         "conflicting": 0,
         "correct_partial": 0,
@@ -179,14 +179,14 @@
       "counts": {
         "correct": 0,
         "incorrect": 0,
-        "correct_abstention": 1,
+        "correct_abstention": 0,
         "miss": 0,
-        "unsupported": 0,
+        "unsupported": 1,
         "conflicting": 0,
         "correct_partial": 0,
         "correct_semantic": 0
       },
-      "accuracy": 1.0
+      "accuracy": 0.0
     },
     "traction.partnerships": {
       "counts": {
@@ -218,17 +218,17 @@
   "overall": {
     "counts": {
       "correct": 2,
-      "incorrect": 5,
-      "correct_abstention": 4,
+      "incorrect": 3,
+      "correct_abstention": 3,
       "miss": 2,
-      "unsupported": 2,
+      "unsupported": 3,
       "conflicting": 0,
-      "correct_partial": 0,
+      "correct_partial": 2,
       "correct_semantic": 0
     },
     "total": 15,
-    "accuracy": 0.4,
-    "extraction_accuracy": 0.2,
+    "accuracy": 0.4666666666666667,
+    "extraction_accuracy": 0.6,
     "inference_accuracy": 0.5,
     "conflicting_count": 0
   },
