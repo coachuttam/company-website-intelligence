@@ -296,7 +296,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from typing import List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from rapidfuzz import fuzz
 
@@ -900,3 +900,45 @@ def check_conflicting_claim(claim: Claim, corpus_texts: List[str]) -> Tuple[bool
         if not value_supported_by_quote(value_item, quote, field=claim.field):
             return False, f"quote does not support the value {value_item!r}: {quote!r}"
     return True, "ok"
+
+
+def evidence_home(
+    claim: Claim, cited_key: str, page_texts: Dict[str, str]
+) -> Tuple[Optional[str], Optional[str]]:
+    """B-77: where an accepted claim's evidence actually is, when it is not on the cited page.
+
+    check_claim()'s B-36 fallback accepts a real quote that sits on another crawled page than the
+    one the claim cites, but the claim kept citing the wrong page: on freshworks.com,
+    products.names cited /products for "Freshsales Pricing & Plans", which is the title of
+    /crm/pricing. This returns (page key to cite instead, None) when every quote that is missing
+    from the cited page is found on one other page and the cited page holds none of the quotes, so
+    the whole claim can move there. When the quotes are split between the cited page and another
+    one, or spread over several other pages, one source_url cannot describe them; it returns
+    (None, note) and the citation is left as it was. (None, None) means nothing needs moving.
+
+    `page_texts` maps normalised URL -> page text (the same dict the evidence check searched);
+    `cited_key` is the claim's own normalised source_url. Acceptance is not changed here: this is
+    only called for a claim that already passed check_claim()."""
+    if claim.status not in (Status.extracted, Status.inferred) or not claim.evidence:
+        return None, None
+    page_text = page_texts.get(cited_key, "")
+    corpus = list(page_texts.values())
+    if isinstance(claim.evidence, list):
+        quotes = [q for q in claim.evidence if q]
+    else:
+        quotes = _evidence_fragments(claim.evidence, page_text, corpus)
+
+    on_cited = [q for q in quotes if quote_in_page(q, page_text)]
+    off_cited = [q for q in quotes if not quote_in_page(q, page_text)]
+    if not off_cited:
+        return None, None
+
+    homes = None
+    for q in off_cited:
+        found = [k for k, text in page_texts.items() if k != cited_key
+                 and quote_in_page(q, text, threshold=CORPUS_FALLBACK_FUZZY_THRESHOLD)]
+        homes = found if homes is None else [k for k in homes if k in found]
+    if on_cited or not homes:
+        return None, (f"B-77: evidence spans more than one page ({len(on_cited)} quote(s) on the "
+                      f"cited page, {len(off_cited)} elsewhere); citation left as it was")
+    return homes[0], None

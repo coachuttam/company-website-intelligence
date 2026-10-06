@@ -129,7 +129,8 @@ from wi.extract.prompt import build_messages
 from wi.schemas.announcement import Announcement
 from wi.schemas.claim import Claim, Status
 from wi.validate.evidence import (
-    check_claim, check_claim_items, check_conflicting_claim, quote_in_page, realign_list_evidence,
+    check_claim, check_claim_items, check_conflicting_claim, evidence_home, quote_in_page,
+    realign_list_evidence,
 )
 
 
@@ -444,6 +445,7 @@ def extract_claims(
     # claim's evidence check pass against a page trimmed out of this call, which is exactly
     # the kind of unverifiable claim EVD-02 exists to catch.
     text_by_url = _page_text_by_url(llm_pages)
+    page_by_key = {normalize_url(p.url): p for p in llm_pages}  # B-77: re-pointing citations
     slug = _slug(site_url)
     seen_fields = set()
 
@@ -518,6 +520,24 @@ def extract_claims(
                 claim = partial_claim if partial_claim is not None else _not_found_replacement(
                     field_name, pages_checked=len(llm_pages)
                 )
+            if claim.status in (Status.extracted, Status.inferred):
+                # B-77: the evidence check may have found a quote on another crawled page (B-36
+                # fallback); cite the page the evidence is actually on. Acceptance is unchanged.
+                cited_key = normalize_url(claim.source_url)
+                home, note = evidence_home(claim, cited_key, text_by_url)
+                if home is not None:
+                    target = page_by_key[home]
+                    data = claim.model_dump()
+                    data["source_url"] = target.url
+                    if claim.page_title is not None:
+                        data["page_title"] = target.title
+                    claim = Claim(**data)
+                    run.schema_errors.append(
+                        f"claim #{i} ({field_name}): B-77: evidence is on {target.url}, not on the "
+                        f"cited {cited_key}; source_url re-pointed"
+                    )
+                elif note:
+                    run.schema_errors.append(f"claim #{i} ({field_name}): {note}")
         elif claim.status == Status.conflicting:
             # B-06/EVD-05 (2026-09-27): conflicting claims used to reach here completely
             # unchecked -- see check_conflicting_claim()'s docstring. Its two values legitimately

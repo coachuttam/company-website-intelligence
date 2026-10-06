@@ -150,7 +150,10 @@ from wi.crawl.fetch import content_hash
 # were rejected for either reason now pass; a stale cached rejection would hide the fix.
 # 19 (2026-10-06, B-67): the B-63 evidence re-pairing no longer borrows another item's bare label as
 # a products.names quote, so a stale cached claim citing the wrong product would hide the fix.
-EXTRACTION_LOGIC_VERSION = 19
+# 20 (2026-10-07, B-77): a claim whose evidence the B-36 fallback found on another crawled page now
+# cites that page instead of the one the model named, so a stale cached claim would keep the wrong
+# source_url.
+EXTRACTION_LOGIC_VERSION = 20
 
 
 def run_fingerprint(site_url: str, pages: List[CleanPage], config: dict) -> str:

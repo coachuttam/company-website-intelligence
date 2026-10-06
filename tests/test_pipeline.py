@@ -1033,3 +1033,67 @@ def test_diagnostics_from_run_on_a_clean_run_is_all_empty():
     diag = diagnostics_from_run(run)
 
     assert diag == {"rejected": [], "schema_errors": [], "rejected_announcements": []}
+
+
+# --- B-77: cite the page the evidence is actually on ------------------------------------------
+
+def _named_customers_claim(value, evidence, source_url, page_title="Case studies"):
+    claims = _all_not_found_claims()
+    claims[FIELDS.index("traction.named_customers")] = {
+        "field": "traction.named_customers", "status": "extracted", "value": value,
+        "confidence": 0.9, "source_url": source_url, "page_title": page_title,
+        "evidence": evidence, "notes": None, "coverage": None,
+    }
+    return claims
+
+
+def test_b77_quote_found_only_on_another_page_is_re_pointed_to_that_page():
+    # The B-36 case above: the quote is real, but on the client's own page, not the index cited.
+    # Found on freshworks.com: "Freshsales Pricing & Plans" cited under /products is the title of
+    # /crm/pricing.
+    claims = _named_customers_claim("CloseKnit Health", "CloseKnit Health",
+                                    "https://example.com/case-studies")
+    run = extract_claims("https://example.com/", [INDEX_PAGE, SUBPAGE], CONFIG,
+                          FakeCompleter({"claims": claims}), retrieved_at="2026-10-07")
+
+    claim = next(c for c in run.claims if c.field == "traction.named_customers")
+    assert claim.status == Status.extracted                         # acceptance unchanged
+    assert claim.source_url == "https://example.com/case-studies/closeknit-health"
+    assert claim.page_title == "CloseKnit Health"
+    assert any("B-77" in e and "re-pointed" in e for e in run.schema_errors)
+
+
+def test_b77_quote_on_the_cited_page_keeps_its_citation():
+    claims = _named_customers_claim("Other Client Inc", "Other Client Inc.",
+                                    "https://example.com/case-studies")
+    run = extract_claims("https://example.com/", [INDEX_PAGE, SUBPAGE], CONFIG,
+                          FakeCompleter({"claims": claims}), retrieved_at="2026-10-07")
+
+    claim = next(c for c in run.claims if c.field == "traction.named_customers")
+    assert claim.source_url == "https://example.com/case-studies"
+    assert not any("B-77" in e for e in run.schema_errors)
+
+
+def test_b77_evidence_split_across_the_cited_page_and_another_is_left_and_noted():
+    # One quote on the cited index, one only on the client page: no single page holds both, so
+    # the citation stays and the split is recorded. The claim itself still passes as before.
+    claims = _named_customers_claim(["Other Client Inc", "CloseKnit Health"],
+                                    ["Other Client Inc.", "CloseKnit Health"],
+                                    "https://example.com/case-studies")
+    run = extract_claims("https://example.com/", [INDEX_PAGE, SUBPAGE], CONFIG,
+                          FakeCompleter({"claims": claims}), retrieved_at="2026-10-07")
+
+    claim = next(c for c in run.claims if c.field == "traction.named_customers")
+    assert claim.status == Status.extracted
+    assert claim.source_url == "https://example.com/case-studies"
+    assert any("B-77" in e and "more than one page" in e for e in run.schema_errors)
+
+
+def test_b77_a_cited_url_that_was_never_crawled_moves_to_the_page_holding_the_quote():
+    claims = _named_customers_claim("CloseKnit Health", "CloseKnit Health",
+                                    "https://example.com/customers/closeknit")  # never crawled
+    run = extract_claims("https://example.com/", [INDEX_PAGE, SUBPAGE], CONFIG,
+                          FakeCompleter({"claims": claims}), retrieved_at="2026-10-07")
+
+    claim = next(c for c in run.claims if c.field == "traction.named_customers")
+    assert claim.source_url == "https://example.com/case-studies/closeknit-health"
