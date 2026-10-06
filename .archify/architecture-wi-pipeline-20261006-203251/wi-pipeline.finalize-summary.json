@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "/Users/uttam/company_website_intelligence/.archify/architecture-wi-pipeline-20261006-203251/candidate.json",
+    "sha256": "bf24728c389181c6ea1fe5a798c25f6e8bfe288ece3a0c7926c3c2389f934886",
+    "bytes": 15186
+  },
+  "artifact": {
+    "path": "/Users/uttam/company_website_intelligence/.archify/architecture-wi-pipeline-20261006-203251/wi-pipeline.html",
+    "sha256": "0fc44d1a82dab4cbc12238e39e1eeb6e759cb54841c2b45a122fe4e1428aacf8",
+    "bytes": 789359
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/Users/uttam/company_website_intelligence/.archify/architecture-wi-pipeline-20261006-203251/wi-pipeline.finalize.json",
+    "summaryReceipt": "/Users/uttam/company_website_intelligence/.archify/architecture-wi-pipeline-20261006-203251/wi-pipeline.finalize-summary.json",
+    "browserCheckReceipt": "/Users/uttam/company_website_intelligence/.archify/architecture-wi-pipeline-20261006-203251/wi-pipeline.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.0.1",
+    "availableVersion": "3.0.1",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-06T15:03:33.773Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 15949
+}
