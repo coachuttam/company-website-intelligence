@@ -1,4 +1,4 @@
-# Error review: post-B-81 dev measurement
+# DRAFT: Error review, post-B-81 dev measurement
 
 Dev set (Calendly, Loom, Typeform, Notion, SimpleStores), 3 rounds, `--no-cache`, scored with
 `eval/baseline.py --semantic-judge`, code at `EXTRACTION_LOGIC_VERSION` 22 with Jev on.

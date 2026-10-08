@@ -1,4 +1,4 @@
-# Known limitations (draft for the handoff docs)
+# DRAFT: Known limitations (for the handoff docs)
 
 Status as of 2026-10-07, code at `EXTRACTION_LOGIC_VERSION` 22, `prompt_version` 16, Jev on.
 
