@@ -327,3 +327,26 @@ def test_announcements_also_appear_in_the_top_level_audit_ledger():
 
     assert len(result["announcements"]) == 1
     assert result["announcements"][0]["text"] == "$5M Series A funding round"
+
+
+# --- B-83: crawl status is profile metadata, not a field ----------------------------------------
+
+def test_b83_crawl_status_is_metadata_on_the_document_and_coverage_strip():
+    from wi.extract.pipeline import ExtractionRun
+    from wi.extract.fields import FIELDS
+    run = ExtractionRun(site_url="https://example.com/")
+    run.claims = [_not_found(f, pages_checked=0) for f in FIELDS]
+    doc = build_profile(run, pages_scanned=0, retrieved_at="2026-10-08",
+                        crawl_status="unreachable", crawl_error_code="SITE_UNREACHABLE",
+                        crawl_status_reason="start URL could not be fetched after 3 attempt(s)")
+    assert doc["crawl_status"] == "unreachable"
+    assert doc["crawl_error_code"] == "SITE_UNREACHABLE"
+    assert doc["profile"]["coverage"]["crawl_status"] == "unreachable"
+    assert "crawl_status" not in {f.split(".")[-1] for f in FIELDS}
+
+
+def test_b83_a_normal_run_reports_crawl_status_ok():
+    from wi.extract.pipeline import ExtractionRun
+    run = ExtractionRun(site_url="https://example.com/")
+    doc = build_profile(run, pages_scanned=3, retrieved_at="2026-10-08")
+    assert (doc["crawl_status"], doc["crawl_error_code"], doc["crawl_status_reason"]) == ("ok", None, None)

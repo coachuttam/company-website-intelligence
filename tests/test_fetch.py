@@ -940,3 +940,102 @@ def test_b80_redirect_ending_off_domain_or_on_a_disallowed_path_is_dropped_with_
          "reason": "final URL disallowed by robots.txt"},
     ]
     assert crawl_diagnostics(result)["dropped_after_redirect"] == result.dropped_after_redirect
+
+
+# --- B-83: unreachable site (PRD Section 9 / INP-03) -------------------------------------------
+
+def _flaky_client(responses, calls):
+    """`responses` maps a URL to a list of outcomes served in order (the last one repeats): an int
+    is an HTTP status, an exception class is raised as a network failure."""
+    def handler(request: httpx.Request) -> httpx.Response:
+        url = str(request.url)
+        calls.append(url)
+        if url.endswith("/robots.txt"):
+            return httpx.Response(404)
+        seq = responses.get(url, [404])
+        outcome = seq.pop(0) if len(seq) > 1 else seq[0]
+        if isinstance(outcome, type) and issubclass(outcome, Exception):
+            raise outcome("simulated", request=request)
+        return httpx.Response(outcome, text="<html><body>Hello there, a real page.</body></html>")
+    return httpx.Client(transport=httpx.MockTransport(handler))
+
+
+def _record_sleeps(monkeypatch):
+    slept = []
+    monkeypatch.setattr("wi.crawl.fetch.time.sleep", lambda s: slept.append(s))
+    return slept
+
+
+def test_b83_start_url_recovers_after_retries(monkeypatch):
+    slept, calls = _record_sleeps(monkeypatch), []
+    responses = {"https://example.com/": [httpx.ConnectError, 503, 200]}
+    with _flaky_client(responses, calls) as client:
+        result = crawl_site("https://example.com/", ["example.com"], BASE_CONFIG, client=client)
+
+    assert result.crawl_status == "ok"
+    assert result.start_attempts == 3
+    assert slept == [1.0, 2.0]
+    assert [p.url for p in result.pages] == ["https://example.com/"]
+
+
+def test_b83_start_url_that_never_answers_is_site_unreachable(monkeypatch):
+    slept, calls = _record_sleeps(monkeypatch), []
+    responses = {"https://example.com/": [httpx.ConnectTimeout]}
+    with _flaky_client(responses, calls) as client:
+        result = crawl_site("https://example.com/", ["example.com"], BASE_CONFIG, client=client)
+
+    assert result.crawl_status == "unreachable"
+    assert result.crawl_error_code == "SITE_UNREACHABLE"
+    assert result.start_attempts == 3                     # 1 try + 2 bounded retries
+    assert slept == [1.0, 2.0]
+    assert "after 3 attempt(s)" in result.crawl_status_reason
+    diag = crawl_diagnostics(result)
+    assert (diag["crawl_status"], diag["crawl_error_code"]) == ("unreachable", "SITE_UNREACHABLE")
+
+
+def test_b83_5xx_start_url_is_retried_then_unreachable(monkeypatch):
+    slept, calls = _record_sleeps(monkeypatch), []
+    with _flaky_client({"https://example.com/": [503]}, calls) as client:
+        result = crawl_site("https://example.com/", ["example.com"], BASE_CONFIG, client=client)
+    assert result.crawl_status == "unreachable" and result.start_attempts == 3
+    assert "HTTP 503" in result.crawl_status_reason
+
+
+def test_b83_4xx_start_url_is_never_retried(monkeypatch):
+    slept, calls = _record_sleeps(monkeypatch), []
+    with _flaky_client({"https://example.com/": [404]}, calls) as client:
+        result = crawl_site("https://example.com/", ["example.com"], BASE_CONFIG, client=client)
+    assert result.start_attempts == 1 and slept == []
+    assert result.crawl_status == "unreachable"
+    assert calls.count("https://example.com/") == 1
+
+
+def test_b83_retries_stop_at_the_total_time_budget(monkeypatch):
+    slept, calls = _record_sleeps(monkeypatch), []
+    config = {**BASE_CONFIG, "crawl": {**BASE_CONFIG["crawl"], "total_budget_s": 0.5}}
+    with _flaky_client({"https://example.com/": [httpx.ConnectError]}, calls) as client:
+        result = crawl_site("https://example.com/", ["example.com"], config, client=client)
+    assert result.start_attempts == 1 and slept == []     # a 1 s wait would pass the 0.5 s budget
+    assert result.crawl_status == "unreachable"
+
+
+def test_b83_pages_after_the_start_page_are_never_retried(monkeypatch):
+    slept, calls = _record_sleeps(monkeypatch), []
+    responses = {
+        "https://example.com/": [200],
+        "https://example.com/about": [503],
+    }
+
+    def handler(request):
+        url = str(request.url)
+        calls.append(url)
+        if url.endswith("/robots.txt"):
+            return httpx.Response(404)
+        if url == "https://example.com/":
+            return httpx.Response(200, text='<html><body><a href="/about">About</a> text</body></html>')
+        return httpx.Response(503)
+
+    with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+        result = crawl_site("https://example.com/", ["example.com"], BASE_CONFIG, client=client)
+    assert calls.count("https://example.com/about") == 1
+    assert result.crawl_status == "ok" and slept == []

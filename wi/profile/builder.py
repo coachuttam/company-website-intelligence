@@ -140,6 +140,9 @@ def build_profile(
     retrieved_at: Optional[str] = None,
     schema_version: str = "schema-v1",
     crawl_budget_exhausted: bool = False,
+    crawl_status: str = "ok",
+    crawl_error_code: Optional[str] = None,
+    crawl_status_reason: Optional[str] = None,
 ) -> dict:
     """Builds the PRD Section 5 "Output 2" document: {"profile": {...}, "claims": [...]}, plus
     `schema_version` (OUT-02: "stamp the schema version") and `limit_reached` (CST-03 / B-19).
@@ -189,6 +192,11 @@ def build_profile(
 
     profile = dict(groups)
     profile["coverage"] = _coverage(claims_by_field, pages_scanned, len(run.rejected), retrieved_at)
+    # B-83 (PRD Section 9 / INP-03): the site-level crawl outcome is metadata on the coverage
+    # strip and on the document, never one of the 15 fields. "ok" for a normal run.
+    crawl_meta = {"crawl_status": crawl_status, "crawl_error_code": crawl_error_code,
+                  "crawl_status_reason": crawl_status_reason}
+    profile["coverage"].update(crawl_meta)
     profile["gaps_conflicts"] = gaps_conflicts
     # B-07/OUT-04: always present (an empty list when none) -- see module docstring.
     profile.setdefault("evidence_traction", {})["announcements"] = [
@@ -201,4 +209,5 @@ def build_profile(
         "announcements": [a.model_dump(mode="json") for a in run.announcements],
         "schema_version": schema_version,
         "limit_reached": bool(run.dropped_pages) or crawl_budget_exhausted,
+        **crawl_meta,
     }

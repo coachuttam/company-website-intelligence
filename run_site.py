@@ -116,56 +116,71 @@ def main(raw_url: str, use_cache: bool = True) -> int:
         flag = f" ({', '.join(flags)})" if flags else ""
         print(f"  cleaned {cp.url}: {len(cp.text)} chars{flag}")
 
-    api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key:
-        print("OPENAI_API_KEY is not set (check your .env). Cannot call the LLM.")
-        return 1
+    # B-83 (PRD Section 9 / INP-03): an unreachable site gets an honest, empty result -- every
+    # field not_found with 0 pages checked, no model call, no API key needed -- and the JSON below
+    # is still written with crawl_status and its reason, so the failure is recorded, not lost.
+    if crawl_result.crawl_status != "ok":
+        print(f"  crawl_status: {crawl_result.crawl_status} ({crawl_result.crawl_error_code}): "
+              f"{crawl_result.crawl_status_reason}")
+        print("  nothing extracted: every field is not_found, no model call made.")
+        retrieved_at = date.today().isoformat()
+        run = extract_claims(validated.url, [], config, completer=None, retrieved_at=retrieved_at)
+        run.cache_status = "not_run"
+        skipped = f"crawl_status {crawl_result.crawl_status}; no model call"
+        focus_report = {"enabled": False, "skipped": skipped}
+        classifier_report = {"provider": (config.get("classifier") or {}).get("provider", "none"),
+                             "enabled": False, "skipped": skipped}
+    else:
+        api_key = os.environ.get("OPENAI_API_KEY")
+        if not api_key:
+            print("OPENAI_API_KEY is not set (check your .env). Cannot call the LLM.")
+            return 1
 
-    print(f"Extracting claims with {config['llm']['small_model']} ...")
-    # temperature added 2026-09-24 to cut down run-to-run variance -- see wi/extract/llm.py's
-    # OpenAIChatCompleter docstring. Falls back to 0.1 if an older config.yaml doesn't have
-    # this key yet, so this isn't a breaking change for configs written before today.
-    temperature = config.get("llm", {}).get("temperature", 0.1)
-    completer = OpenAIChatCompleter(api_key=api_key, temperature=temperature)
-    cache_cfg = config.get("cache", {})
-    cache = RunCache(cache_dir=ROOT / "data" / "runs" / "cache",
-                      max_age_days=cache_cfg.get("max_age_days", 30)) if use_cache else None
-    if not use_cache:
-        print("  (--no-cache: forcing a fresh LLM call, ignoring and not writing any cached result)")
-    # Computed once and passed to both extract_claims() and build_profile() below (Week 3,
-    # 2026-09-27) so the ledger's per-claim retrieved_at and the profile's coverage-strip
-    # "as of" date can never disagree just because each function called date.today() separately
-    # across a midnight boundary -- a real, if rare, way for the two outputs to silently drift.
-    retrieved_at = date.today().isoformat()
-    with timer.phase("extract"):
-        run = extract_claims(validated.url, clean_pages, config, completer, cache=cache,
-                              retrieved_at=retrieved_at)
+        print(f"Extracting claims with {config['llm']['small_model']} ...")
+        # temperature added 2026-09-24 to cut down run-to-run variance -- see wi/extract/llm.py's
+        # OpenAIChatCompleter docstring. Falls back to 0.1 if an older config.yaml doesn't have
+        # this key yet, so this isn't a breaking change for configs written before today.
+        temperature = config.get("llm", {}).get("temperature", 0.1)
+        completer = OpenAIChatCompleter(api_key=api_key, temperature=temperature)
+        cache_cfg = config.get("cache", {})
+        cache = RunCache(cache_dir=ROOT / "data" / "runs" / "cache",
+                          max_age_days=cache_cfg.get("max_age_days", 30)) if use_cache else None
+        if not use_cache:
+            print("  (--no-cache: forcing a fresh LLM call, ignoring and not writing any cached result)")
+        # Computed once and passed to both extract_claims() and build_profile() below (Week 3,
+        # 2026-09-27) so the ledger's per-claim retrieved_at and the profile's coverage-strip
+        # "as of" date can never disagree just because each function called date.today() separately
+        # across a midnight boundary -- a real, if rare, way for the two outputs to silently drift.
+        retrieved_at = date.today().isoformat()
+        with timer.phase("extract"):
+            run = extract_claims(validated.url, clean_pages, config, completer, cache=cache,
+                                  retrieved_at=retrieved_at)
 
-    # B-71 (2026-10-06): focused second pass for fields the full run left not_found (industries,
-    # certifications, named customers, partnerships, named alternatives, headquarters): the same
-    # extraction on only the best-matching pages, same evidence gate. Off unless
-    # config.yaml's focus_retry.enabled; any failure leaves the first-pass result unchanged.
-    with timer.phase("second_pass"):
-        focus_report = focus_retry(run, clean_pages, config, completer, retrieved_at, cache=cache)
-    if focus_report.get("enabled") and focus_report.get("fields"):
-        for e in focus_report["fields"]:
-            print(f"  second pass: {e['field']} -> "
-                  f"{'ADOPTED' if e.get('adopted') else 'not adopted'}: {e.get('reason')}")
-        if focus_report.get("error"):
-            print(f"  second pass error (first-pass result kept): {focus_report['error']}")
+        # B-71 (2026-10-06): focused second pass for fields the full run left not_found (industries,
+        # certifications, named customers, partnerships, named alternatives, headquarters): the same
+        # extraction on only the best-matching pages, same evidence gate. Off unless
+        # config.yaml's focus_retry.enabled; any failure leaves the first-pass result unchanged.
+        with timer.phase("second_pass"):
+            focus_report = focus_retry(run, clean_pages, config, completer, retrieved_at, cache=cache)
+        if focus_report.get("enabled") and focus_report.get("fields"):
+            for e in focus_report["fields"]:
+                print(f"  second pass: {e['field']} -> "
+                      f"{'ADOPTED' if e.get('adopted') else 'not adopted'}: {e.get('reason')}")
+            if focus_report.get("error"):
+                print(f"  second pass error (first-pass result kept): {focus_report['error']}")
 
-    # B-62 (2026-10-06): optional Jev decision for pricing.sales_motion, off unless config.yaml's
-    # classifier.provider is "jev". Runs after extraction (and after the run cache was written), so
-    # extraction results and cache keys are unchanged either way.
-    with timer.phase("classifier"):
-        classifier_report = apply_classifier(run, clean_pages, config, retrieved_at)
-    if classifier_report.get("enabled"):
-        for d in classifier_report["decisions"]:
-            print(f"  classifier (jev): {d.get('choice', '-')} "
-                  f"p={d.get('probability', '-')} -> "
-                  f"{'APPLIED' if d.get('applied') else 'not applied'}: {d.get('reason')}")
-        if classifier_report.get("error"):
-            print(f"  classifier error (extraction result kept): {classifier_report['error']}")
+        # B-62 (2026-10-06): optional Jev decision for pricing.sales_motion, off unless config.yaml's
+        # classifier.provider is "jev". Runs after extraction (and after the run cache was written), so
+        # extraction results and cache keys are unchanged either way.
+        with timer.phase("classifier"):
+            classifier_report = apply_classifier(run, clean_pages, config, retrieved_at)
+        if classifier_report.get("enabled"):
+            for d in classifier_report["decisions"]:
+                print(f"  classifier (jev): {d.get('choice', '-')} "
+                      f"p={d.get('probability', '-')} -> "
+                      f"{'APPLIED' if d.get('applied') else 'not applied'}: {d.get('reason')}")
+            if classifier_report.get("error"):
+                print(f"  classifier error (extraction result kept): {classifier_report['error']}")
 
     print(f"  cache: {run.cache_status}")
     if run.dropped_pages:
@@ -233,6 +248,8 @@ def main(raw_url: str, use_cache: bool = True) -> int:
     profile_doc = build_profile(
         run, pages_scanned=len(clean_pages), retrieved_at=retrieved_at,
         crawl_budget_exhausted=crawl_result.budget_exhausted or crawl_result.page_cap_reached,
+        crawl_status=crawl_result.crawl_status, crawl_error_code=crawl_result.crawl_error_code,
+        crawl_status_reason=crawl_result.crawl_status_reason,
     )
     if profile_doc["limit_reached"]:
         print("  limit_reached: true (a hard crawl or token-budget cap was hit this run)")
@@ -259,6 +276,10 @@ def main(raw_url: str, use_cache: bool = True) -> int:
             "profile": profile_doc["profile"],
             "schema_version": profile_doc["schema_version"],
             "limit_reached": profile_doc["limit_reached"],
+            # B-83 (PRD Section 9 / INP-03): "ok", or "unreachable" with SITE_UNREACHABLE.
+            "crawl_status": profile_doc["crawl_status"],
+            "crawl_error_code": profile_doc["crawl_error_code"],
+            "crawl_status_reason": profile_doc["crawl_status_reason"],
             # Added 2026-09-27 (crawl-coverage-misses investigation, see PROGRESS.md): this was
             # all already computed above and already printed to the console once, but never
             # written here -- meaning it was lost the moment the terminal scrolled past it. Purely

@@ -140,6 +140,13 @@ class CrawlResult:
     # B-73: the crawl stopped at crawl.max_pages with URLs still queued, so some discovered pages
     # were never fetched. Separate from budget_exhausted, which only ever meant the time budget.
     page_cap_reached: bool = False
+    # B-83 (PRD Section 9 / INP-03): the site-level outcome, decided by the start page alone.
+    # "ok", or "unreachable" with crawl_error_code "SITE_UNREACHABLE" when the start URL could not
+    # be fetched even after the bounded retries below. crawl_status_reason says why in plain words.
+    crawl_status: str = "ok"
+    crawl_error_code: Optional[str] = None
+    crawl_status_reason: Optional[str] = None
+    start_attempts: int = 0     # fetches of the start URL, including retries
 
 
 def crawl_diagnostics(result: CrawlResult) -> dict:
@@ -176,6 +183,10 @@ def crawl_diagnostics(result: CrawlResult) -> dict:
         "dropped_after_redirect": result.dropped_after_redirect,  # B-80
         "budget_exhausted": result.budget_exhausted,
         "page_cap_reached": result.page_cap_reached,  # B-73
+        "crawl_status": result.crawl_status,          # B-83
+        "crawl_error_code": result.crawl_error_code,
+        "crawl_status_reason": result.crawl_status_reason,
+        "start_attempts": result.start_attempts,
     }
 
 
@@ -441,6 +452,19 @@ def fetch_page(client: httpx.Client, url: str, max_raw_bytes: int, timeout_s: fl
         return FetchResult(url=url, status="error", elapsed_s=time.monotonic() - start, error=str(e))
 
 
+# B-83: waits before the 2nd and 3rd fetch of the start URL. Only the start URL is retried, only
+# for a network error, a timeout or a 5xx (never a 4xx), and only while the total time budget lasts.
+START_RETRY_DELAYS_S = (1.0, 2.0)
+
+
+def _is_retryable(page: FetchResult) -> bool:
+    """A failure worth one more try: no HTTP answer at all (DNS, connection, timeout) or a 5xx.
+    A redirect-limit or unsupported-content failure has its own error_code and is final."""
+    if page.status != "error" or page.error_code is not None:
+        return False
+    return page.status_code is None or page.status_code >= 500
+
+
 def _priority_rank(url: str, keywords: List[str]) -> int:
     """0 if this URL should be fetched ahead of same-depth non-matching pages, else 1. See
     the module docstring for why (Week 2 page-discovery / CRL-01)."""
@@ -514,6 +538,28 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
             last_request = time.monotonic()
 
             page = fetch_page(client, url, cfg["max_raw_bytes"], cfg["request_timeout_s"])
+
+            if depth == 0:
+                # B-83: the start page decides whether the site is reachable at all. Retry it a
+                # bounded number of times (START_RETRY_DELAYS_S) for network errors, timeouts and
+                # 5xx, never past the total time budget; if it still fails, report the site as
+                # unreachable and stop -- there are no links to follow and nothing to extract.
+                result.start_attempts = 1
+                for delay in START_RETRY_DELAYS_S:
+                    if not _is_retryable(page) or time.monotonic() + delay >= deadline:
+                        break
+                    time.sleep(delay)
+                    page = fetch_page(client, url, cfg["max_raw_bytes"], cfg["request_timeout_s"])
+                    result.start_attempts += 1
+                if page.status != "ok":
+                    result.pages.append(page)
+                    result.crawl_status = "unreachable"
+                    result.crawl_error_code = "SITE_UNREACHABLE"
+                    result.crawl_status_reason = (
+                        f"start URL {url} could not be fetched after {result.start_attempts} "
+                        f"attempt(s): {page.error_code or page.error}"
+                    )
+                    break
 
             # B-80: the robots.txt and domain checks above ran on the address that was asked for.
             # When a redirect ended somewhere else, check where it ended too; a page outside the
