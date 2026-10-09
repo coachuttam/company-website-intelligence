@@ -9,9 +9,16 @@ Status: Done
 
 # Final PRD — Company Website Intelligence Prototype
 
-> **Version:** 1.0 · **Owner:** Uttam · **Approver:** Abhishek · **Date:** 21 September 2026 · **Delivery window:** 4 weeks
+> **Version:** 1.1 · **Owner:** Uttam · **Approver:** Abhishek · **Date:** 21 September 2026 · **Delivery window:** 4 weeks · v1.0 approved 21 September 2026; v1.1 additions (held-out set v2) pending re-approval
 Founder scope decisions are treated as **confirmed**. Only the parameters in Section 13 and the decisions in Section 14 are proposals for approval.
 > 
+
+**Revision history**
+
+| Version | Date | Change |
+| --- | --- | --- |
+| v1.0 | 21 September 2026 | Approved version. |
+| v1.1 | 9 October 2026 | Added §12.1 Held-out evaluation set v2 (8 sites) and a note under Appendix A. AC-02 and all thresholds unchanged. |
 
 ---
 
@@ -362,6 +369,35 @@ Built **only after the Week 3 website-profile gate passes**, as a bounded spike 
 | Interface | Page renders offline from JSON with the LLM blocked |
 | Evaluation | Field-level accuracy, evidence-support rate and abstention quality on the dev and held-out sets |
 
+### 12.1 Held-out evaluation set v2
+
+*Added in v1.1. Status: Labels pending; not yet run.*
+
+**Purpose:** a fresh held-out set. The original 10-site held-out set was contaminated: fixes B-39 to B-54 were made using its failures, and B-51 relabelled `customers.segments` in all 10 of its label files. It is therefore not used for the headline AC-02 number.
+
+**Final sites (8):** miro.com, leadsquared.com, cashfree.com, cohere.com, framer.com, chargebee.com, mercury.com, elevenlabs.io.
+
+**Selection:** user-supplied on 2026-10-09, before any pipeline output for these sites existed. The contamination check found 0 hits in runs, labels, snapshots, pages, reports and the peeked-sites list.
+
+**Exclusions:** athenahealth.com (`SITE_BLOCKED`, HTTP 403) and fractal.ai (`SITE_UNREACHABLE`, TLS failure in this environment) were in the original list of 10 and were excluded on 2026-10-09 for crawl-status reasons. They were not replaced. These are real crawler limitations, to be listed in `docs/KNOWN_LIMITATIONS.md` after the run.
+
+**Eligibility rule:** a site may be replaced or excluded only for crawl-status reasons (unreachable, blocked, redirected off domain, non-English), never for pipeline performance.
+
+**Protocol, in order:**
+
+1. Hand-label all 8 from full live-page text, blind, with a source URL per label.
+2. Write a SHA-256 checksum of the label files.
+3. Tag the code `pre-heldout-v2`.
+4. Run once with `--no-cache`.
+5. Report all results, including bad ones.
+6. No tuning on these sites afterwards.
+
+**Sample size:** n = 8, so each per-field score moves in steps of 12.5 points. Results are indicative, not precise.
+
+**Records:** `eval/benchmark_sites_v2.md` (selection, status, replacement log), `eval/LABELLING_GUIDE_v2.md` (labelling rules and decisions), `eval/preflight_v2.md` (crawl pre-flight), `eval/checksum_labels.py` (checksum write and verify).
+
+`eval/held_out.py` still hard-codes the old 10 sites and needs a change before v2 can be scored.
+
 ---
 
 ## 13. Proposed parameters (for Abhishek's approval)
@@ -428,6 +464,8 @@ These are implementation parameters, not scope. They are tunable after the Week 
 | H9 | Plaid | plaid.com | Fintech, developer-led | Developer docs mixed with marketing |
 | H10 | *(you choose)* |  | Second sparse site | Small local business site. Tests abstention on unseen data. |
 
+Note (v1.1): this original list was later contaminated by development fixes and is not used for the headline AC-02 number. See §12.1 for held-out set v2.
+
 ### Verification checklist (about 5 minutes per site, before locking the list)
 
 1. Open the homepage and confirm it loads without login.
@@ -469,4 +507,4 @@ These are implementation parameters, not scope. They are tunable after the Week 
 
 ---
 
-*Prepared by Uttam · Company Website Intelligence Prototype · Final PRD v1.0*
+*Prepared by Uttam · Company Website Intelligence Prototype · PRD v1.1*
