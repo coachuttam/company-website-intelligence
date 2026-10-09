@@ -398,6 +398,8 @@ Built **only after the Week 3 website-profile gate passes**, as a bounded spike 
 
 `eval/held_out.py` still hard-codes the old 10 sites and needs a change before v2 can be scored.
 
+Deviation from the original plan: the development set used for measurement has 5 labelled sites (Calendly, Loom, Typeform, Notion, SimpleStores), not the 8 proposed in §12 and Appendix A; headline development numbers are over these 5.
+
 ---
 
 ## 13. Proposed parameters (for Abhishek's approval)

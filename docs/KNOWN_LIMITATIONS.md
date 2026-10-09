@@ -27,6 +27,10 @@ Status as of 2026-10-09, code at `EXTRACTION_LOGIC_VERSION` 26, `prompt_version`
   called at temperature 0.1, live sites change between days, and Jev's decisions move with the
   text (Calendly's `sales_motion` came out at probability 0.71 to 0.76, just under the 0.8
   threshold). Judge a change on 3-round means from the same window, never on a single round.
+- **The dev set is 5 sites, not the 8 the PRD planned.** Every dev number is over Calendly, Loom,
+  Typeform, Notion and SimpleStores (`eval/baseline.py` `DEV_SET`), against the 8 proposed in PRD
+  §12 and Appendix A. One dev site moves a field's score by 20 points, so per-field dev numbers are
+  noisy. The held-out v2 set (n = 8) moves by 12.5 points per site.
 - **About a third of dev errors trace to the labels, not the system.** See
   `docs/ERROR_REVIEW.md`: 26 of 73 non-right verdicts are label granularity or format, two valid
   wordings on the site, or a `not_found` label where the run found gate-verified text. The dev labels

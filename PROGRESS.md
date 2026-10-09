@@ -2125,3 +2125,5 @@ but cannot run Uttam's actual crawler/LLM pipeline against the real sites.
 - 2026-10-09: held-out v2 set defined (8 sites; athenahealth.com and fractal.ai excluded for crawl failures). Labels blank, awaiting hand-labelling. PRD bumped to v1.1 (new §12.1, AC-02 unchanged), pending Abhishek's re-approval. eval/held_out.py still hard-codes the old 10 sites and needs a change before v2 can be scored.
 
 - 2026-10-09: eval/labels/ organised into dev/ (5), heldout_v1_archived/ (10, contaminated, with a README), heldout_v2/ (8) and templates/ (2); archive_old_dev/ unchanged. Moved with git mv, contents unchanged (SHA-256 of all 30 label files identical before and after). Path constants only: DEV_LABEL_DIR in eval/baseline.py (also used by score_one.py and jev_gate_probe.py), HELD_OUT_LABEL_DIR in eval/held_out.py, checksum_labels.py reads heldout_v2/. B-96 guard test (test_label_paths). Tests 578 passed, 1 skipped. Report files in eval/ left in place.
+
+- 2026-10-09: dev set documented as 5 sites vs 8 planned in PRD; PRD §12.1 notes the deviation, pending Abhishek's re-approval.
