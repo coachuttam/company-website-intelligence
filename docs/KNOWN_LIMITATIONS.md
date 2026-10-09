@@ -1,6 +1,6 @@
 # DRAFT: Known limitations (for the handoff docs)
 
-Status as of 2026-10-09, code at `EXTRACTION_LOGIC_VERSION` 22, `prompt_version` 16, Jev on.
+Status as of 2026-10-09, code at `EXTRACTION_LOGIC_VERSION` 25, `prompt_version` 16, Jev on.
 
 ## Accuracy
 
@@ -104,3 +104,27 @@ error code, and the rendered page shows a banner for them (B-83, B-84, B-86, B-8
   "en", 7 "unknown"). Its thresholds were set from test fixtures only. On those short quotes
   Freshworks and SimpleStores sit just above the English threshold (0.106 to 0.107 against 0.10);
   below it they would read "unknown", which is still not flagged.
+
+## Deferred (found on postman.com, 2026-10-09)
+
+- **Docs subdomains crowd out company pages.** The approved domains include every subdomain of the
+  site, so on postman.com 12 of the 38 pages fetched within the 120 s budget were
+  `learning.postman.com` documentation (integration and admin guides). Company pages compete with
+  them for the same page and time budget; `traction.partnerships` came back `not_found` although
+  `/partner-program` was crawled. No change has been made.
+- **`pricing.revenue_model` can rest on a metered price.** On postman.com the model's own answer was
+  rejected and Jev filled the field with "Subscription", quoting "$20 per 50,000 requests / team /
+  month", a usage-priced add-on rather than a plan price. B-68's evidence rule accepts any
+  recurring per-period price line, including metered ones. "Subscription" is probably right for
+  Postman's plans, but that quote supports usage-based pricing at least as well.
+- **Text the cleaner drops has no cause category of its own.** `docs/ERROR_REVIEW.md` sorts misses
+  into crawl, model, gate, inference and label causes, but not "on the page, dropped by the
+  cleaner". On postman.com the certification badge grid (PCI DSS, HIPAA, ISO 27001, ISO 42001 ...)
+  was visible text in the raw HTML that trafilatura removed, so the model could only see "SOC 2";
+  B-92 now folds badge grids back in, but other layouts can be lost the same way, and in a review
+  they look like "model missed it". B-88 snapshots save the cleaned text and only a checksum of the
+  raw HTML, so a cleaner loss still needs a fresh fetch of the page to confirm.
+- **Country-code locales are skipped only on English-locale sites.** B-90 now reads `/jp/` as
+  Japanese, but the skip itself still applies only when the start URL is under `/en/` or the start
+  page links to an English locale (B-60/B-69). postman.com starts at its bare domain with no such
+  links, so its `/jp/` pages (5 of 38 on that run) would still be crawled.
