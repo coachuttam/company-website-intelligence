@@ -19,13 +19,13 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 
 ROOT = Path(__file__).resolve().parent.parent
-LABEL_DIR = ROOT / "eval" / "labels"
+LABEL_DIR = ROOT / "eval" / "labels" / "heldout_v2"
 CHECKSUM_FILE = ROOT / "eval" / "labels_v2.sha256"
 V2_SPLIT = "held_out_v2"
 
 
 def v2_label_files(label_dir: Path = LABEL_DIR) -> List[str]:
-    """The v2 label files, found from the files themselves: every eval/labels/*.json whose
+    """The v2 label files, found from the files themselves: every eval/labels/heldout_v2/*.json whose
     labeling_metadata.split is "held_out_v2" (templates excluded), sorted by name. No fixed count:
     the set is whatever eval/benchmark_sites_v2.md settled on."""
     names = []

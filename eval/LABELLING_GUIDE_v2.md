@@ -2,7 +2,7 @@
 
 For the 8 sites in `eval/benchmark_sites_v2.md`. Built from the field definitions in
 `docs/PRD.MD` (Section 4, Section 5 rules, Section 12 ground truth) and the conventions already in
-`eval/labels/_template_v2.json` and the dev labels. It adds no new field or status; where the
+`eval/labels/templates/_template_v2.json` and the dev labels. It adds no new field or status; where the
 dev labels are inconsistent, that is listed under "Open points" rather than decided here.
 
 ## Before you start

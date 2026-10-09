@@ -47,6 +47,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from eval.baseline import build_semantic_judge, run_scoring_set  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
+HELD_OUT_LABEL_DIR = ROOT / "eval" / "labels" / "heldout_v1_archived"
 
 # The 10 frozen held-out sites (eval/benchmark_sites.md H1-H10). Label file -> the site's own
 # registered domain fragment(s) to search for among data/runs/*.json, in priority order (a site
@@ -91,7 +92,7 @@ def _resolve_run_file(candidates: List[str], run_dir: Path) -> Tuple[Optional[st
 def main() -> int:
     judge, model = build_semantic_judge("--semantic-judge" in sys.argv[1:])
 
-    label_dir = ROOT / "eval" / "labels"
+    label_dir = HELD_OUT_LABEL_DIR
     run_dir = ROOT / "data" / "runs"
     report_path = ROOT / "eval" / "held_out_report.json"
 

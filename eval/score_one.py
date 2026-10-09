@@ -13,7 +13,8 @@ Usage:
     python eval/score_one.py basecamp
     python eval/score_one.py razorpay --semantic-judge
 
-The name is the label file's own name (eval/labels/<name>.json), with or without ".json" --
+The name is the label file's own name (eval/labels/dev/<name>.json or
+eval/labels/heldout_v1_archived/<name>.json), with or without ".json" --
 same name eval/baseline.py's DEV_SET or eval/held_out.py's HELD_OUT_LABELS already use. Looked
 up in both: a dev-set name uses DEV_SET's confirmed run-file pairing directly; a held-out name
 goes through eval/held_out.py's own at-execution-time run-file resolution (same
@@ -30,8 +31,8 @@ from typing import List, Optional, Tuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from eval.baseline import DEV_SET, build_semantic_judge, run_scoring_set  # noqa: E402
-from eval.held_out import HELD_OUT_LABELS, _resolve_run_file  # noqa: E402
+from eval.baseline import DEV_LABEL_DIR, DEV_SET, build_semantic_judge, run_scoring_set  # noqa: E402
+from eval.held_out import HELD_OUT_LABEL_DIR, HELD_OUT_LABELS, _resolve_run_file  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -68,13 +69,14 @@ def main() -> int:
         return 2
     name = positional[0]
 
-    label_dir = ROOT / "eval" / "labels"
     run_dir = ROOT / "data" / "runs"
 
     site_set, error = _resolve_site(name, run_dir)
     if site_set is None:
         print(error)
         return 1
+    dev_names = {lf for lf, _ in DEV_SET}
+    label_dir = DEV_LABEL_DIR if site_set[0][0] in dev_names else HELD_OUT_LABEL_DIR
 
     judge, model = build_semantic_judge("--semantic-judge" in sys.argv[1:])
     report_path = ROOT / "eval" / f"score_one_{name.removesuffix('.json')}_report.json"

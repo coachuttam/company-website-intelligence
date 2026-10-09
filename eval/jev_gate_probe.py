@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 load_dotenv(ROOT / ".env")
 
+from eval.baseline import DEV_LABEL_DIR                 # noqa: E402
 from wi.classify.decisions import parse_choice          # noqa: E402
 from wi.classify.jev import JevClient, JevError         # noqa: E402
 from wi.config import load_config                       # noqa: E402
@@ -63,7 +64,7 @@ def main(paths):
     for path in paths:
         slug = Path(path).stem
         run = json.loads(Path(path).read_text(encoding="utf-8"))
-        label_path = ROOT / "eval" / "labels" / f"{LABEL_FILE.get(slug, slug)}.json"
+        label_path = DEV_LABEL_DIR / f"{LABEL_FILE.get(slug, slug)}.json"
         labels = json.loads(label_path.read_text(encoding="utf-8")) if label_path.exists() else {}
         todo = [r for r in run.get("rejected", []) if "quote not found" not in r["reason"]]
         print(f"\n=== {slug}: {len(todo)} rejected claim(s) with a real quote ===")

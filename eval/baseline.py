@@ -2,7 +2,7 @@
 """Week 3 field-level accuracy baseline (Final PRD Section 12, AC-02/AC-09/AC-11).
 
 Scores each of the 5 dev-set runs already produced by run_site.py against its hand-labelled
-answer key in eval/labels/, using wi.eval.scoring's pure comparison logic. This makes no LLM
+answer key in eval/labels/dev/, using wi.eval.scoring's pure comparison logic. This makes no LLM
 or network call itself -- it only reads JSON already on disk -- so, unlike run_site.py, it runs
 the same everywhere including this sandboxed environment.
 
@@ -64,6 +64,7 @@ from wi.extract.pricing import estimate_cost_usd  # noqa: E402
 from wi.schemas.claim import Claim  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
+DEV_LABEL_DIR = ROOT / "eval" / "labels" / "dev"
 
 # Explicit label-file -> run-file pairing, not inferred from the label's site URL. A run's output
 # filename is slugged from wherever the crawl actually landed after redirects (e.g. zerodha.com's
@@ -293,7 +294,7 @@ def main() -> int:
     semantic_judge_enabled = "--semantic-judge" in sys.argv[1:]
     judge, model = build_semantic_judge(semantic_judge_enabled)
 
-    label_dir = ROOT / "eval" / "labels"
+    label_dir = DEV_LABEL_DIR
     run_dir = ROOT / "data" / "runs"
     report_path = ROOT / "eval" / "baseline_report.json"
     _report, code = run_scoring_set(

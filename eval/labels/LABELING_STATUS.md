@@ -9,11 +9,11 @@ all-`not_found` site by content alone. Check here before trusting any dev-set sc
 
 | File | Company | Status | Notes |
 | --- | --- | --- | --- |
-| `calendly.json` | Calendly | **LABELED** (2026-10-04) | Hand-labeled by Uttam. |
-| `loom.json` | Loom | **LABELED** (2026-10-04) | Hand-labeled by Uttam. |
-| `typeform.json` | Typeform | **LABELED** (2026-10-04) | Hand-labeled by Uttam. |
-| `notion.json` | Notion | **LABELED** (2026-10-04) | Hand-labeled by Uttam. |
-| `simplestores.json` | SimpleStores | **LABELED** (2026-10-04) | Hand-labeled by Uttam. |
+| `dev/calendly.json` | Calendly | **LABELED** (2026-10-04) | Hand-labeled by Uttam. |
+| `dev/loom.json` | Loom | **LABELED** (2026-10-04) | Hand-labeled by Uttam. |
+| `dev/typeform.json` | Typeform | **LABELED** (2026-10-04) | Hand-labeled by Uttam. |
+| `dev/notion.json` | Notion | **LABELED** (2026-10-04) | Hand-labeled by Uttam. |
+| `dev/simplestores.json` | SimpleStores | **LABELED** (2026-10-04) | Hand-labeled by Uttam. |
 
 ## What UNLABELED means here
 

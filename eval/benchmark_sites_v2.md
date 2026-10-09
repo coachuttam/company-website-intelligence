@@ -7,25 +7,34 @@ crawl-status reasons (see the replacement log), leaving the **final set of 8**:
 
 | # | Site | Label file | Label status |
 | --- | --- | --- | --- |
-| V1 | miro.com | `eval/labels/miro.json` | UNLABELED |
-| V2 | leadsquared.com | `eval/labels/leadsquared.json` | UNLABELED |
-| V3 | cashfree.com | `eval/labels/cashfree.json` | UNLABELED |
-| V4 | cohere.com | `eval/labels/cohere.json` | UNLABELED |
-| V5 | framer.com | `eval/labels/framer.json` | UNLABELED |
-| V6 | chargebee.com | `eval/labels/chargebee.json` | UNLABELED |
-| V7 | mercury.com | `eval/labels/mercury.json` | UNLABELED |
-| V8 | elevenlabs.io | `eval/labels/elevenlabs.json` | UNLABELED |
+| V1 | miro.com | `eval/labels/heldout_v2/miro.json` | UNLABELED |
+| V2 | leadsquared.com | `eval/labels/heldout_v2/leadsquared.json` | UNLABELED |
+| V3 | cashfree.com | `eval/labels/heldout_v2/cashfree.json` | UNLABELED |
+| V4 | cohere.com | `eval/labels/heldout_v2/cohere.json` | UNLABELED |
+| V5 | framer.com | `eval/labels/heldout_v2/framer.json` | UNLABELED |
+| V6 | chargebee.com | `eval/labels/heldout_v2/chargebee.json` | UNLABELED |
+| V7 | mercury.com | `eval/labels/heldout_v2/mercury.json` | UNLABELED |
+| V8 | elevenlabs.io | `eval/labels/heldout_v2/elevenlabs.json` | UNLABELED |
 
 **Sample size:** n = 8, so each per-field score moves in steps of 12.5 points (one site), and the
 headline moves by about 0.8 points per field-site. Results from this set must be read as
 indicative, not precise.
 
-The label files were created from `eval/labels/_template_v2.json` with nothing filled in. In that
+The label files were created from `eval/labels/templates/_template_v2.json` with nothing filled in. In that
 template every field starts as `not_found`, so an unlabelled file is indistinguishable from a site
 that genuinely says nothing (the same problem `eval/labels/LABELING_STATUS.md` exists for). Update
 the "Label status" column by hand as each file is labelled; `eval/checksum_labels.py --write`
 also refuses to run while any file still has the template's `YYYY-MM-DD` date or an empty company
 name.
+
+## Layout
+
+Since 2026-10-09 the label files are in subfolders of `eval/labels/` (moved with `git mv`, contents
+unchanged): `dev/` (the 5 dev labels, read by `eval/baseline.py`), `heldout_v1_archived/` (the
+original 10 held-out labels, contaminated, read only by `eval/held_out.py`), `heldout_v2/` (these 8,
+read by `eval/checksum_labels.py`), `templates/` (`_template.json`, `_template_v2.json`) and
+`archive_old_dev/` (unchanged). `LABELING_STATUS.md` stays at the top. The contamination check
+below was made before the move and names the old flat paths.
 
 ## Contamination check (2026-10-09)
 
