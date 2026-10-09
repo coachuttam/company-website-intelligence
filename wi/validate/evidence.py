@@ -1033,3 +1033,31 @@ def trim_note_details(notes: Optional[str], dropped: List[str], kept_value: str)
             if not any(_word_in(w, set(_significant_words(s))) or
                        any(sw.startswith(w) for sw in _significant_words(s)) for w in banned)]
     return " ".join(kept) if kept else TRIMMED_NOTE
+
+
+def drop_unfound_lines(
+    claim: Claim, cited_key: str, page_texts: Dict[str, str]
+) -> Tuple[Optional[str], List[str]]:
+    """B-94: for an accepted claim whose evidence is a multi-line string, remove every line that
+    appears on no crawled page (the cited page at the normal threshold, else any page at the
+    stricter corpus threshold -- the evidence check's own rules). B-42 accepts such a claim when ANY
+    one line is a real, supporting quote, so the made-up lines next to it used to stay in the
+    ledger: on postman.com, revenue_model's four lines ("$0 - Free", "$9 per month ... - Solo" ...)
+    had only one that was on a page. Returns (new evidence, removed lines); (None, []) when nothing
+    needs removing. List evidence is left alone: each item's quote is already checked one by one,
+    and an item without a real quote is dropped by check_claim_items (B-40)."""
+    if not isinstance(claim.evidence, str):
+        return None, []
+    page_text = page_texts.get(cited_key, "")
+    corpus = list(page_texts.values())
+    lines = _evidence_fragments(claim.evidence, page_text, corpus)
+    if len(lines) < 2:
+        return None, []
+    kept, removed = [], []
+    for line in lines:
+        real = (bool(cited_key) and quote_in_page(line, page_text)) or any(
+            quote_in_page(line, text, threshold=CORPUS_FALLBACK_FUZZY_THRESHOLD) for text in corpus)
+        (kept if real else removed).append(line)
+    if not removed or not kept:
+        return None, []
+    return "\n".join(kept), removed

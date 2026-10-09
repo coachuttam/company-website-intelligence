@@ -1227,3 +1227,73 @@ def test_b89_evidence_sources_survive_a_cache_round_trip(tmp_path):
     again = extract_claims("https://example.com/", [INDEX, CISCO, NUBANK], CONFIG,
                             FakeCompleter({"claims": claims}), retrieved_at="2026-10-09", cache=cache)
     assert again.cache_status == "hit" and again.evidence_sources == first.evidence_sources != {}
+
+
+# --- B-94: evidence lines found on no crawled page are removed ----------------------------------------
+
+PRICING = CleanPage(url="https://example.com/pricing", title="Pricing",
+                    text="Free\n$0\nSolo\n$19 per user/month (billed annually) - Team\nContact Sales")
+
+
+def _revenue_claim(evidence, notes="Plans are billed monthly."):
+    claims = _all_not_found_claims()
+    claims[FIELDS.index("pricing.revenue_model")] = {
+        "field": "pricing.revenue_model", "status": "inferred", "value": "subscription",
+        "confidence": 0.8, "source_url": "https://example.com/pricing", "page_title": "Pricing",
+        "evidence": evidence, "notes": notes, "coverage": None}
+    return claims
+
+
+def test_b94_postman_shape_four_lines_one_real_keeps_only_the_real_line():
+    # postman.com: four lines, only one on the page; B-42 accepted the claim on that one line.
+    ev = ("$0 - Free\n$9 per month (billed annually) - Solo\n"
+          "$19 per user/month (billed annually) - Team\nContact sales for pricing - Enterprise")
+    run = extract_claims("https://example.com/", [PRICING], CONFIG,
+                          FakeCompleter({"claims": _revenue_claim(ev)}), retrieved_at="2026-10-09")
+    c = next(x for x in run.claims if x.field == "pricing.revenue_model")
+    assert c.status == Status.inferred and c.value == "subscription"          # still passes
+    assert c.evidence == "$19 per user/month (billed annually) - Team"
+    assert c.notes.startswith("Plans are billed monthly. Evidence lines found on no crawled page were removed:")
+    assert "'$0 - Free'" in c.notes and "Contact sales for pricing - Enterprise" in c.notes
+    assert any("B-94: removed 3 evidence line(s)" in e for e in run.schema_errors)
+
+
+def test_b94_single_quote_claim_is_unchanged():
+    run = extract_claims("https://example.com/", [PRICING], CONFIG,
+                          FakeCompleter({"claims": _revenue_claim("$19 per user/month (billed annually) - Team")}),
+                          retrieved_at="2026-10-09")
+    c = next(x for x in run.claims if x.field == "pricing.revenue_model")
+    assert c.evidence == "$19 per user/month (billed annually) - Team" and c.notes == "Plans are billed monthly."
+    assert not any("B-94" in e for e in run.schema_errors)
+
+
+def test_b94_all_real_lines_are_left_alone():
+    ev = "$19 per user/month (billed annually) - Team\nContact Sales"
+    run = extract_claims("https://example.com/", [PRICING], CONFIG,
+                          FakeCompleter({"claims": _revenue_claim(ev)}), retrieved_at="2026-10-09")
+    c = next(x for x in run.claims if x.field == "pricing.revenue_model")
+    assert c.evidence == ev and not any("B-94" in e for e in run.schema_errors)
+
+
+def test_b94_list_field_with_partial_matches_keeps_only_verified_items_as_before():
+    # List evidence is checked item by item; B-40 already drops the item whose quote is not real,
+    # and B-94 leaves list evidence alone.
+    claims = _named_customers_claim(["Cisco Meraki", "Acme Bank"],
+                                    ["Cisco Meraki makes networking simple for organizations everywhere.",
+                                     "Acme Bank runs on our platform worldwide."],
+                                    "https://example.com/customer-stories")
+    run = extract_claims("https://example.com/", [INDEX, CISCO, NUBANK], CONFIG,
+                          FakeCompleter({"claims": claims}), retrieved_at="2026-10-09")
+    c = next(x for x in run.claims if x.field == "traction.named_customers")
+    assert c.value == ["Cisco Meraki"]
+    assert c.evidence == ["Cisco Meraki makes networking simple for organizations everywhere."]
+    assert not any("B-94" in e for e in run.schema_errors)
+
+
+def test_b94_claim_with_no_real_line_is_rejected_as_before():
+    ev = "$0 - Free\n$9 per month (billed annually) - Solo"
+    run = extract_claims("https://example.com/", [PRICING], CONFIG,
+                          FakeCompleter({"claims": _revenue_claim(ev)}), retrieved_at="2026-10-09")
+    c = next(x for x in run.claims if x.field == "pricing.revenue_model")
+    assert c.status == Status.not_found
+    assert any(r.field == "pricing.revenue_model" for r in run.rejected)

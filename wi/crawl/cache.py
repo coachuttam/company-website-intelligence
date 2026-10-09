@@ -163,7 +163,9 @@ from wi.crawl.fetch import content_hash
 # are spread over several pages, and the cache payload carries them; an older cached payload lacks it.
 # 25 (2026-10-09, B-91): when B-81 trims delivery_model details, sentences of the note naming them are
 # removed too, so a stale cached claim would keep a note that contradicts its value.
-EXTRACTION_LOGIC_VERSION = 25
+# 26 (2026-10-09, B-94): evidence lines found on no crawled page are removed from accepted multi-line
+# evidence (and the removal noted), so a stale cached claim would keep the made-up lines.
+EXTRACTION_LOGIC_VERSION = 26
 
 
 def run_fingerprint(site_url: str, pages: List[CleanPage], config: dict) -> str:

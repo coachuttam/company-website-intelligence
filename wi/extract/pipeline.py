@@ -129,8 +129,9 @@ from wi.extract.prompt import build_messages
 from wi.schemas.announcement import Announcement
 from wi.schemas.claim import Claim, Status
 from wi.validate.evidence import (
-    check_claim, check_claim_items, check_conflicting_claim, evidence_home, quote_in_page,
-    quote_sources, realign_list_evidence, trim_delivery_model_details, trim_note_details,
+    check_claim, check_claim_items, check_conflicting_claim, drop_unfound_lines, evidence_home,
+    quote_in_page, quote_sources, realign_list_evidence, trim_delivery_model_details,
+    trim_note_details,
 )
 
 
@@ -554,6 +555,21 @@ def extract_claims(
                         f"claim #{i} ({field_name}): B-81: dropped detail(s) not in the evidence "
                         f"quote: {', '.join(dropped)} (value now {trimmed!r})"
                     )
+            if claim.status in (Status.extracted, Status.inferred):
+                # B-94: the claim passed on at least one real line (B-42); drop the lines that are on
+                # no crawled page, and say so in its note. Never changes whether it passes.
+                trimmed_ev, removed = drop_unfound_lines(
+                    claim, normalize_url(claim.source_url), text_by_url)
+                if removed:
+                    data = claim.model_dump()
+                    data["evidence"] = trimmed_ev
+                    removal = (f"Evidence lines found on no crawled page were removed: "
+                               + "; ".join(repr(r) for r in removed) + ".")
+                    data["notes"] = f"{claim.notes} {removal}" if claim.notes else removal
+                    claim = Claim(**data)
+                    run.schema_errors.append(
+                        f"claim #{i} ({field_name}): B-94: removed {len(removed)} evidence line(s) "
+                        f"found on no crawled page")
             if claim.status in (Status.extracted, Status.inferred):
                 # B-77: the evidence check may have found a quote on another crawled page (B-36
                 # fallback); cite the page the evidence is actually on. Acceptance is unchanged.
