@@ -113,7 +113,7 @@ These scripts **overwrite committed report files** (`eval/baseline_report.json`,
 
 ## Development history
 
-B-72 to B-94 were motivated partly by informal spot-checks on non-dev sites: freshworks.com (B-75 to B-81) and postman.com (B-88 to B-94), which are on the peeked list (`eval/peeked_sites.txt`) and excluded from the fresh held-out set. Earlier, B-59 to B-72 were motivated partly by snowflake.com, which is **not** on the peeked list yet. Run files on disk also exist for other non-dev sites (for example basecamp.com, hussmann.com, darwinbox.com) and for the old held-out sites. No dev or held-out labels were edited in this period: the label files have no commits since the 2026-10-06 snapshot, the dev labels are dated 2026-09-28, and the held-out labels last changed with B-51 (2026-09-27).
+B-72 to B-94 were motivated partly by informal spot-checks on non-dev sites: freshworks.com (B-75 to B-81) and postman.com (B-88 to B-94), which are on the peeked list (`eval/peeked_sites.txt`) and excluded from the fresh held-out set. Earlier, B-59 to B-72 were motivated partly by snowflake.com. The peeked list now holds every site that has been run (30 domains: snowflake.com, the current and old dev sets, the old held-out set, and other one-off runs such as basecamp.com, hussmann.com and darwinbox.com), and all of them are excluded from the fresh held-out set. No dev or held-out labels were edited in this period: the label files have no commits since the 2026-10-06 snapshot, the dev labels are dated 2026-09-28, and the held-out labels last changed with B-51 (2026-09-27).
 
 ## Project layout
 
