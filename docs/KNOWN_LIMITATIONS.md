@@ -124,7 +124,12 @@ error code, and the rendered page shows a banner for them (B-83, B-84, B-86, B-8
   B-92 now folds badge grids back in, but other layouts can be lost the same way, and in a review
   they look like "model missed it". B-88 snapshots save the cleaned text and only a checksum of the
   raw HTML, so a cleaner loss still needs a fresh fetch of the page to confirm.
-- **Country-code locales are skipped only on English-locale sites.** B-90 now reads `/jp/` as
-  Japanese, but the skip itself still applies only when the start URL is under `/en/` or the start
-  page links to an English locale (B-60/B-69). postman.com starts at its bare domain with no such
-  links, so its `/jp/` pages (5 of 38 on that run) would still be crawled.
+- **Locale skipping can still misread a section path in one rare case.** B-93 skips non-English
+  locale copies on any site when there is evidence they are locales (a locale start URL, a language
+  switcher, an English locale link, a country code such as `/jp/`, or a language-with-region form),
+  which fixes postman.com's `/jp/` pages. A lone `/hr/` or `/it/` section on a bare-domain site is
+  kept as a possible HR or IT section. But since B-90 reads `/us/`, `/uk/` and the other
+  English-speaking country segments as English, a start page that links to a country page such as
+  `/us/pricing` now counts as an English-locale site (B-69's rule), and a lone `/hr/` section on
+  that same site would then be skipped as Croatian. It needs both a country-site link and an HR
+  section at `/hr/` on one site, so it should be rare; no test covers it and no change has been made.
