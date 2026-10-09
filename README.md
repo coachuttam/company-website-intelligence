@@ -7,8 +7,9 @@ Spec: `docs/PRD.MD`. Behaviour log: `tests/BEHAVIOURS.md`. Progress log: `PROGRE
 
 ## Status at a glance
 
-- **Accuracy is below target.** The dev-set headline is **67.6%** (mean of 3 `--no-cache` rounds scored with the semantic judge: 69.3, 66.7, 66.7; `eval/baseline_report_b81_nc1-3.json`). The previous build measured 68.9% (`eval/baseline_report_nc1-3.json`). Run-to-run noise is about ±3 points. The PRD target (AC-02) is **80% on held-out sites**. It is **not met on the dev set**, and the **held-out result is pending** (see "Evaluation limits").
-- **Latency misses the p50 target** in the post-B-81 rounds: p50 70 to 88 s per round against 60 s; p95 132 to 134 s in two rounds and 231 s in the third (one slow model call), against 180 s. Mean variable cost was $0.0061 to $0.0062 per site against $0.10 (`eval/latency_report_b81_nc1-3.json`).
+- **Accuracy is below target.** On current code (tag `pre-compare-b93`) the dev-set headline is **63.6%**: the mean of 3 same-window `--no-cache` rounds scored with the semantic judge (64.0, 62.7, 64.0; `eval/baseline_report_cmp_C_nc1-3.json`). In the same window the post-B-81 code scored 65.8% (`eval/baseline_report_cmp_A_nc1-3.json`). The PRD target (AC-02) is **80% on held-out sites**. It is **not met on the dev set**, and the **held-out result is pending** (see "Evaluation limits").
+- **How much the numbers move.** ±3 points holds for 3-round means within one day. Single rounds varied by up to about 8 points (post-B-81 code: 61.3 to 69.3), the same code moved about 2 points between days (67.6% on 2026-10-07, 65.8% on 2026-10-09), and single fields swing far more (`pricing.free_trial` 40 / 0 / 0 on identical code).
+- **Latency misses the p50 target** on current code: p50 91.9 / 80.4 / 79.9 s per round against 60 s; p95 132 to 134 s against 180 s. Mean variable cost was $0.0061 to $0.0062 per site against $0.10 (`eval/latency_report_cmp_C_nc1-3.json`).
 - **Jev** (TypeSafe, the optional `pricing.sales_motion` / `pricing.revenue_model` classifier) is on in `config.yaml`. It was approved verbally by Abhishek in a meeting on 2026-10-06; written confirmation is pending.
 - A Gemini extraction comparison was prepared and then dropped. Its code (B-82, an optional extraction endpoint) sits **unmerged on the `gemini-compare` branch**; `main` uses `gpt-4o-mini`.
 - Drafts: `docs/ERROR_REVIEW.md` (every dev-set error and its cause) and `docs/KNOWN_LIMITATIONS.md`. Both are marked **DRAFT** until the held-out run is done.
@@ -101,13 +102,13 @@ These scripts **overwrite committed report files** (`eval/baseline_report.json`,
 1. Run each dev site fresh: `python run_site.py <url> --no-cache` for `https://calendly.com/`, `https://www.loom.com/`, `https://www.typeform.com/`, `https://www.notion.com/`, `https://simplestores.in/`.
 2. Score with the judge: `python eval/baseline.py --semantic-judge`, then copy `eval/baseline_report.json` to `eval/baseline_report_<name>_nc<round>.json`.
 3. `python eval/latency_report.py`, then copy `eval/latency_report.json` the same way.
-4. Repeat 3 times and compare the mean with the committed reports; a difference of 3 points or less is within noise.
+4. Repeat 3 times and compare the 3-round mean with the committed reports. ±3 points holds only for 3-round means within one day; to compare two builds, run them back to back in the same window (as the `_cmp_` reports were), since the same code has moved about 2 points between days.
 
 ### Evaluation limits
 
 - **The dev set is saturated.** Calendly, Loom, Typeform, Notion and SimpleStores were used to build and tune the pipeline, so the dev headline overstates performance on unseen sites.
 - **The old 10-site held-out set is contaminated.** After it was first run and scored, fixes B-39 to B-54 were made using its failures, and B-51 re-labelled `customers.segments` in all 10 of its label files. A score on those sites is not a held-out measurement. `eval/held_out.py` exists but was not run for this README.
-- **The dev labels were made by hand from the sites' screenshots and pages** (`labeling_metadata` in each `eval/labels/*.json`) and may have gaps; `docs/ERROR_REVIEW.md` attributes about a third of dev errors to the labels.
+- **The dev labels were made by hand from the sites' screenshots and pages** (`labeling_metadata` in each `eval/labels/*.json`) and may have gaps; `docs/ERROR_REVIEW.md` attributes about a third of dev errors to the labels. For example, Calendly's certifications label says `not_found` while the page lists SOC 2 and ISO/IEC 27001, so current code's answer scores as unsupported; labels are not edited to match outputs. `company_identity.description` also depends on which of several real sentences the model picks.
 - **The fresh held-out set is still to be labelled.** It must be labelled by hand before any run, exclude the sites in `eval/peeked_sites.txt`, and be run once on tagged code. No git tag exists yet.
 
 ## Project layout

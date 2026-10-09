@@ -4,13 +4,18 @@ Status as of 2026-10-09, code at `EXTRACTION_LOGIC_VERSION` 25, `prompt_version`
 
 ## Accuracy
 
-- **Dev headline is about 68%, against an 80% target (AC-02).** The post-B-81 3-round mean is
-  67.6% (69.3 / 66.7 / 66.7); the build before B-75 measured 68.9%. The 80% target applies to
-  held-out sites, which have not been measured on this code (see below).
-- **Run-to-run noise is about ±3 points.** The model is called at temperature 0.1, and Jev's
-  decisions move with it (Calendly's `sales_motion` came out at probability 0.71 to 0.76, just
-  under the 0.8 threshold). Judge a change on 3 or more `--no-cache` runs; a single run cannot show a
-  difference of 3 points or less.
+- **Dev headline is 63.6% on current code, against an 80% target (AC-02), which is not met.** In
+  the same-window comparison of 2026-10-09 (3 rounds, each running all three builds back to back;
+  `eval/baseline_report_cmp_*_nc1-3.json`), current code (build C, tag `pre-compare-b93`) scored
+  64.0 / 62.7 / 64.0, mean 63.6%; the post-B-81 code (build A) scored 65.8% in the same window. The
+  80% target applies to held-out sites, which have not been measured on this code (see below).
+- **How much the numbers move.** ±3 points holds for 3-round means measured within one day. Single
+  rounds varied by up to about 8 points (build A: 61.3 to 69.3), and the same code moved about 2
+  points between days (build A: 67.6% on 2026-10-07, 65.8% on 2026-10-09). Single fields swing much
+  more: `pricing.free_trial` went 40 / 0 / 0 across three rounds of identical code. The model is
+  called at temperature 0.1, live sites change between days, and Jev's decisions move with the
+  text (Calendly's `sales_motion` came out at probability 0.71 to 0.76, just under the 0.8
+  threshold). Judge a change on 3-round means from the same window, never on a single round.
 - **About a third of dev errors trace to the labels, not the system.** See
   `docs/ERROR_REVIEW.md`: 26 of 73 non-right verdicts are label granularity or format, two valid
   wordings on the site, or a `not_found` label where the run found gate-verified text. The dev labels
@@ -33,14 +38,13 @@ Status as of 2026-10-09, code at `EXTRACTION_LOGIC_VERSION` 25, `prompt_version`
 
 ## Latency and cost
 
-- **p50 latency misses its target.** Post-B-81: p50 87 s against 60 s; p95 182 s against 180 s,
-  just over because of one 136 s model call (the other rounds' p95 were 132 to 134 s). The crawl is
-  most of the time (69 s per site on average, against 24 s for the model call), set by
-  `rate_limit_rps: 1` and `max_pages: 40`;
-  SimpleStores also hits the 120 s `total_budget_s` after 14 to 16 pages. Meeting 60 s needs a
-  change to those Section 13 parameters, which needs approval.
-- **Cost is well inside its targets:** mean $0.0062 and p95 $0.0089 per site against $0.10 and
-  $0.25 (gpt-4o-mini list prices; Jev adds about $0.0001).
+- **p50 latency misses its target.** Current code (build C, `eval/latency_report_cmp_C_nc1-3.json`):
+  p50 91.9 / 80.4 / 79.9 s per round against 60 s; p95 132 to 134 s against 180 s (met). The crawl
+  is most of the time (68 s per site on average, against 17 s for the model call), set by
+  `rate_limit_rps: 1` and `max_pages: 40`; SimpleStores also hits the 120 s `total_budget_s` after
+  12 to 14 pages. Meeting 60 s needs a change to those Section 13 parameters, which needs approval.
+- **Cost is well inside its targets:** mean $0.0061 to $0.0062 and p95 $0.0085 to $0.0087 per site
+  against $0.10 and $0.25 (gpt-4o-mini list prices; Jev adds about $0.0001).
 
 ## Field-specific
 
@@ -56,6 +60,18 @@ Status as of 2026-10-09, code at `EXTRACTION_LOGIC_VERSION` 25, `prompt_version`
   so the value is better supported, but the field's score stayed at 40%: two dev labels are long
   free-text descriptions ("Digital software delivered online with a downloadable app") and Calendly's
   label is `not_found`, so neither the trimmed nor the untrimmed value matches.
+- **Calendly's certifications now score as unsupported.** Since B-92, the cleaned
+  calendly.com/security page includes its badge labels, and current code quotes "SOC 2 (Type 2)" and
+  "ISO/IEC 27001" from them in every same-window round. Calendly's label, made from the site's
+  screenshots, says `not_found`, so the field scores "unsupported" (one per round in
+  `eval/baseline_report_cmp_C_nc1-3.json`; the values are in PROGRESS.md and the runs). The label is
+  not edited to match an output; it needs an independent re-check.
+- **`company_identity.description` depends on which sentence the model picks.** Several real
+  sentences on a site can describe the company. In the same-window comparison, Calendly's strict
+  verdicts were identical across builds, but current code picked "Calendly is the easiest and most
+  powerful way to find time to connect." in all three rounds, which the semantic judge did not
+  accept as matching the label, while older builds mostly picked "...the scheduling platform that
+  enables individuals, teams..." which it did (field mean 40% against 53 to 60%).
 - **`products.names` bare-label guard also rejects correct names.** When the only quote available
   for a product is its own name (Notion "Notion AI", Typeform "Growth Flow"), the guard that stops
   menu labels being reported as products rejects the real product too.
