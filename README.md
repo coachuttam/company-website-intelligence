@@ -109,7 +109,11 @@ These scripts **overwrite committed report files** (`eval/baseline_report.json`,
 - **The dev set is saturated.** Calendly, Loom, Typeform, Notion and SimpleStores were used to build and tune the pipeline, so the dev headline overstates performance on unseen sites.
 - **The old 10-site held-out set is contaminated.** After it was first run and scored, fixes B-39 to B-54 were made using its failures, and B-51 re-labelled `customers.segments` in all 10 of its label files. A score on those sites is not a held-out measurement. `eval/held_out.py` exists but was not run for this README.
 - **The dev labels were made by hand from the sites' screenshots and pages** (`labeling_metadata` in each `eval/labels/*.json`) and may have gaps; `docs/ERROR_REVIEW.md` attributes about a third of dev errors to the labels. For example, Calendly's certifications label says `not_found` while the page lists SOC 2 and ISO/IEC 27001, so current code's answer scores as unsupported; labels are not edited to match outputs. `company_identity.description` also depends on which of several real sentences the model picks.
-- **The fresh held-out set is still to be labelled.** It must be labelled by hand before any run, exclude the sites in `eval/peeked_sites.txt`, and be run once on tagged code. No git tag exists yet.
+- **The fresh held-out set is still to be labelled.** It must be labelled by hand before any run, exclude the sites in `eval/peeked_sites.txt`, and be run once on tagged code. The tag `pre-compare-b93` exists (the frozen build of the three-build comparison); the held-out tag `pre-heldout-v2` will only be created after the fresh held-out labels are made and checksummed.
+
+## Development history
+
+B-72 to B-94 were motivated partly by informal spot-checks on non-dev sites: freshworks.com (B-75 to B-81) and postman.com (B-88 to B-94), which are on the peeked list (`eval/peeked_sites.txt`) and excluded from the fresh held-out set. Earlier, B-59 to B-72 were motivated partly by snowflake.com, which is **not** on the peeked list yet. Run files on disk also exist for other non-dev sites (for example basecamp.com, hussmann.com, darwinbox.com) and for the old held-out sites. No dev or held-out labels were edited in this period: the label files have no commits since the 2026-10-06 snapshot, the dev labels are dated 2026-09-28, and the held-out labels last changed with B-51 (2026-09-27).
 
 ## Project layout
 

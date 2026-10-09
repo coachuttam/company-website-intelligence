@@ -1,6 +1,17 @@
 # DRAFT: Known limitations (for the handoff docs)
 
-Status as of 2026-10-09, code at `EXTRACTION_LOGIC_VERSION` 25, `prompt_version` 16, Jev on.
+Status as of 2026-10-09, code at `EXTRACTION_LOGIC_VERSION` 26, `prompt_version` 16, Jev on.
+
+## Development history
+
+- **Behaviours were shaped partly by spot-checks on non-dev sites.** B-72 to B-94 came partly from
+  informal spot-checks on freshworks.com (B-75 to B-81) and postman.com (B-88 to B-94); both are on
+  the peeked list (`eval/peeked_sites.txt`) and excluded from the fresh held-out set. B-59 to B-72
+  came partly from snowflake.com, which is not on the peeked list yet; run files on disk also exist
+  for other non-dev sites and for the old held-out sites. Any site that has been run should be
+  treated as seen when the fresh held-out set is chosen. No dev or held-out labels were edited in
+  this period (no label commits since the 2026-10-06 snapshot; dev labels dated 2026-09-28;
+  held-out labels last changed with B-51 on 2026-09-27).
 
 ## Accuracy
 
