@@ -165,3 +165,47 @@ def test_b86_redirect_to_a_restricted_platform_is_rejected_like_validation(tmp_p
     assert run_site.main("https://acme-example.com/") == 1
     assert "REJECTED (RESTRICTED_PLATFORM)" in capsys.readouterr().out
     assert not (tmp_path / "data" / "runs").exists()      # existing handling: no JSON written
+
+
+# --- B-88: every run writes a snapshot of what it fetched and sent --------------------------------
+
+def test_b88_run_writes_a_snapshot_referenced_from_the_run_json(tmp_path, monkeypatch):
+    import hashlib
+    from tests.test_language import ENGLISH
+    from wi.extract.llm import LLMResult
+    html = f'<html lang="en"><head><title>Acme</title></head><body><p>{ENGLISH}</p></body></html>'
+
+    def fake_crawl(url, domains, config, js_renderer=None):
+        r = CrawlResult(start_url=url)
+        r.pages = [FetchResult(url="https://acme-snap.com/", status="ok", status_code=200, html=html,
+                               elapsed_s=0.5)]
+        r.start_attempts = 1
+        return r
+
+    claims = [{"field": f, "status": "not_found", "value": None, "confidence": None, "source_url": None,
+               "page_title": None, "evidence": None, "notes": None,
+               "coverage": {"page_types_checked": ["home"], "pages_checked": 1}} for f in FIELDS]
+
+    class FakeCompleter:
+        def __init__(self, *a, **k):
+            pass
+
+        def complete(self, messages, model):
+            return LLMResult(content=json.dumps({"claims": claims, "announcements": []}), model=model,
+                             prompt_tokens=10, completion_tokens=5, total_tokens=15, elapsed_s=0.01)
+
+    monkeypatch.setattr(run_site, "ROOT", tmp_path)
+    monkeypatch.setattr(run_site, "crawl_site", fake_crawl)
+    monkeypatch.setattr(run_site, "OpenAIChatCompleter", FakeCompleter)
+    monkeypatch.setattr(run_site, "apply_classifier", lambda *a, **k: {"provider": "jev", "enabled": False})
+    monkeypatch.setenv("OPENAI_API_KEY", "fake-key")
+
+    assert run_site.main("https://acme-snap.com/", use_cache=False) == 0
+    out = json.loads((tmp_path / "data" / "runs" / "acme-snap_com.json").read_text())
+    ref = out["clean_snapshot"]
+    snap_bytes = (tmp_path / ref["path"]).read_bytes()
+    assert ref["path"].startswith("data/clean/acme-snap_com/")
+    assert hashlib.sha256(snap_bytes).hexdigest() == ref["sha256"]
+    page = json.loads(snap_bytes)["pages"][0]
+    assert page["sent_to_model"] is True and page["elapsed_s"] == 0.5
+    assert "Acme helps small and growing businesses" in page["clean_text"]

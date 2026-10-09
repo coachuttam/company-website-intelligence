@@ -42,6 +42,7 @@ from wi.crawl.clean import clean_page, resolve_char_cap
 from wi.crawl.fetch import crawl_diagnostics, crawl_site
 from wi.crawl.js_fallback import render_with_playwright
 from wi.crawl.language import declared_language, site_language, text_language
+from wi.crawl.snapshot import build_snapshot, write_snapshot
 from wi.crawl.url import RESTRICTED_MESSAGE, validate_company_url
 from wi.eval.latency import PhaseTimer
 from wi.extract.llm import OpenAIChatCompleter
@@ -292,6 +293,12 @@ def main(raw_url: str, use_cache: bool = True) -> int:
     out_dir = ROOT / "data" / "runs"
     out_dir.mkdir(parents=True, exist_ok=True)
     slug = (validated.approved_domains[0] if validated.approved_domains else "site").replace(".", "_")
+
+    # B-88: a record of what was fetched and what the model was shown (cleaned text, fetch timing,
+    # checksums), under data/clean/ (git-ignored). Records only; nothing above depends on it.
+    snapshot_ref = write_snapshot(ROOT, slug, build_snapshot(
+        validated.url, retrieved_at, crawl_result.pages, clean_pages, [cp.url for cp in sent_pages]))
+    print(f"  snapshot: {snapshot_ref['path']} ({snapshot_ref['pages']} page(s))")
     out_path = out_dir / f"{slug}.json"
     out_path.write_text(
         json.dumps({
@@ -345,6 +352,7 @@ def main(raw_url: str, use_cache: bool = True) -> int:
                 "estimated_cost_usd": cost_usd,
             } if run.usage else None,
             "timing": timing,                   # B-74 (AC-10), see the PhaseTimer above
+            "clean_snapshot": snapshot_ref,     # B-88: path and sha256 of the page-text snapshot
         }, indent=2),
         encoding="utf-8",
     )
