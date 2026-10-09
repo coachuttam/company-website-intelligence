@@ -1,6 +1,6 @@
 # DRAFT: Known limitations (for the handoff docs)
 
-Status as of 2026-10-07, code at `EXTRACTION_LOGIC_VERSION` 22, `prompt_version` 16, Jev on.
+Status as of 2026-10-09, code at `EXTRACTION_LOGIC_VERSION` 22, `prompt_version` 16, Jev on.
 
 ## Accuracy
 
@@ -66,9 +66,41 @@ Status as of 2026-10-07, code at `EXTRACTION_LOGIC_VERSION` 22, `prompt_version`
   domain is dropped and recorded in `dropped_after_redirect`. Loom now redirects 15 of its links
   (`/security`, `/signup`, blog posts) to atlassian.com, so those pages are no longer read; Loom's
   crawl fell from 60 fetches to 25 kept pages. Company information that has moved to a parent
-  company's domain is not collected.
+  company's domain is not collected. (A start URL that itself redirects off the domain is reported
+  as `crawl_status: "redirected"`, B-86.)
 - **Login check is links only.** B-78 skips login and SSO links before fetching, but a normal link
   that redirects to a login page is still fetched (it is then dropped only if it leaves the
   approved domains, B-80).
 - **Pages a JS-only site renders after load** are read only through the Playwright fallback, when
   the static text is under the threshold.
+
+## Error handling (PRD Section 9, B-83 to B-87)
+
+Unreachable, blocked and off-domain-redirect start pages are reported with `crawl_status` and an
+error code, and the rendered page shows a banner for them (B-83, B-84, B-86, B-87). What is left:
+
+- **No backoff for a 429 after the start page.** Only the start URL waits out a 429 (B-84). A later
+  page that answers 429 is recorded in `blocked_pages` and skipped, with no wait or retry, so a
+  rate-limited site can lose pages that a short backoff would have recovered (Section 9 asks for
+  exponential backoff within the time budget).
+- **No `TIMEOUT` error code.** A page that times out is skipped, recorded with the exception text and
+  the crawl continues (Section 9's "skip the page, log it, continue"), but it has no distinct
+  `error_code`, so timeouts are counted only by reading the error text. A start page that times out
+  is retried and then reported as `SITE_UNREACHABLE` (B-83).
+- **A start URL that redirects within the domain to a robots-disallowed path** is dropped by B-80,
+  and the run ends with 0 pages and `crawl_status: "ok"` instead of `blocked` /
+  `ROBOTS_DISALLOWED`. No model call is made, but a missing `OPENAI_API_KEY` still stops the run.
+- **Jev has no retry on a rate limit.** Any Jev HTTP error, including 429, leaves the extraction
+  result unchanged and is recorded in the run JSON's `classifier.error`; the decision is simply not
+  made for that run. (The OpenAI client retries its own calls twice by default; that is the SDK's
+  behaviour, not this project's code.)
+- **The bot-challenge detector (B-84) has not been checked against real crawled HTML.** No raw page
+  HTML is saved for any run. It was checked on test fixtures, on the 6 rendered HTML files on disk,
+  and on 504 claim titles and quotes across the 29 saved runs (0 false positives), not on the pages
+  themselves. The next sanctioned `--no-cache` run lists any flagged page in `blocked_pages` with its
+  reason, so a false positive would be visible there.
+- **The language check (B-85) was run on quotes, not full page text.** Saved runs keep no page text,
+  so the check over all 29 runs used their claim quotes and page titles: 0 flagged non-English (22
+  "en", 7 "unknown"). Its thresholds were set from test fixtures only. On those short quotes
+  Freshworks and SimpleStores sit just above the English threshold (0.106 to 0.107 against 0.10);
+  below it they would read "unknown", which is still not flagged.
