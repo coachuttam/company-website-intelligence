@@ -14,8 +14,8 @@ Status as of 2026-10-07, code at `EXTRACTION_LOGIC_VERSION` 22, `prompt_version`
 - **About a third of dev errors trace to the labels, not the system.** See
   `docs/ERROR_REVIEW.md`: 26 of 73 non-right verdicts are label granularity or format, two valid
   wordings on the site, or a `not_found` label where the run found gate-verified text. The dev labels
-  were made by hand by Uttam on 2026-09-28, mostly from website screenshots, so text on a page the
-  screenshots did not show can be missing from them; they have not had a second independent check.
+  were made by hand by Uttam on 2026-09-28, from the sites' screenshots and pages, so text on a
+  page they did not cover can be missing from them; they have not had a second independent check.
 
 ## Evaluation sets
 

@@ -68,8 +68,8 @@ R1/R2/R3 give the verdict in each round (blank = a right call that round).
    (`delivery_model` labels are long free text that predate the "category (channels)" convention of
    B-66; `free_trial` and `revenue_model` labels carry per-plan detail), two valid wordings, or a
    `not_found` label where the run found gate-verified text (Calendly certifications, SimpleStores
-   named customers). The labels were made by hand from website screenshots (see each file's
-   `labeling_metadata`), so text on pages the screenshots did not cover can be missing. These need
+   named customers). The labels were made by hand from the sites' screenshots and pages (see each
+   file's `labeling_metadata`), so text on pages they did not cover can be missing. These need
    an independent re-check of the labels, not output-matching edits.
 2. **No crawl misses.** Every page a label cites was fetched in every round, so the remaining
    misses are extraction, not discovery.
