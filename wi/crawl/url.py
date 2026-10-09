@@ -29,6 +29,17 @@ class UrlResult(BaseModel):
     approved_domains: List[str] = []     # canonical host plus its www / apex variant
 
 
+RESTRICTED_MESSAGE = "Restricted platform. Provide the company's own website."
+
+
+def is_restricted_host(host: str) -> bool:
+    """True for a restricted platform (or a subdomain of one), with or without "www.". Shared by
+    validate_company_url() and the crawl's start-page redirect check (B-86), so both use one rule."""
+    host = (host or "").lower().rstrip(".")
+    apex = host[4:] if host.startswith("www.") else host
+    return apex in RESTRICTED_HOSTS or any(apex.endswith("." + r) for r in RESTRICTED_HOSTS)
+
+
 def _error(code: str, message: str) -> UrlResult:
     return UrlResult(status="error", error_code=code, message=message)
 
@@ -64,8 +75,8 @@ def validate_company_url(raw: object) -> UrlResult:
         return _error("INVALID_URL", "Invalid company URL")
 
     apex = host[4:] if host.startswith("www.") else host
-    if apex in RESTRICTED_HOSTS or any(apex.endswith("." + r) for r in RESTRICTED_HOSTS):
-        return _error("RESTRICTED_PLATFORM", "Restricted platform. Provide the company's own website.")
+    if is_restricted_host(host):
+        return _error("RESTRICTED_PLATFORM", RESTRICTED_MESSAGE)
 
     path = parts.path or "/"
     normalised = f"{parts.scheme}://{host}{path}"

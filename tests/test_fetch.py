@@ -1177,3 +1177,96 @@ def test_b84_parse_retry_after_reads_seconds_and_http_dates():
     assert parse_retry_after("5") == 5.0
     assert parse_retry_after(None) is None and parse_retry_after("soon") is None
     assert parse_retry_after("Wed, 21 Oct 2015 07:28:00 GMT") == 0.0   # in the past: no wait
+
+
+# --- B-86: a start URL that redirects off the approved domains ------------------------------------
+
+def _redirect_site(redirects, pages):
+    calls = []
+
+    def handler(request):
+        url = str(request.url)
+        calls.append(url)
+        if url.endswith("/robots.txt"):
+            return httpx.Response(404)
+        if url in redirects:
+            return httpx.Response(301, headers={"Location": redirects[url]})
+        return httpx.Response(200, text=pages.get(url, REAL_PAGE))
+    return httpx.Client(transport=httpx.MockTransport(handler), follow_redirects=True, max_redirects=5), calls
+
+
+def _crawl_from(start, redirects, pages=None, monkeypatch=None):
+    from wi.crawl.url import validate_company_url
+    if monkeypatch:
+        _record_sleeps(monkeypatch)
+    v = validate_company_url(start)
+    client, calls = _redirect_site(redirects, pages or {})
+    with client:
+        return crawl_site(v.url, v.approved_domains, BASE_CONFIG, client=client), calls
+
+
+def test_b86_start_url_redirecting_to_another_domain_is_reported_and_not_crawled(monkeypatch):
+    home_elsewhere = '<html><body>' + "Atlassian text. " * 40 + '<a href="/jira">Jira</a></body></html>'
+    result, calls = _crawl_from(
+        "https://www.loom.com/", {"https://www.loom.com/": "https://www.atlassian.com/software/loom"},
+        {"https://www.atlassian.com/software/loom": home_elsewhere}, monkeypatch)
+    assert (result.crawl_status, result.crawl_error_code) == ("redirected", "REDIRECTED_OFF_DOMAIN")
+    assert result.final_url == "https://www.atlassian.com/software/loom"
+    assert "outside the approved domains" in result.crawl_status_reason
+    assert [p for p in result.pages if p.status == "ok"] == []          # nothing to send to the model
+    assert "https://www.atlassian.com/jira" not in calls                 # its links are not followed
+    assert crawl_diagnostics(result)["final_url"] == result.final_url
+
+
+def test_b86_redirects_that_stay_on_the_company_domain_are_ok(monkeypatch):
+    cases = [
+        ("https://example.co.in/", {"https://example.co.in/": "https://www.example.co.in/"}),   # apex -> www
+        ("https://www.example.co.uk/", {"https://www.example.co.uk/": "https://example.co.uk/"}),  # www -> apex
+        ("http://example.com/", {"http://example.com/": "https://example.com/"}),               # http -> https
+        ("https://example.com/", {"https://example.com/": "https://example.com/en/home"}),      # path
+    ]
+    for start, redirects in cases:
+        result, _ = _crawl_from(start, redirects, monkeypatch=monkeypatch)
+        assert result.crawl_status == "ok", start
+        assert result.final_url is None
+        assert [p.status for p in result.pages][:1] == ["ok"], start
+
+
+def test_b86_a_different_company_on_the_same_country_suffix_is_off_domain(monkeypatch):
+    # The rule compares against the host as given, never a bare "co.uk" or "co.in".
+    for start, target in [("https://example.co.uk/", "https://another-company.co.uk/"),
+                          ("https://example.co.in/", "https://www.someone-else.co.in/")]:
+        result, _ = _crawl_from(start, {start: target}, monkeypatch=monkeypatch)
+        assert (result.crawl_status, result.crawl_error_code) == ("redirected", "REDIRECTED_OFF_DOMAIN"), start
+
+
+def test_b86_redirect_to_a_restricted_platform_is_marked_restricted(monkeypatch):
+    result, _ = _crawl_from("https://example.com/",
+                            {"https://example.com/": "https://www.linkedin.com/company/example"},
+                            monkeypatch=monkeypatch)
+    assert (result.crawl_status, result.crawl_error_code) == ("redirected", "RESTRICTED_PLATFORM")
+
+
+def test_b86_loom_start_page_behaves_exactly_as_before(monkeypatch):
+    # Loom today: the start page is served directly; some of its links redirect to atlassian.com
+    # and are dropped by B-80 as before. crawl_status stays "ok" and the start page is crawled.
+    home = ('<html><head><title>Loom</title></head><body>' + "Record your screen with Loom. " * 30 +
+            '<a href="/pricing">Pricing</a> <a href="/security">Security</a></body></html>')
+    result, calls = _crawl_from(
+        "https://www.loom.com/",
+        {"https://www.loom.com/security": "https://www.atlassian.com/legal/security-measures"},
+        {"https://www.loom.com/": home}, monkeypatch)
+    assert result.crawl_status == "ok" and result.final_url is None
+    assert [p.url for p in result.pages if p.status == "ok"] == ["https://www.loom.com/",
+                                                                 "https://www.loom.com/pricing"]
+    assert result.dropped_after_redirect == [{
+        "requested_url": "https://www.loom.com/security",
+        "final_url": "https://www.atlassian.com/legal/security-measures",
+        "reason": "final URL outside the approved domains"}]
+
+
+def test_b86_validation_still_rejects_restricted_platforms_through_the_shared_helper():
+    from wi.crawl.url import is_restricted_host, validate_company_url
+    assert validate_company_url("https://www.linkedin.com/company/acme").error_code == "RESTRICTED_PLATFORM"
+    assert is_restricted_host("www.linkedin.com") and is_restricted_host("m.facebook.com")
+    assert not is_restricted_host("example.co.uk")

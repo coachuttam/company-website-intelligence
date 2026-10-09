@@ -121,3 +121,47 @@ def test_b85_non_english_site_is_flagged_and_extraction_still_runs(tmp_path, mon
     assert [(p["declared_lang"], p["guessed_lang"], p["sent_to_model"]) for p in langs] == \
         [("es", "non-en", True), ("es", "non-en", True)]
     assert check_gate.main(str(path)) == 0               # schema and evidence presence still pass
+
+
+# --- B-86: off-domain start redirect ----------------------------------------------------------------
+
+def _redirected_crawl(final_url, code):
+    def fake_crawl(url, domains, config, js_renderer=None):
+        r = CrawlResult(start_url=url)
+        r.pages = [FetchResult(url=final_url, status="error", status_code=200, error_code=code,
+                               error=f"redirected off the approved domains to {final_url}",
+                               requested_url=url)]
+        r.start_attempts, r.final_url = 1, final_url
+        r.crawl_status, r.crawl_error_code = "redirected", code
+        r.crawl_status_reason = f"start URL {url} redirects to {final_url}, outside the approved domains"
+        return r
+    return fake_crawl
+
+
+def _no_model(*a, **k):
+    raise AssertionError("no model client may be built")
+
+
+def test_b86_off_domain_redirect_writes_an_empty_result_without_any_model_call(tmp_path, monkeypatch):
+    monkeypatch.setattr(run_site, "ROOT", tmp_path)
+    monkeypatch.setattr(run_site, "crawl_site",
+                        _redirected_crawl("https://www.atlassian.com/software/loom", "REDIRECTED_OFF_DOMAIN"))
+    monkeypatch.setattr(run_site, "OpenAIChatCompleter", _no_model)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+
+    assert run_site.main("https://moved-example.com/") == 0
+    out = json.loads((tmp_path / "data" / "runs" / "moved-example_com.json").read_text())
+    assert (out["crawl_status"], out["crawl_error_code"]) == ("redirected", "REDIRECTED_OFF_DOMAIN")
+    assert out["final_url"] == "https://www.atlassian.com/software/loom"
+    assert all(c["status"] == "not_found" for c in out["claims"]) and out["usage"] is None
+
+
+def test_b86_redirect_to_a_restricted_platform_is_rejected_like_validation(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(run_site, "ROOT", tmp_path)
+    monkeypatch.setattr(run_site, "crawl_site",
+                        _redirected_crawl("https://www.linkedin.com/company/acme", "RESTRICTED_PLATFORM"))
+    monkeypatch.setattr(run_site, "OpenAIChatCompleter", _no_model)
+
+    assert run_site.main("https://acme-example.com/") == 1
+    assert "REJECTED (RESTRICTED_PLATFORM)" in capsys.readouterr().out
+    assert not (tmp_path / "data" / "runs").exists()      # existing handling: no JSON written

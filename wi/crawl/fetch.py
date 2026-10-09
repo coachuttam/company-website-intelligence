@@ -92,6 +92,7 @@ import httpx
 from bs4 import BeautifulSoup
 
 from wi.crawl.clean import _title, is_priority_url, main_text
+from wi.crawl.url import is_restricted_host
 from wi.crawl.js_fallback import (DEFAULT_MIN_TEXT_CHARS, DEFAULT_TIMEOUT_S, needs_fallback,
                                   visible_text_length)
 
@@ -143,6 +144,8 @@ class CrawlResult:
     # B-73: the crawl stopped at crawl.max_pages with URLs still queued, so some discovered pages
     # were never fetched. Separate from budget_exhausted, which only ever meant the time budget.
     page_cap_reached: bool = False
+    # B-86 adds "redirected" (REDIRECTED_OFF_DOMAIN, or RESTRICTED_PLATFORM when the redirect ends on
+    # a restricted platform) for a start URL whose redirects leave the approved domains.
     # B-83/B-84 (PRD Section 9 / INP-03): the site-level outcome, decided by the start page alone:
     # "ok"; "unreachable" (crawl_error_code SITE_UNREACHABLE) when the start URL could not be
     # fetched even after the bounded retries; "blocked" (SITE_BLOCKED, or ROBOTS_DISALLOWED when
@@ -151,6 +154,8 @@ class CrawlResult:
     crawl_error_code: Optional[str] = None
     crawl_status_reason: Optional[str] = None
     start_attempts: int = 0     # fetches of the start URL, including retries
+    # B-86: where the start URL's redirects ended, when that is outside the approved domains.
+    final_url: Optional[str] = None
     # B-84: pages after the start page that refused us (401/403/429 or a bot-challenge page):
     # [{"url", "reason"}]. Never sent to the model; crawl_status stays "ok".
     blocked_pages: List[dict] = field(default_factory=list)
@@ -194,6 +199,7 @@ def crawl_diagnostics(result: CrawlResult) -> dict:
         "crawl_error_code": result.crawl_error_code,
         "crawl_status_reason": result.crawl_status_reason,
         "start_attempts": result.start_attempts,
+        "final_url": result.final_url,                # B-86
         "blocked_pages": result.blocked_pages,        # B-84
     }
 
@@ -662,6 +668,25 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
                     result.crawl_status_reason = (
                         f"start URL {url} refused the crawler after {result.start_attempts} "
                         f"attempt(s): {why}")
+                    break
+                if page.status == "ok" and page.requested_url is not None \
+                        and not _same_domain(page.url, approved_domains):
+                    # B-86: the start URL redirects to another domain (B-80's own domain rule). The
+                    # page there is not this company's site as given: nothing is crawled or sent
+                    # to the model. A restricted platform keeps its existing handling (rejected).
+                    restricted = is_restricted_host(urlsplit(page.url).hostname or "")
+                    result.pages.append(FetchResult(
+                        url=page.url, status="error", status_code=page.status_code,
+                        elapsed_s=page.elapsed_s, requested_url=page.requested_url,
+                        error_code="RESTRICTED_PLATFORM" if restricted else "REDIRECTED_OFF_DOMAIN",
+                        error=f"redirected off the approved domains to {page.url}"))
+                    result.final_url = page.url
+                    result.crawl_status = "redirected"
+                    result.crawl_error_code = ("RESTRICTED_PLATFORM" if restricted
+                                               else "REDIRECTED_OFF_DOMAIN")
+                    result.crawl_status_reason = (
+                        f"start URL {url} redirects to {page.url}, outside the approved domains "
+                        f"({', '.join(approved_domains)}); not crawled")
                     break
                 if page.status != "ok":
                     result.pages.append(page)

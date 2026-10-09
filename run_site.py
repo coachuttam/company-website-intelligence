@@ -42,7 +42,7 @@ from wi.crawl.clean import clean_page, resolve_char_cap
 from wi.crawl.fetch import crawl_diagnostics, crawl_site
 from wi.crawl.js_fallback import render_with_playwright
 from wi.crawl.language import declared_language, site_language, text_language
-from wi.crawl.url import validate_company_url
+from wi.crawl.url import RESTRICTED_MESSAGE, validate_company_url
 from wi.eval.latency import PhaseTimer
 from wi.extract.llm import OpenAIChatCompleter
 from wi.classify.decisions import apply_classifier
@@ -92,6 +92,13 @@ def main(raw_url: str, use_cache: bool = True) -> int:
           + (", page cap reached" if crawl_result.page_cap_reached else "")
           + (f", {len(crawl_result.blocked_pages)} page(s) refused us (not used)"
              if crawl_result.blocked_pages else ""))
+
+    # B-86: a start URL that redirects to a restricted platform gets the existing restricted-
+    # platform handling, exactly as if that address had been given: rejected, exit 1, no JSON.
+    if crawl_result.crawl_error_code == "RESTRICTED_PLATFORM":
+        print(f"REJECTED (RESTRICTED_PLATFORM): {RESTRICTED_MESSAGE} "
+              f"(the start URL redirects to {crawl_result.final_url})")
+        return 1
 
     ok_pages = [p for p in crawl_result.pages if p.status == "ok" and p.html]
     if not ok_pages:
@@ -300,11 +307,13 @@ def main(raw_url: str, use_cache: bool = True) -> int:
             "profile": profile_doc["profile"],
             "schema_version": profile_doc["schema_version"],
             "limit_reached": profile_doc["limit_reached"],
-            # B-83/B-84 (PRD Section 9 / INP-03): "ok"; "unreachable" (SITE_UNREACHABLE); or
-            # "blocked" (SITE_BLOCKED, or ROBOTS_DISALLOWED for a disallowed start URL).
+            # B-83/B-84/B-86 (PRD Section 9 / INP-03): "ok"; "unreachable" (SITE_UNREACHABLE);
+            # "blocked" (SITE_BLOCKED, or ROBOTS_DISALLOWED for a disallowed start URL); or
+            # "redirected" (REDIRECTED_OFF_DOMAIN, with final_url).
             "crawl_status": profile_doc["crawl_status"],
             "crawl_error_code": profile_doc["crawl_error_code"],
             "crawl_status_reason": profile_doc["crawl_status_reason"],
+            "final_url": crawl_result.final_url,   # B-86: set when crawl_status is "redirected"
             # B-85: "en", "unknown", a declared non-English code such as "es", or "non-en".
             "site_language": profile_doc["site_language"],
             "site_language_source": profile_doc["site_language_source"],
