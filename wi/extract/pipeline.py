@@ -130,7 +130,7 @@ from wi.schemas.announcement import Announcement
 from wi.schemas.claim import Claim, Status
 from wi.validate.evidence import (
     check_claim, check_claim_items, check_conflicting_claim, evidence_home, quote_in_page,
-    realign_list_evidence, trim_delivery_model_details,
+    quote_sources, realign_list_evidence, trim_delivery_model_details,
 )
 
 
@@ -173,6 +173,9 @@ class ExtractionRun:
     cache_status: str = "miss"  # "hit" | "miss" -- CST-02 asks this to be logged per run
     dropped_pages: List[str] = field(default_factory=list)  # URLs trimmed by the input-budget
                                                               # guard below, never sent to the LLM
+    # B-89: claim_id -> [{"quote", "urls"}] for accepted claims whose quotes are not all on the one
+    # page their source_url names (quotes spread over several pages, or found elsewhere).
+    evidence_sources: Dict[str, List[dict]] = field(default_factory=dict)
 
 
 def _slug(site_url: str) -> str:
@@ -228,6 +231,7 @@ def _payload_from_run(run: ExtractionRun) -> dict:
         "announcements": [a.model_dump(mode="json") for a in run.announcements],
         "rejected_announcements": [asdict(r) for r in run.rejected_announcements],
         "schema_errors": run.schema_errors,
+        "evidence_sources": run.evidence_sources,   # B-89
     }
 
 
@@ -248,6 +252,7 @@ def diagnostics_from_run(run: ExtractionRun) -> dict:
         "rejected": [asdict(r) for r in run.rejected],
         "schema_errors": run.schema_errors,
         "rejected_announcements": [asdict(r) for r in run.rejected_announcements],
+        "evidence_sources": run.evidence_sources,   # B-89: each quote's own page(s)
     }
 
 
@@ -260,6 +265,7 @@ def _run_from_cached_payload(site_url: str, payload: dict, model: str) -> Extrac
         RejectedAnnouncement(**r) for r in payload.get("rejected_announcements", [])
     ]
     run.schema_errors = list(payload.get("schema_errors", []))
+    run.evidence_sources = dict(payload.get("evidence_sources", {}))   # B-89
     run.usage = LLMResult(content="", model=model, prompt_tokens=0, completion_tokens=0,
                            total_tokens=0, elapsed_s=0.0)
     return run
@@ -564,6 +570,7 @@ def extract_claims(
                     )
                 elif note:
                     run.schema_errors.append(f"claim #{i} ({field_name}): {note}")
+
         elif claim.status == Status.conflicting:
             # B-06/EVD-05 (2026-09-27): conflicting claims used to reach here completely
             # unchecked -- see check_conflicting_claim()'s docstring. Its two values legitimately
@@ -577,6 +584,18 @@ def extract_claims(
                     source_url=claim.source_url,
                 ))
                 claim = _not_found_replacement(field_name, pages_checked=len(llm_pages))
+
+        if claim.status in (Status.extracted, Status.inferred, Status.conflicting):
+            # B-89: record each quote's own page when they are not all on the one page source_url
+            # names, so the ledger and the rendered page can show every source. Records only: the
+            # claim was already accepted above, by the unchanged evidence check.
+            cited = normalize_url(claim.source_url) if claim.source_url else ""
+            located = quote_sources(claim, cited, text_by_url)
+            if any(entry["pages"] != [cited] for entry in located):
+                run.evidence_sources[claim.claim_id] = [
+                    {"quote": e["quote"], "urls": [page_by_key[k].url for k in e["pages"]]}
+                    for e in located
+                ]
 
         run.claims.append(claim)
 

@@ -985,3 +985,27 @@ def trim_delivery_model_details(
     if not dropped:
         return value, []
     return (f"{category} ({', '.join(kept)})" if kept else category), dropped
+
+
+def quote_sources(
+    claim: Claim, cited_key: str, page_texts: Dict[str, str]
+) -> List[Dict[str, object]]:
+    """B-89: for a claim that already passed the evidence check, where each of its quotes actually
+    is: [{"quote": q, "pages": [page key, ...]}], one entry per quote, using the same rule the check
+    used (the cited page at the normal threshold, else any crawled page at the stricter corpus
+    threshold). Records only -- it never accepts or rejects anything."""
+    if not claim.evidence:
+        return []
+    page_text = page_texts.get(cited_key, "")
+    corpus = list(page_texts.values())
+    quotes = ([q for q in claim.evidence if q] if isinstance(claim.evidence, list)
+              else _evidence_fragments(claim.evidence, page_text, corpus))
+    out = []
+    for q in quotes:
+        if cited_key and quote_in_page(q, page_text):
+            pages = [cited_key]
+        else:
+            pages = [k for k, text in page_texts.items()
+                     if quote_in_page(q, text, threshold=CORPUS_FALLBACK_FUZZY_THRESHOLD)]
+        out.append({"quote": q, "pages": pages})
+    return out

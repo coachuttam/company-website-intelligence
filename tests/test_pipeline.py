@@ -1032,7 +1032,8 @@ def test_diagnostics_from_run_on_a_clean_run_is_all_empty():
 
     diag = diagnostics_from_run(run)
 
-    assert diag == {"rejected": [], "schema_errors": [], "rejected_announcements": []}
+    assert diag == {"rejected": [], "schema_errors": [], "rejected_announcements": [],
+                    "evidence_sources": {}}   # B-89: every quote is on its cited page
 
 
 # --- B-77: cite the page the evidence is actually on ------------------------------------------
@@ -1147,3 +1148,64 @@ def test_b81_pipeline_keeps_the_claim_and_drops_only_the_unsupported_detail():
     assert claim.value == "software"
     assert run.rejected == []
     assert any("B-81" in e and "cloud-based" in e for e in run.schema_errors)
+
+
+# --- B-89: each quote's own source is recorded when quotes span several pages --------------------
+
+CISCO = CleanPage(url="https://example.com/customer-stories/cisco", title="Cisco",
+                  text="Cisco Meraki makes networking simple for organizations everywhere.")
+NUBANK = CleanPage(url="https://example.com/customer-stories/nubank", title="Nubank",
+                   text="Nubank is on a mission to reinvent financial services across Latin America.")
+INDEX = CleanPage(url="https://example.com/customer-stories", title="Customer stories",
+                  text="Read how teams build with us.")
+
+
+def test_b89_quotes_spread_over_several_pages_each_keep_their_own_source():
+    # Found on postman.com: named_customers cited /customer-stories, but each quote was on its own
+    # customer page; B-77 could not re-point one source_url to two pages.
+    claims = _named_customers_claim(
+        ["Cisco Meraki", "Nubank"],
+        ["Cisco Meraki makes networking simple for organizations everywhere.",
+         "Nubank is on a mission to reinvent financial services across Latin America."],
+        "https://example.com/customer-stories", page_title="Customer stories")
+    run = extract_claims("https://example.com/", [INDEX, CISCO, NUBANK], CONFIG,
+                          FakeCompleter({"claims": claims}), retrieved_at="2026-10-09")
+
+    claim = next(c for c in run.claims if c.field == "traction.named_customers")
+    assert claim.status == Status.extracted                       # acceptance unchanged
+    assert claim.source_url == "https://example.com/customer-stories"
+    assert run.evidence_sources[claim.claim_id] == [
+        {"quote": "Cisco Meraki makes networking simple for organizations everywhere.",
+         "urls": ["https://example.com/customer-stories/cisco"]},
+        {"quote": "Nubank is on a mission to reinvent financial services across Latin America.",
+         "urls": ["https://example.com/customer-stories/nubank"]},
+    ]
+    assert diagnostics_from_run(run)["evidence_sources"] == run.evidence_sources
+
+
+def test_b89_a_fabricated_quote_is_still_rejected_and_records_no_sources():
+    claims = _named_customers_claim(["Cisco Meraki", "Acme Bank"],
+                                    ["Cisco Meraki makes networking simple for organizations everywhere.",
+                                     "Acme Bank runs on our platform worldwide."],
+                                    "https://example.com/customer-stories")
+    run = extract_claims("https://example.com/", [INDEX, CISCO, NUBANK], CONFIG,
+                          FakeCompleter({"claims": claims}), retrieved_at="2026-10-09")
+    claim = next(c for c in run.claims if c.field == "traction.named_customers")
+    assert claim.value == ["Cisco Meraki"]                         # gate still drops the made-up item
+    assert any(r.field == "traction.named_customers" for r in run.rejected)
+    assert all("Acme Bank" not in e["quote"] for e in run.evidence_sources.get(claim.claim_id, []))
+
+
+def test_b89_evidence_sources_survive_a_cache_round_trip(tmp_path):
+    from wi.crawl.cache import RunCache
+    claims = _named_customers_claim(
+        ["Cisco Meraki", "Nubank"],
+        ["Cisco Meraki makes networking simple for organizations everywhere.",
+         "Nubank is on a mission to reinvent financial services across Latin America."],
+        "https://example.com/customer-stories")
+    cache = RunCache(cache_dir=tmp_path)
+    first = extract_claims("https://example.com/", [INDEX, CISCO, NUBANK], CONFIG,
+                            FakeCompleter({"claims": claims}), retrieved_at="2026-10-09", cache=cache)
+    again = extract_claims("https://example.com/", [INDEX, CISCO, NUBANK], CONFIG,
+                            FakeCompleter({"claims": claims}), retrieved_at="2026-10-09", cache=cache)
+    assert again.cache_status == "hit" and again.evidence_sources == first.evidence_sources != {}

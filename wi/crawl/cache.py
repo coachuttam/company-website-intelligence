@@ -159,7 +159,9 @@ from wi.crawl.fetch import content_hash
 # not mention, so a stale cached claim would keep the unsupported detail.
 # 23 (2026-10-09, B-92): clean_page folds certification badge-grid labels back into the cleaned text,
 # so what the model and the evidence gate see changes; a cached result would miss the new labels.
-EXTRACTION_LOGIC_VERSION = 23
+# 24 (2026-10-09, B-89): the pipeline records each quote's own source page(s) for claims whose quotes
+# are spread over several pages, and the cache payload carries them; an older cached payload lacks it.
+EXTRACTION_LOGIC_VERSION = 24
 
 
 def run_fingerprint(site_url: str, pages: List[CleanPage], config: dict) -> str:

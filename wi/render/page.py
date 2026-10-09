@@ -240,12 +240,19 @@ def _drawer(claim: Optional[Dict[str, Any]], summary: str = "Evidence") -> str:
     pairs = _evidence_pairs(claim)
     if not pairs:
         parts.append('<p class="muted">No quote recorded.</p>')
+    # B-89: when the quotes come from several pages, each quote shows its own source.
+    per_quote = {str(e.get("quote")): e.get("urls") or [] for e in (claim.get("_quote_sources") or [])}
     for value, quote in pairs:
         lead = "<strong>" + esc(value) + "</strong>" if value else ""
-        parts.append('<figure class="quote">' + lead + "<blockquote>" + esc(quote) + "</blockquote></figure>")
+        urls = per_quote.get(quote)
+        own = ('<figcaption class="meta">From: ' + ", ".join(_link(u) for u in urls) + "</figcaption>"
+               if urls else "")
+        parts.append('<figure class="quote">' + lead + "<blockquote>" + esc(quote) + "</blockquote>"
+                     + own + "</figure>")
     meta: List[str] = []
     if claim.get("source_url"):
-        meta.append("Source: " + _link(claim["source_url"]))
+        label = "Cited page: " if per_quote else "Source: "
+        meta.append(label + _link(claim["source_url"]))
     if claim.get("page_title"):
         meta.append(esc(claim["page_title"]))
     if claim.get("retrieved_at"):
@@ -363,7 +370,10 @@ def render_profile_html(run: Dict[str, Any], source_name: str = "") -> str:
     """Render one run dict (the JSON run_site.py writes) to a complete HTML document string."""
     profile = run.get("profile") or {}
     claims = run.get("claims") or []
-    lookup = {str(c.get("claim_id")): c for c in claims}
+    # B-89: attach each claim's per-quote sources (run-level evidence_sources) for the drawer.
+    sources = run.get("evidence_sources") or {}
+    lookup = {str(c.get("claim_id")): {**c, "_quote_sources": sources.get(str(c.get("claim_id")))}
+              for c in claims}
 
     domain = _domain(run)
     name_entry = (profile.get("company_identity") or {}).get("name") or {}

@@ -259,3 +259,18 @@ def test_b87_crawl_banner_and_limit_banner_can_both_show():
     page = render_profile_html(_run(crawl_status="unreachable", crawl_error_code="SITE_UNREACHABLE",
                                     crawl_status_reason="x", limit_reached=True))
     assert "Site unreachable" in page and "Partial profile" in page
+
+
+def test_b89_each_quote_shows_its_own_source_when_quotes_span_pages():
+    run = _run()
+    cid = run["claims"][2]["claim_id"]                      # products.names, two quotes
+    run["evidence_sources"] = {cid: [{"quote": "Acme Pay", "urls": ["https://www.acme.com/pay"]},
+                                     {"quote": "Acme Payout", "urls": ["https://www.acme.com/payout"]}]}
+    page = render_profile_html(run)
+    assert "From: " in page and "https://www.acme.com/pay" in page and "https://www.acme.com/payout" in page
+    assert "Cited page: " in page                           # the single source_url is labelled as such
+
+
+def test_b89_no_per_quote_sources_means_the_drawer_is_unchanged():
+    page = render_profile_html(_run())
+    assert "From: " not in page and "Cited page: " not in page and "Source: " in page
