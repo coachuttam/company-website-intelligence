@@ -630,19 +630,18 @@ def test_b60_skip_can_be_switched_off_in_config():
     assert result.skipped_as_other_locale == []
 
 
-def test_b60_start_url_without_locale_skips_nothing():
-    # a bare-domain start page that never links to an /en... URL: a top-level /ja/ or /de/ here is
-    # not evidence of a locale-organised site (B-69 only reacts to /en links on the start page)
-    pages = dict(LOCALE_PAGES)
-    pages["https://s.example"] = (
-        '<html><body><a href="/pricing">P</a> <a href="/ja/pricing">JA</a> '
-        '<a href="/de/pricing">DE</a> <a href="/resource/guide">G</a></body></html>'
-    )
-    pages.pop("https://s.example/en")
-    config = {"crawl": dict(BASE_CONFIG["crawl"], respect_robots=False)}
-    with _locale_site_client(pages) as client:
-        result = crawl_site("https://s.example/", ["s.example"], config, client=client)
-    assert result.skipped_as_other_locale == []
+def test_b60_b93_a_lone_language_code_section_on_a_bare_domain_is_kept():
+    # B-60's original worry, still honoured by B-93: on a bare-domain site with no language
+    # switcher, a single top-level /hr/ or /it/ may be an HR or IT section, not Croatian/Italian.
+    for seg in ("hr", "it"):
+        pages = {"https://s.example": f'<html><body><a href="/pricing">P</a> <a href="/{seg}/overview">S</a></body></html>',
+                 "https://s.example/pricing": "<html><body>Pricing</body></html>",
+                 f"https://s.example/{seg}/overview": "<html><body>Section overview</body></html>"}
+        config = {"crawl": dict(BASE_CONFIG["crawl"], respect_robots=False)}
+        with _locale_site_client(pages) as client:
+            result = crawl_site("https://s.example/", ["s.example"], config, client=client)
+        assert result.skipped_as_other_locale == [], seg
+        assert f"https://s.example/{seg}/overview" in {p.url for p in result.pages}, seg
 
 
 # ---- B-65: failed fetches (404/403) do not use up the page budget ------------------------------
@@ -1310,3 +1309,54 @@ def test_b90_crawl_keeps_english_country_pages_and_skips_other_countries():
         assert f"https://s.example/{s}/page" in fetched, s
     assert sorted(result.skipped_as_other_locale) == sorted(
         f"https://s.example/{s}/page" for s in ["jp", "kr", "cn", "de"])
+
+
+# --- B-93: the language-segment skip on any site -----------------------------------------------------
+
+def _b93_crawl(start, home_links, extra_pages=()):
+    links = "".join(f'<a href="{h}">x</a> ' for h in home_links)
+    pages = {start.rstrip("/"): f"<html><body>Welcome to Acme. {links}</body></html>"}
+    pages.update({f"https://s.example{h}": f"<html><body>Page {h}</body></html>" for h in list(home_links) + list(extra_pages)})
+    config = {"crawl": dict(BASE_CONFIG["crawl"], respect_robots=False)}
+    with _locale_site_client(pages) as client:
+        return crawl_site(start, ["s.example"], config, client=client)
+
+
+def test_b93_english_bare_domain_start_skips_jp_de_and_fr_copies():
+    result = _b93_crawl("https://s.example/", ["/pricing", "/jp/pricing", "/de/pricing", "/fr/pricing"])
+    assert sorted(result.skipped_as_other_locale) == [
+        "https://s.example/de/pricing", "https://s.example/fr/pricing", "https://s.example/jp/pricing"]
+    assert "https://s.example/pricing" in {p.url for p in result.pages}
+
+
+def test_b93_start_url_under_fr_keeps_its_own_fr_pages():
+    result = _b93_crawl("https://s.example/fr/", ["/fr/tarifs", "/fr/clients", "/de/preise", "/en/pricing"])
+    fetched = {p.url for p in result.pages}
+    assert {"https://s.example/fr/tarifs", "https://s.example/fr/clients"} <= fetched
+    assert "https://s.example/en/pricing" in fetched                      # English is never skipped
+    assert result.skipped_as_other_locale == ["https://s.example/de/preise"]
+
+
+def test_b93_english_country_pages_are_kept_even_with_a_language_switcher():
+    result = _b93_crawl("https://s.example/", ["/uk/pricing", "/in/pricing", "/us/pricing", "/jp/pricing", "/de/pricing"])
+    fetched = {p.url for p in result.pages}
+    assert {"https://s.example/uk/pricing", "https://s.example/in/pricing", "https://s.example/us/pricing"} <= fetched
+    assert sorted(result.skipped_as_other_locale) == ["https://s.example/de/pricing", "https://s.example/jp/pricing"]
+
+
+def test_b93_postman_shape_a_country_code_alone_is_skipped_on_a_bare_domain():
+    # postman.com: bare-domain start, no /en/ links, only /jp/ copies -- crawled before B-93.
+    result = _b93_crawl("https://s.example/", ["/security", "/jp/security", "/jp/pricing"])
+    assert sorted(result.skipped_as_other_locale) == ["https://s.example/jp/pricing", "https://s.example/jp/security"]
+    assert "https://s.example/security" in {p.url for p in result.pages}
+
+
+def test_b93_should_skip_locale_rules():
+    from wi.crawl.fetch import should_skip_locale
+    assert should_skip_locale("https://s.example/jp/x", None, False) is True       # unambiguous country
+    assert should_skip_locale("https://s.example/pt_br/x", None, False) is True    # language + region
+    assert should_skip_locale("https://s.example/it/x", None, False) is False      # could be an IT section
+    assert should_skip_locale("https://s.example/it/x", None, True) is True        # switcher seen
+    assert should_skip_locale("https://s.example/fr/x", "fr", True) is False       # start URL's own locale
+    assert should_skip_locale("https://s.example/uk/x", None, True) is False       # English country
+    assert should_skip_locale("https://s.example/en-gb/x", "fr", True) is False    # English

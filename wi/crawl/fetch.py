@@ -68,6 +68,13 @@ changes nothing (a top-level /it/ or /hr/ there could be IT or HR content, not I
 Croatian), and English variants (/en-gb) are kept. Config: crawl.skip_other_locales (default
 true) turns it off.
 
+B-93 (2026-10-09): the skip now applies on any site, whenever there is evidence a segment is a
+locale (see should_skip_locale): the start URL sits under a locale, the start page links to two or
+more locales (a language switcher) or to an English one (B-69), or the segment can only be a locale
+(a mapped country code such as /jp/, or a language with a region such as /pt_br/). The start URL's
+own locale, English and the English-speaking countries (B-90) are never skipped, and a lone /it/
+or /hr/ on a bare-domain site with no switcher is still kept as a possible IT or HR section.
+
 B-69 (2026-10-06): the same copies were still fetched when the start URL was the bare domain
 (https://www.snowflake.com/ -- the form people actually type): 10 of its 40 pages were /ja/ /ko/
 /pt_br/ /de/ /fr/ /es/ /it/ copies of the pricing and customers pages, and the crawl never reached
@@ -363,6 +370,31 @@ def is_other_locale_url(url: str, start_url: str) -> bool:
     return lang is not None and lang != "en"
 
 
+def is_unambiguous_locale_url(url: str) -> bool:
+    """B-93: True when the first path segment can only be a locale: a mapped country code
+    (/jp/, /kr/, /cn/ ...) or a language with a region (/pt_br/, /zh-cn/). A bare language code
+    such as /it/ or /hr/ is NOT unambiguous: on its own it may be an IT or HR section."""
+    segments = [s for s in urlsplit(url).path.split("/") if s]
+    if not segments:
+        return False
+    seg = segments[0].lower()
+    if seg in _COUNTRY_TO_LANGUAGE:
+        return True
+    return bool(re.match(r"^[a-z]{2}[-_][a-z0-9]{2,4}$", seg)) and locale_language(url) is not None
+
+
+def should_skip_locale(url: str, start_lang: Optional[str], locale_site: bool) -> bool:
+    """B-93: skip `url` as another-language copy when its locale maps to a non-English language
+    other than the start URL's own, AND there is evidence it really is a locale: the site is known
+    to be locale-organised (start URL under a locale, or a language switcher on the start page), or
+    the segment can only be a locale (is_unambiguous_locale_url). English and the English-speaking
+    country segments (B-90) are never skipped, and neither is the start URL's own segment."""
+    lang = locale_language(url)
+    if lang is None or lang == "en" or lang == start_lang:
+        return False
+    return locale_site or is_unambiguous_locale_url(url)
+
+
 def is_non_english_locale_url(url: str) -> bool:
     """True when `url` sits under a non-English locale prefix (/ja/, /pt_br/, ...). Used once a
     site is known to be organised by English locale prefix (B-60, B-69)."""
@@ -621,6 +653,10 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
         failed_count = 0
         # B-60 / B-69: True once the site is known to be organised by an English locale prefix.
         english_locale_site = locale_language(start_url) == "en"
+        # B-93: the start URL's own locale (never skipped), and whether the site is known to be
+        # organised by locale: the start URL sits under one, or the start page links to several.
+        start_lang = locale_language(start_url)
+        locale_site = start_lang is not None
 
         while queue and (len(result.pages) - failed_count) < cfg["max_pages"]:
             if time.monotonic() >= deadline:
@@ -786,10 +822,15 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
                 if (skip_other_locales and depth == 0 and not english_locale_site
                         and any(locale_language(l) == "en" for l in page_links)):
                     english_locale_site = True      # B-69: the start page itself links to /en...
+                if depth == 0:
+                    # B-93: a language switcher on the start page (two or more locales linked, or
+                    # any English one, B-69) shows the site is organised by locale.
+                    linked = {locale_language(l) for l in page_links} - {None}
+                    locale_site = locale_site or english_locale_site or len(linked) >= 2
                 for link in page_links:
                     if link not in seen:
                         seen.add(link)
-                        if skip_other_locales and english_locale_site and is_non_english_locale_url(link):
+                        if skip_other_locales and should_skip_locale(link, start_lang, locale_site):
                             result.skipped_as_other_locale.append(link)
                             continue
                         if skip_auth_pages and is_auth_url(link):
