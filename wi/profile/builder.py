@@ -143,6 +143,9 @@ def build_profile(
     crawl_status: str = "ok",
     crawl_error_code: Optional[str] = None,
     crawl_status_reason: Optional[str] = None,
+    site_language: Optional[str] = None,
+    site_language_source: Optional[str] = None,
+    non_english: bool = False,
 ) -> dict:
     """Builds the PRD Section 5 "Output 2" document: {"profile": {...}, "claims": [...]}, plus
     `schema_version` (OUT-02: "stamp the schema version") and `limit_reached` (CST-03 / B-19).
@@ -194,8 +197,11 @@ def build_profile(
     profile["coverage"] = _coverage(claims_by_field, pages_scanned, len(run.rejected), retrieved_at)
     # B-83 (PRD Section 9 / INP-03): the site-level crawl outcome is metadata on the coverage
     # strip and on the document, never one of the 15 fields. "ok" for a normal run.
+    # B-85: the non-English flag is metadata in the same two places (PRD Section 9, AC-05).
     crawl_meta = {"crawl_status": crawl_status, "crawl_error_code": crawl_error_code,
-                  "crawl_status_reason": crawl_status_reason}
+                  "crawl_status_reason": crawl_status_reason,
+                  "site_language": site_language, "site_language_source": site_language_source,
+                  "non_english": non_english}
     profile["coverage"].update(crawl_meta)
     profile["gaps_conflicts"] = gaps_conflicts
     # B-07/OUT-04: always present (an empty list when none) -- see module docstring.

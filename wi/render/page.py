@@ -383,6 +383,14 @@ def render_profile_html(run: Dict[str, Any], source_name: str = "") -> str:
             '<p class="banner" role="status">Partial profile: a crawl or token limit was reached, '
             "so some pages may not have been read.</p>"
         )
+    if run.get("non_english"):
+        # B-85 (PRD Section 9, AC-05): flag only; the facts below were still extracted.
+        banner += (
+            '<p class="banner" role="status">Non-English site (detected language: '
+            + esc(run.get("site_language") or "non-en")
+            + "). Facts were still extracted, but this site is outside the English-language "
+            "supported-website definition, so expect gaps.</p>"
+        )
 
     sections: List[str] = []
     for key, title, anchor in SECTIONS:

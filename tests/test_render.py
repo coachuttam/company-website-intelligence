@@ -219,3 +219,10 @@ def test_renders_a_real_saved_run():
     run = json.loads((REPO / "data" / "runs" / "razorpay_com.json").read_text(encoding="utf-8"))
     page = render_profile_html(run)
     assert "Razorpay" in page and "Evidence ledger" in page
+
+
+def test_b85_non_english_banner_shows_only_when_flagged():
+    flagged = render_profile_html(_run(non_english=True, site_language="es"))
+    assert "Non-English site (detected language: es)" in flagged
+    assert "Non-English site" not in render_profile_html(_run(non_english=False, site_language="en"))
+    assert "Non-English site" not in render_profile_html(_run())     # older runs have no flag

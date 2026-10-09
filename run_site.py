@@ -41,6 +41,7 @@ from wi.crawl.cache import RunCache
 from wi.crawl.clean import clean_page, resolve_char_cap
 from wi.crawl.fetch import crawl_diagnostics, crawl_site
 from wi.crawl.js_fallback import render_with_playwright
+from wi.crawl.language import declared_language, site_language, text_language
 from wi.crawl.url import validate_company_url
 from wi.eval.latency import PhaseTimer
 from wi.extract.llm import OpenAIChatCompleter
@@ -241,6 +242,24 @@ def main(raw_url: str, use_cache: bool = True) -> int:
         for r in run.rejected_announcements:
             print(f"    - {r.reason} (claimed: {r.attempted_text!r})")
 
+    # B-85 (PRD Section 9 "Non-English site: attempt extraction and flag the language", AC-05):
+    # judged on every page of text actually sent to the model, weighted by length, plus the start
+    # page's <html lang>. Flag only -- it changes nothing that was crawled, sent or extracted.
+    dropped = set(run.dropped_pages)
+    sent_pages = [cp for cp in clean_pages if cp.url not in dropped]
+    html_by_url = {p.url: p.html for p in ok_pages}
+    language = site_language([f"{cp.title or ''}\n{cp.text}" for cp in sent_pages],
+                             start_html=ok_pages[0].html if ok_pages else None)
+    page_languages = [
+        {"url": cp.url, "declared_lang": declared_language(html_by_url.get(cp.url)),
+         "guessed_lang": text_language(cp.text)["guess"], "sent_to_model": cp.url not in dropped}
+        for cp in clean_pages
+    ]
+    if language["non_english"]:
+        print(f"  WARNING: the site's text looks non-English (site_language: "
+              f"{language['site_language']}). Extraction ran, but the site is outside the "
+              f"English-language supported-website definition (AC-05); expect gaps.")
+
     # Week 3 (2026-09-27): the canonical profile (OUT-01's second, product-facing output,
     # derived from the already-validated claims -- see wi/profile/builder.py) is written
     # alongside the ledger, not instead of it. `limit_reached` (B-19/CST-03) is true if either
@@ -252,6 +271,9 @@ def main(raw_url: str, use_cache: bool = True) -> int:
         crawl_budget_exhausted=crawl_result.budget_exhausted or crawl_result.page_cap_reached,
         crawl_status=crawl_result.crawl_status, crawl_error_code=crawl_result.crawl_error_code,
         crawl_status_reason=crawl_result.crawl_status_reason,
+        site_language=language["site_language"],
+        site_language_source=language["site_language_source"],
+        non_english=language["non_english"],
     )
     if profile_doc["limit_reached"]:
         print("  limit_reached: true (a hard crawl or token-budget cap was hit this run)")
@@ -283,12 +305,21 @@ def main(raw_url: str, use_cache: bool = True) -> int:
             "crawl_status": profile_doc["crawl_status"],
             "crawl_error_code": profile_doc["crawl_error_code"],
             "crawl_status_reason": profile_doc["crawl_status_reason"],
+            # B-85: "en", "unknown", a declared non-English code such as "es", or "non-en".
+            "site_language": profile_doc["site_language"],
+            "site_language_source": profile_doc["site_language_source"],
+            "non_english": profile_doc["non_english"],
             # Added 2026-09-27 (crawl-coverage-misses investigation, see PROGRESS.md): this was
             # all already computed above and already printed to the console once, but never
             # written here -- meaning it was lost the moment the terminal scrolled past it. Purely
             # additive keys, safe for every existing consumer (eval/check_gate.py and
             # eval/baseline.py only ever read data["claims"]).
-            "crawl": crawl_diagnostics(crawl_result),
+            "crawl": {**crawl_diagnostics(crawl_result),
+                      # B-85: diagnostics only -- declared and guessed language per cleaned page,
+                      # and the measurements behind the site-level flag.
+                      "page_languages": page_languages,
+                      "language_measured": {**language["measured"],
+                                            "declared_lang": language["declared_lang"]}},
             "focus_retry": focus_report,       # B-71; {"enabled": false} when off
             "classifier": classifier_report,   # B-62; {"provider": "none", ...} when off
             **diagnostics_from_run(run),

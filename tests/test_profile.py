@@ -350,3 +350,14 @@ def test_b83_a_normal_run_reports_crawl_status_ok():
     run = ExtractionRun(site_url="https://example.com/")
     doc = build_profile(run, pages_scanned=3, retrieved_at="2026-10-08")
     assert (doc["crawl_status"], doc["crawl_error_code"], doc["crawl_status_reason"]) == ("ok", None, None)
+
+
+def test_b85_language_flag_is_metadata_on_the_document_and_coverage_strip():
+    from wi.extract.pipeline import ExtractionRun
+    from wi.extract.fields import FIELDS
+    run = ExtractionRun(site_url="https://example.com/")
+    doc = build_profile(run, pages_scanned=2, retrieved_at="2026-10-09", site_language="es",
+                        site_language_source="text + html lang", non_english=True)
+    assert (doc["site_language"], doc["non_english"]) == ("es", True)
+    assert doc["profile"]["coverage"]["site_language"] == "es"
+    assert len(FIELDS) == 15 and "site_language" not in {f.split(".")[-1] for f in FIELDS}
