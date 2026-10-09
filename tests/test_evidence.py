@@ -1209,3 +1209,29 @@ def test_b81_supported_details_plurals_and_list_evidence_are_kept_unchanged():
     assert trim_delivery_model_details("software", "Anything at all") == ("software", [])
     assert trim_delivery_model_details("physical (dealer network)", "Visit our dealer network") \
         == ("physical (dealer network)", [])
+
+
+# --- B-91: the note loses the details B-81 removed from the value ------------------------------------
+
+def test_b91_note_naming_only_dropped_details_becomes_the_neutral_note():
+    from wi.validate.evidence import TRIMMED_NOTE, trim_note_details
+    # postman.com: value trimmed to "software", note still said web and desktop applications.
+    assert trim_note_details("The product is software delivered via web and desktop applications.",
+                             ["web app", "desktop app"], "software") == TRIMMED_NOTE
+
+
+def test_b91_only_sentences_naming_dropped_details_are_removed():
+    from wi.validate.evidence import trim_note_details
+    note = "Delivered as a cloud-based service. The company sells software to teams."
+    assert trim_note_details(note, ["cloud-based"], "software") == "The company sells software to teams."
+    # "app" is still in the kept value, so only the word unique to the dropped detail counts.
+    note = "Loom is software with a desktop app and a mobile app. It also works on the web."
+    assert trim_note_details(note, ["web app"], "software (desktop app, mobile app)") == \
+        "Loom is software with a desktop app and a mobile app."
+
+
+def test_b91_notes_without_dropped_details_or_nothing_dropped_are_unchanged():
+    from wi.validate.evidence import trim_note_details
+    assert trim_note_details("Software used by teams.", ["web app"], "software") == "Software used by teams."
+    assert trim_note_details("Delivered via web app.", [], "software (web app)") == "Delivered via web app."
+    assert trim_note_details(None, ["web app"], "software") is None

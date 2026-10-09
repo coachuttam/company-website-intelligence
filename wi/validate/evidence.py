@@ -1009,3 +1009,27 @@ def quote_sources(
                      if quote_in_page(q, text, threshold=CORPUS_FALLBACK_FUZZY_THRESHOLD)]
         out.append({"quote": q, "pages": pages})
     return out
+
+
+TRIMMED_NOTE = "Inferred from the quote; details the quote does not mention were removed."
+
+
+def trim_note_details(notes: Optional[str], dropped: List[str], kept_value: str) -> Optional[str]:
+    """B-91: when B-81 drops details from a delivery_model value, the claim's note should not
+    keep stating them (on postman.com the value became "software" while the note still said
+    "delivered via web and desktop applications"). Removes every sentence of the note that uses a
+    word found only in the dropped details (a word also in the kept value, such as "app" when
+    "desktop app" is kept, does not count). If no sentence is left, returns TRIMMED_NOTE, since an
+    inferred claim must keep a note. Notes are never checked by the evidence gate; this only keeps
+    them consistent with the value."""
+    if not notes or not dropped:
+        return notes
+    kept_words = set(_significant_words(kept_value or ""))
+    banned = {w for d in dropped for w in _significant_words(d) if not _word_in(w, kept_words)}
+    if not banned:
+        return notes
+    sentences = re.split(r"(?<=[.!?])\s+", notes.strip())
+    kept = [s for s in sentences
+            if not any(_word_in(w, set(_significant_words(s))) or
+                       any(sw.startswith(w) for sw in _significant_words(s)) for w in banned)]
+    return " ".join(kept) if kept else TRIMMED_NOTE

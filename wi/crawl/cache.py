@@ -161,7 +161,9 @@ from wi.crawl.fetch import content_hash
 # so what the model and the evidence gate see changes; a cached result would miss the new labels.
 # 24 (2026-10-09, B-89): the pipeline records each quote's own source page(s) for claims whose quotes
 # are spread over several pages, and the cache payload carries them; an older cached payload lacks it.
-EXTRACTION_LOGIC_VERSION = 24
+# 25 (2026-10-09, B-91): when B-81 trims delivery_model details, sentences of the note naming them are
+# removed too, so a stale cached claim would keep a note that contradicts its value.
+EXTRACTION_LOGIC_VERSION = 25
 
 
 def run_fingerprint(site_url: str, pages: List[CleanPage], config: dict) -> str:

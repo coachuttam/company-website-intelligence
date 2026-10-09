@@ -130,7 +130,7 @@ from wi.schemas.announcement import Announcement
 from wi.schemas.claim import Claim, Status
 from wi.validate.evidence import (
     check_claim, check_claim_items, check_conflicting_claim, evidence_home, quote_in_page,
-    quote_sources, realign_list_evidence, trim_delivery_model_details,
+    quote_sources, realign_list_evidence, trim_delivery_model_details, trim_note_details,
 )
 
 
@@ -547,6 +547,8 @@ def extract_claims(
                 if dropped:
                     data = claim.model_dump()
                     data["value"] = trimmed
+                    # B-91: the note must not keep stating the details just removed.
+                    data["notes"] = trim_note_details(claim.notes, dropped, trimmed)
                     claim = Claim(**data)
                     run.schema_errors.append(
                         f"claim #{i} ({field_name}): B-81: dropped detail(s) not in the evidence "

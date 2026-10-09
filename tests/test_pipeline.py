@@ -1150,6 +1150,24 @@ def test_b81_pipeline_keeps_the_claim_and_drops_only_the_unsupported_detail():
     assert any("B-81" in e and "cloud-based" in e for e in run.schema_errors)
 
 
+def test_b91_pipeline_trims_the_note_along_with_the_value():
+    from wi.validate.evidence import TRIMMED_NOTE
+    page = CleanPage(url="https://example.com/", title="Example",
+                     text="Example Co makes AI-powered customer service software.")
+    claims = _all_not_found_claims()
+    claims[FIELDS.index("products.delivery_model")] = {
+        "field": "products.delivery_model", "status": "inferred", "value": "software (cloud-based)",
+        "confidence": 0.8, "source_url": "https://example.com/", "page_title": "Example",
+        "evidence": "AI-powered customer service software",
+        "notes": "The product is cloud-based software.", "coverage": None,
+    }
+    run = extract_claims("https://example.com/", [page], CONFIG, FakeCompleter({"claims": claims}),
+                          retrieved_at="2026-10-09")
+    claim = next(c for c in run.claims if c.field == "products.delivery_model")
+    assert (claim.value, claim.notes) == ("software", TRIMMED_NOTE)
+    assert claim.status == Status.inferred and run.rejected == []
+
+
 # --- B-89: each quote's own source is recorded when quotes span several pages --------------------
 
 CISCO = CleanPage(url="https://example.com/customer-stories/cisco", title="Cisco",
