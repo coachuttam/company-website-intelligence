@@ -1,5 +1,46 @@
-# Sites the pipeline has already been run on outside the dev set.
-# Exclude these when choosing the fresh held-out set: their output has been seen.
-# One domain per line, with the date it was first run.
-freshworks.com  2026-10-06
-postman.com  2026-10-09
+# Sites the pipeline has already been run on. Exclude every one of them when choosing the fresh
+# held-out set: their output has been seen, and several were used to build or tune the pipeline.
+# Format: domain  first recorded run (earliest claim retrieval date, else run file date)  reason
+# Sources: data/runs/*.json, the run cache (data/runs/cache), data/clean snapshots, archived labels.
+# Sites only checked during benchmark verification and never run (Tata Motors, romsportsacademy.com)
+# are not listed.
+
+# Current dev set: built and tuned on.
+calendly.com      2026-09-28  current dev set
+loom.com          2026-09-28  current dev set
+typeform.com      2026-09-28  current dev set
+notion.com        2026-09-28  current dev set
+simplestores.in   2026-09-28  current dev set
+
+# Old dev set (labels archived in eval/labels/archive_old_dev): built and tuned on.
+basecamp.com      2026-09-26  old dev set
+darwinbox.com     2026-09-26  old dev set
+zerodha.com       2026-09-26  old dev set
+bajajauto.com     2026-09-26  old dev set
+thoughtbot.com    2026-09-26  old dev set
+
+# Old held-out set: run and scored repeatedly; fixes B-39 to B-54 used its failures (contaminated).
+razorpay.com      2026-09-27  old held-out set
+buffer.com        2026-09-27  old held-out set
+innovaccer.com    2026-09-27  old held-out set
+sarvam.ai         2026-09-27  old held-out set
+temenos.com       2026-09-27  old held-out set
+thoughtworks.com  2026-09-27  old held-out set
+nobroker.in       2026-09-27  old held-out set
+gong.io           2026-09-27  old held-out set
+plaid.com         2026-09-27  old held-out set
+rentec.com        2026-09-27  old held-out set
+
+# Informal spot-checks that motivated behaviours.
+snowflake.com     2026-10-06  spot-check; motivated B-59 to B-72
+freshworks.com    2026-10-06  spot-check; motivated B-75 to B-81
+postman.com       2026-10-09  spot-check; motivated B-88 to B-94
+
+# Other runs (benchmark candidates and one-off runs).
+azentio.com       2026-09-27  benchmark candidate (H5 swap); run returned 0 pages
+finastra.com      2026-09-27  benchmark candidate; run returned 0 pages
+site-example.com  2026-09-29  one-off run (18 pages fetched); placeholder-like name, kept because it was run
+hussmann.com      2026-09-30  benchmark candidate (H10)
+threepins.com     2026-09-30  one-off run
+upekkha.io        2026-09-30  one-off run
+acer.com          2026-10-04  one-off run; start page timed out
