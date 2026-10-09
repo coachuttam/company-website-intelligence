@@ -226,3 +226,36 @@ def test_b85_non_english_banner_shows_only_when_flagged():
     assert "Non-English site (detected language: es)" in flagged
     assert "Non-English site" not in render_profile_html(_run(non_english=False, site_language="en"))
     assert "Non-English site" not in render_profile_html(_run())     # older runs have no flag
+
+
+def test_b87_every_non_ok_crawl_status_shows_a_banner_with_its_code_and_reason():
+    cases = [
+        ("unreachable", "SITE_UNREACHABLE", "Site unreachable",
+         "start URL https://acme.com/ could not be fetched after 3 attempt(s): HTTP 503"),
+        ("blocked", "SITE_BLOCKED", "Site blocked the crawler",
+         "start URL https://acme.com/ refused the crawler after 1 attempt(s): HTTP 403"),
+        ("blocked", "ROBOTS_DISALLOWED", "Site blocked the crawler",
+         "robots.txt disallows the start URL https://acme.com/"),
+        ("redirected", "REDIRECTED_OFF_DOMAIN", "Site redirects to another domain",
+         "start URL https://acme.com/ redirects to https://other.com/, outside the approved domains"),
+    ]
+    for status, code, headline, reason in cases:
+        page = render_profile_html(_run(crawl_status=status, crawl_error_code=code,
+                                        crawl_status_reason=reason, final_url="https://other.com/"))
+        assert f"{headline} ({code})" in page, status
+        assert reason in page
+        assert "No facts were extracted from this site." in page
+
+
+def test_b87_ok_and_older_runs_show_no_crawl_banner_and_reasons_are_escaped():
+    assert "No facts were extracted" not in render_profile_html(_run(crawl_status="ok"))
+    assert "No facts were extracted" not in render_profile_html(_run())       # no crawl_status key
+    page = render_profile_html(_run(crawl_status="blocked", crawl_error_code="SITE_BLOCKED",
+                                    crawl_status_reason="<script>alert(1)</script>"))
+    assert "<script>alert(1)</script>" not in page and "&lt;script&gt;" in page
+
+
+def test_b87_crawl_banner_and_limit_banner_can_both_show():
+    page = render_profile_html(_run(crawl_status="unreachable", crawl_error_code="SITE_UNREACHABLE",
+                                    crawl_status_reason="x", limit_reached=True))
+    assert "Site unreachable" in page and "Partial profile" in page

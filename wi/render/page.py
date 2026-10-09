@@ -378,8 +378,26 @@ def render_profile_html(run: Dict[str, Any], source_name: str = "") -> str:
         "states about itself and are not independently verified.</p></header>"
     )
     banner = ""
+    status = run.get("crawl_status")
+    if status and status != "ok":
+        # B-87: a run whose site could not be read (B-83 unreachable, B-84 blocked, B-86 redirected)
+        # says so first, instead of showing an empty profile with no reason.
+        headline = {
+            "unreachable": "Site unreachable",
+            "blocked": "Site blocked the crawler",
+            "redirected": "Site redirects to another domain",
+        }.get(status, "Site could not be read")
+        detail = run.get("crawl_status_reason") or ""
+        if status == "redirected" and run.get("final_url") and run.get("final_url") not in detail:
+            detail = (detail + " " if detail else "") + "Final URL: " + str(run.get("final_url"))
+        banner += (
+            '<p class="banner" role="status">' + esc(headline) + " ("
+            + esc(run.get("crawl_error_code") or status) + "). "
+            + (esc(detail) + " " if detail else "")
+            + "No facts were extracted from this site.</p>"
+        )
     if run.get("limit_reached"):
-        banner = (
+        banner += (
             '<p class="banner" role="status">Partial profile: a crawl or token limit was reached, '
             "so some pages may not have been read.</p>"
         )
