@@ -157,7 +157,9 @@ from wi.crawl.fetch import content_hash
 # model instead of the model's own account, so a stale cached claim would keep the model's numbers.
 # 22 (2026-10-07, B-81): products.delivery_model drops any bracketed detail its evidence quote does
 # not mention, so a stale cached claim would keep the unsupported detail.
-EXTRACTION_LOGIC_VERSION = 22
+# 23 (2026-10-09, B-92): clean_page folds certification badge-grid labels back into the cleaned text,
+# so what the model and the evidence gate see changes; a cached result would miss the new labels.
+EXTRACTION_LOGIC_VERSION = 23
 
 
 def run_fingerprint(site_url: str, pages: List[CleanPage], config: dict) -> str:

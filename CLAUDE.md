@@ -24,4 +24,4 @@ Spec: docs/PRD.MD. Behaviour log: tests/BEHAVIOURS.md.
 - After each session, update PROGRESS.md (stale since 2026-09-27).
 
 ## State at last session
-prompt_version 16, EXTRACTION_LOGIC_VERSION 22, focus_retry off (B-72), Jev on for sales_motion and revenue_model.
+prompt_version 16, EXTRACTION_LOGIC_VERSION 23, focus_retry off (B-72), Jev on for sales_motion and revenue_model.

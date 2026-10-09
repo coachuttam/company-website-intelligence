@@ -221,3 +221,66 @@ def test_b61_pricing_page_without_cta_labels_gets_no_block():
     html = "<html><body><main><h1>Plans</h1><p>" + "Simple pricing. " * 20 + "</p></main></body></html>"
     page = clean_page("https://x.example/pricing", html, 12000)
     assert "Buttons and links" not in page.text
+
+
+# --- B-92: certification badge grids are folded back in -------------------------------------------
+
+def _security_page(main_extra="", outside=""):
+    """Synthetic page shaped like a compliance page: prose that trafilatura keeps, plus whatever
+    the test adds inside <main> and outside it."""
+    prose = ("<p>We protect customer data with encryption in transit and at rest, regular "
+             "penetration tests and a dedicated security team. Our trust centre lists every "
+             "audit report and policy, and customers can request documents at any time.</p>") * 6
+    return (f"<html><head><title>Security</title></head><body>"
+            f"<nav><a href='/'>Home</a></nav><main><h1>Security at Acme</h1>{prose}{main_extra}</main>"
+            f"{outside}</body></html>")
+
+
+BADGE_GRID = (
+    '<section><h2>Compliance is a proof point.</h2><div class="BadgeGrid__strip">'
+    + "".join(f'<div class="BadgeGrid__badge"><img alt="{n} certified." src="/b/{i}.png"/>'
+              f'<span class="BadgeGrid__label">{n}</span></div>'
+              for i, n in enumerate(["SOC 2 Type II", "PCI DSS", "HIPAA", "GDPR", "CCPA / CPRA",
+                                     "CSA STAR", "TX-RAMP", "ISO 27001", "ISO 42001"]))
+    + "</div></section>"
+)
+
+
+def test_b92_badge_grid_labels_are_folded_back_in():
+    from wi.crawl.clean import CERT_BLOCK_HEADER
+    text = clean_page("https://acme.test/security", _security_page(BADGE_GRID), 16000).text
+    assert CERT_BLOCK_HEADER in text
+    block = text.split(CERT_BLOCK_HEADER, 1)[1]
+    for label in ["SOC 2 Type II", "PCI DSS", "HIPAA", "GDPR", "CCPA / CPRA", "CSA STAR",
+                  "TX-RAMP", "ISO 27001", "ISO 42001"]:
+        assert f"\n{label}" in block                    # one quotable line per label
+    assert "certified." not in block                     # alt text is not used
+
+
+def test_b92_footer_links_naming_certifications_are_not_folded_in():
+    footer = ("<footer><ul><li><a href='/gdpr'>GDPR</a></li><li><a href='/soc2'>SOC 2</a></li>"
+              "<li><a href='/hipaa'>HIPAA</a></li></ul></footer>")
+    text = clean_page("https://acme.test/security", _security_page(outside=footer), 16000).text
+    assert "Certification and compliance badges:" not in text
+
+
+def test_b92_cookie_banner_mentioning_gdpr_is_not_folded_in():
+    banner = ('<div id="cookie-consent" class="consent-banner"><span>GDPR</span><span>CCPA</span>'
+              '<span>HIPAA</span><button>Accept all</button></div>')
+    for placement in ("main", "outside"):
+        page = _security_page(main_extra=banner) if placement == "main" else _security_page(outside=banner)
+        text = clean_page("https://acme.test/security", page, 16000).text
+        assert "Certification and compliance badges:" not in text, placement
+
+
+def test_b92_a_single_soc2_mention_is_not_folded_in():
+    single = '<div class="badge"><span>SOC 2</span></div>'
+    text = clean_page("https://acme.test/security", _security_page(single), 16000).text
+    assert "Certification and compliance badges:" not in text
+
+
+def test_b92_prose_naming_three_certifications_is_not_a_badge_grid():
+    prose = ("<div><p>Our programme is audited every year against SOC 2, aligned with ISO 27001 "
+             "and designed to help customers meet HIPAA obligations where they apply to them.</p></div>")
+    text = clean_page("https://acme.test/security", _security_page(prose), 16000).text
+    assert "Certification and compliance badges:" not in text

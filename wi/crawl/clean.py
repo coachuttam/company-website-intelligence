@@ -46,6 +46,15 @@ postcode); an explicit <address> tag is trusted on its own, since using that tag
 deliberate authoring signal. Among several matching blocks, the shortest one wins, on the
 reasoning that the smallest enclosing element is the most likely to be the address itself
 rather than a larger wrapper that merely contains one.
+
+Fold certification badge grids back in (decided 2026-10-09, B-92): on postman.com/security the
+compliance badges (SOC 2 Type II, PCI DSS, HIPAA, GDPR, CCPA / CPRA, CSA STAR, TX-RAMP, ISO 27001,
+ISO 42001) are visible <span> labels in a grid inside <main>, yet trafilatura dropped all of them
+as a logo-strip-like block, so traction.certifications could only ever find "SOC 2". Same failure
+class as the <h1> and address fixes above. Kept conservative (see _certification_badges_text): only
+the main content area, never nav/header/footer/aside or a cookie/consent banner; only short visible
+labels (no alt text, no scripts); only a single small container holding at least three different
+certification terms; and only the labels that name a certification are added.
 """
 from __future__ import annotations
 
@@ -141,6 +150,72 @@ def _address_text(html: str) -> Optional[str]:
     return min(candidates, key=len)
 
 
+# B-92: certification and compliance terms. Each pattern is one distinct certification, so "at
+# least three different terms" counts certifications, not repeats of one name.
+_CERT_TERMS = {
+    "soc2": re.compile(r"\bSOC\s?2\b", re.I),
+    "iso27001": re.compile(r"\bISO(?:/IEC)?\s?27001\b", re.I),
+    "iso27017": re.compile(r"\bISO(?:/IEC)?\s?27017\b", re.I),
+    "iso27018": re.compile(r"\bISO(?:/IEC)?\s?27018\b", re.I),
+    "iso42001": re.compile(r"\bISO(?:/IEC)?\s?42001\b", re.I),
+    "pcidss": re.compile(r"\bPCI[\s-]?DSS\b", re.I),
+    "hipaa": re.compile(r"\bHIPAA\b", re.I),
+    "gdpr": re.compile(r"\bGDPR\b", re.I),
+    "ccpa": re.compile(r"\bC[CP]PA\b", re.I),
+    "csastar": re.compile(r"\bCSA\s?STAR\b", re.I),
+    "txramp": re.compile(r"\bTX-?RAMP\b", re.I),
+    "hitrust": re.compile(r"\bHITRUST\b", re.I),
+    "fedramp": re.compile(r"\bFedRAMP\b", re.I),
+    "cyberessentials": re.compile(r"\bCyber\s+Essentials\b", re.I),
+}
+_CERT_MIN_TERMS = 3            # a grid must name at least this many different certifications
+_CERT_LABEL_MAX_CHARS = 40     # a label is a short piece of visible text, not a sentence
+_CERT_CONTAINER_MAX_CHARS = 600  # the whole container is mostly labels, not a section of prose
+_CERT_EXCLUDED_TAGS = ("script", "style", "noscript", "template", "nav", "header", "footer", "aside")
+_CONSENT_MARKERS = re.compile(r"cookie|consent|onetrust|cookiebot|cc-window|cc-banner", re.I)
+CERT_BLOCK_HEADER = "Certification and compliance badges:"
+
+
+def _cert_keys(text: str) -> set:
+    return {key for key, rx in _CERT_TERMS.items() if rx.search(text)}
+
+
+def _certification_badges_text(html: str) -> Optional[str]:
+    """B-92: the short certification labels of a badge grid in the main content area, as a block
+    to fold back into the cleaned text, or None. See the module docstring for the rules."""
+    soup = BeautifulSoup(html, "lxml")
+    unwanted = list(soup.find_all(_CERT_EXCLUDED_TAGS))
+    for tag in soup.find_all(True):
+        marker = " ".join([tag.get("id") or "", " ".join(tag.get("class") or []),
+                           tag.get("aria-label") or ""])
+        if marker.strip() and _CONSENT_MARKERS.search(marker):
+            unwanted.append(tag)
+    for tag in unwanted:
+        tag.extract()           # removing a tag inside an already-removed one is harmless
+    scope = soup.find("main") or soup.body
+    if scope is None:
+        return None
+
+    best = None
+    for container in scope.find_all(["div", "ul", "ol", "section", "dl", "table"]):
+        text = " ".join(container.get_text(separator=" ").split())
+        if not text or len(text) > _CERT_CONTAINER_MAX_CHARS:
+            continue
+        labels = []
+        for piece in container.find_all(string=True):
+            label = " ".join(str(piece).split())
+            if 2 <= len(label) <= _CERT_LABEL_MAX_CHARS and _cert_keys(label):
+                labels.append(label)
+        keys = set().union(*(_cert_keys(l) for l in labels)) if labels else set()
+        if len(keys) < _CERT_MIN_TERMS:
+            continue
+        if best is None or len(text) < best[0]:
+            best = (len(text), list(dict.fromkeys(labels)))
+    if best is None:
+        return None
+    return CERT_BLOCK_HEADER + "\n" + "\n".join(best[1])
+
+
 def main_text(url: str, html: str) -> str:
     """The page's main text before any per-page cap or call-to-action block is applied: what
     clean_page() starts from. Also what the crawl hashes to spot duplicate pages (B-75), since two
@@ -160,6 +235,12 @@ def main_text(url: str, html: str) -> str:
     address = _address_text(html)
     if address and address not in text:
         text = text + "\n" + address
+
+    # B-92 (see module docstring): a certification badge grid trafilatura dropped is folded back
+    # in as its short labels, so traction.certifications can quote them.
+    badges = _certification_badges_text(html)
+    if badges and badges not in text:
+        text = text + "\n" + badges
     return text
 
 
