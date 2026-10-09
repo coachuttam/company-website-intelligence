@@ -1039,3 +1039,141 @@ def test_b83_pages_after_the_start_page_are_never_retried(monkeypatch):
         result = crawl_site("https://example.com/", ["example.com"], BASE_CONFIG, client=client)
     assert calls.count("https://example.com/about") == 1
     assert result.crawl_status == "ok" and slept == []
+
+
+# --- B-84: blocked sites (PRD Section 9 / INP-03, CRL-03) ----------------------------------------
+
+CF_CHALLENGE = ('<html><head><title>Just a moment...</title></head><body>'
+                '<script>window._cf_chl_opt={cvId:"3"};</script>'
+                '<noscript>Enable JavaScript and cookies to continue</noscript></body></html>')
+REAL_PAGE = ('<html><head><title>Example Co</title></head><body><h1>Example Co</h1><p>'
+             + "We build scheduling software for teams of every size. " * 20 + '</p></body></html>')
+
+
+def _scripted_client(script, calls, robots="User-agent: *\nAllow: /\n"):
+    """`script` maps a URL to a list of (status, headers, body) served in order; the last repeats."""
+    def handler(request):
+        url = str(request.url)
+        calls.append(url)
+        if url.endswith("/robots.txt"):
+            return httpx.Response(200, text=robots)
+        seq = script.get(url, [(404, {}, "not found")])
+        status, headers, body = seq.pop(0) if len(seq) > 1 else seq[0]
+        return httpx.Response(status, headers=headers, text=body)
+    return httpx.Client(transport=httpx.MockTransport(handler))
+
+
+def _crawl(script, monkeypatch, robots="User-agent: *\nAllow: /\n", js_renderer=None, config=BASE_CONFIG):
+    slept, calls = _record_sleeps(monkeypatch), []
+    with _scripted_client(script, calls, robots) as client:
+        result = crawl_site("https://example.com/", ["example.com"], config, client=client,
+                            js_renderer=js_renderer)
+    return result, slept, calls
+
+
+def test_b84_start_page_403_or_401_is_blocked_and_never_retried(monkeypatch):
+    for status in (403, 401):
+        result, slept, calls = _crawl({"https://example.com/": [(status, {}, "Forbidden")]}, monkeypatch)
+        assert (result.crawl_status, result.crawl_error_code) == ("blocked", "SITE_BLOCKED")
+        assert result.start_attempts == 1 and slept == []
+        assert f"HTTP {status}" in result.crawl_status_reason
+        assert result.pages[0].error_code == "BLOCKED"
+
+
+def test_b84_start_page_429_honours_retry_after_then_recovers(monkeypatch):
+    script = {"https://example.com/": [(429, {"Retry-After": "3"}, ""), (200, {}, REAL_PAGE)]}
+    result, slept, _ = _crawl(script, monkeypatch)
+    assert result.crawl_status == "ok" and slept == [3.0] and result.start_attempts == 2
+
+
+def test_b84_start_page_429_that_persists_is_blocked_after_bounded_backoff(monkeypatch):
+    result, slept, _ = _crawl({"https://example.com/": [(429, {"Retry-After": "1"}, "")]}, monkeypatch)
+    assert slept == [1.0, 1.0] and result.start_attempts == 3
+    assert (result.crawl_status, result.crawl_error_code) == ("blocked", "SITE_BLOCKED")
+    assert "HTTP 429" in result.crawl_status_reason
+
+
+def test_b84_start_page_429_without_retry_after_uses_the_1s_2s_backoff(monkeypatch):
+    result, slept, _ = _crawl({"https://example.com/": [(429, {}, "")]}, monkeypatch)
+    assert slept == [1.0, 2.0] and result.crawl_status == "blocked"
+
+
+def test_b84_a_retry_after_longer_than_the_cap_is_not_retried_early(monkeypatch):
+    result, slept, _ = _crawl({"https://example.com/": [(429, {"Retry-After": "120"}, "")]}, monkeypatch)
+    assert slept == [] and result.start_attempts == 1 and result.crawl_status == "blocked"
+
+
+def test_b84_cloudflare_challenge_header_on_a_503_is_blocked_not_retried(monkeypatch):
+    script = {"https://example.com/": [(503, {"cf-mitigated": "challenge"}, CF_CHALLENGE)]}
+    result, slept, _ = _crawl(script, monkeypatch)
+    assert result.crawl_status == "blocked" and slept == [] and result.start_attempts == 1
+    assert "cf-mitigated" in result.crawl_status_reason
+
+
+def test_b84_challenge_page_served_with_200_is_blocked_and_never_rendered(monkeypatch):
+    rendered = []
+    result, _, _ = _crawl({"https://example.com/": [(200, {}, CF_CHALLENGE)]}, monkeypatch,
+                          js_renderer=lambda url, t: rendered.append(url) or REAL_PAGE)
+    assert (result.crawl_status, result.crawl_error_code) == ("blocked", "SITE_BLOCKED")
+    assert "bot-protection page" in result.crawl_status_reason
+    assert rendered == []                                # the JS fallback never touches it
+    assert all(p.status == "error" for p in result.pages)
+
+
+def test_b84_robots_disallowing_the_start_url_is_blocked_and_it_is_not_fetched(monkeypatch):
+    result, _, calls = _crawl({"https://example.com/": [(200, {}, REAL_PAGE)]}, monkeypatch,
+                              robots="User-agent: *\nDisallow: /\n")
+    assert (result.crawl_status, result.crawl_error_code) == ("blocked", "ROBOTS_DISALLOWED")
+    assert "https://example.com/" not in calls           # fetch behaviour unchanged: never fetched
+    assert result.skipped_by_robots == ["https://example.com/"]
+
+
+def test_b84_ordinary_pages_are_not_mistaken_for_challenges():
+    from wi.crawl.fetch import detect_challenge
+    contact = REAL_PAGE.replace("</body>", '<div class="g-recaptcha" data-sitekey="x"></div></body>')
+    article = REAL_PAGE.replace("<title>Example Co", "<title>Access denied: how we handle data requests")
+    assert detect_challenge(contact, start_page=True) is None
+    assert detect_challenge(contact) is None             # long page: a widget alone is not a wall
+    assert detect_challenge(article, start_page=True) is None
+    assert detect_challenge('<html><body><div class="g-recaptcha"></div></body></html>',
+                            start_page=True) is None     # start page needs a strong marker
+    assert "CAPTCHA page" in detect_challenge('<html><body><div class="g-recaptcha"></div></body></html>')
+
+
+def test_b84_later_refusals_are_listed_and_never_used_but_the_crawl_stays_ok(monkeypatch):
+    home = ('<html><head><title>Home</title></head><body>' + "Real home text. " * 30 +
+            '<a href="/pricing">P</a> <a href="/contact">C</a> <a href="/about">A</a></body></html>')
+    captcha = ('<html><head><title>Contact</title></head><body><div class="g-recaptcha"></div>'
+               '<a href="/secret">S</a></body></html>')
+    rendered = []
+    script = {
+        "https://example.com/": [(200, {}, home)],
+        "https://example.com/pricing": [(403, {}, "Forbidden")],
+        "https://example.com/contact": [(200, {}, captcha)],
+        "https://example.com/about": [(200, {}, REAL_PAGE)],
+    }
+    result, slept, calls = _crawl(script, monkeypatch, js_renderer=lambda u, t: rendered.append(u))
+    assert result.crawl_status == "ok"
+    assert [w for w in slept if w >= 0.5] == []          # no retry waits (tiny politeness gaps only)
+    assert [b["url"] for b in result.blocked_pages] == ["https://example.com/pricing",
+                                                        "https://example.com/contact"]
+    ok_urls = [p.url for p in result.pages if p.status == "ok"]
+    assert ok_urls == ["https://example.com/", "https://example.com/about"]
+    assert "https://example.com/secret" not in calls     # the CAPTCHA page's links are not followed
+    assert "https://example.com/contact" not in rendered
+    assert crawl_diagnostics(result)["blocked_pages"] == result.blocked_pages
+
+
+def test_b84_a_render_that_turns_out_to_be_a_challenge_is_discarded(monkeypatch):
+    thin = '<html><head><title>Home</title></head><body><div id="app"></div></body></html>'
+    config = {**BASE_CONFIG, "crawl": {**BASE_CONFIG["crawl"], "js_fallback_min_text_chars": 200}}
+    result, _, _ = _crawl({"https://example.com/": [(200, {}, thin)]}, monkeypatch,
+                          js_renderer=lambda u, t: CF_CHALLENGE, config=config)
+    assert result.pages[0].js_rendered is False and result.pages[0].html == thin
+
+
+def test_b84_parse_retry_after_reads_seconds_and_http_dates():
+    from wi.crawl.fetch import parse_retry_after
+    assert parse_retry_after("5") == 5.0
+    assert parse_retry_after(None) is None and parse_retry_after("soon") is None
+    assert parse_retry_after("Wed, 21 Oct 2015 07:28:00 GMT") == 0.0   # in the past: no wait

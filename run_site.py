@@ -88,7 +88,9 @@ def main(raw_url: str, use_cache: bool = True) -> int:
           + (f", {unsupported_count} non-HTML (PDF/image/etc.) skipped" if unsupported_count else "")
           + (f", {js_rendered_count} JS-rendered" if js_rendered_count else "")
           + (", budget exhausted" if crawl_result.budget_exhausted else "")
-          + (", page cap reached" if crawl_result.page_cap_reached else ""))
+          + (", page cap reached" if crawl_result.page_cap_reached else "")
+          + (f", {len(crawl_result.blocked_pages)} page(s) refused us (not used)"
+             if crawl_result.blocked_pages else ""))
 
     ok_pages = [p for p in crawl_result.pages if p.status == "ok" and p.html]
     if not ok_pages:
@@ -116,7 +118,7 @@ def main(raw_url: str, use_cache: bool = True) -> int:
         flag = f" ({', '.join(flags)})" if flags else ""
         print(f"  cleaned {cp.url}: {len(cp.text)} chars{flag}")
 
-    # B-83 (PRD Section 9 / INP-03): an unreachable site gets an honest, empty result -- every
+    # B-83/B-84 (PRD Section 9 / INP-03): an unreachable or blocked site gets an honest, empty result -- every
     # field not_found with 0 pages checked, no model call, no API key needed -- and the JSON below
     # is still written with crawl_status and its reason, so the failure is recorded, not lost.
     if crawl_result.crawl_status != "ok":
@@ -276,7 +278,8 @@ def main(raw_url: str, use_cache: bool = True) -> int:
             "profile": profile_doc["profile"],
             "schema_version": profile_doc["schema_version"],
             "limit_reached": profile_doc["limit_reached"],
-            # B-83 (PRD Section 9 / INP-03): "ok", or "unreachable" with SITE_UNREACHABLE.
+            # B-83/B-84 (PRD Section 9 / INP-03): "ok"; "unreachable" (SITE_UNREACHABLE); or
+            # "blocked" (SITE_BLOCKED, or ROBOTS_DISALLOWED for a disallowed start URL).
             "crawl_status": profile_doc["crawl_status"],
             "crawl_error_code": profile_doc["crawl_error_code"],
             "crawl_status_reason": profile_doc["crawl_status_reason"],

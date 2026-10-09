@@ -37,3 +37,28 @@ def test_b83_unreachable_site_writes_an_empty_result_without_any_model_call(tmp_
     assert all(c["status"] == "not_found" and c["coverage"]["pages_checked"] == 0 for c in out["claims"])
     assert out["usage"] is None and out["cache_status"] == "not_run"
     assert out["classifier"]["enabled"] is False and out["focus_retry"]["enabled"] is False
+
+
+def test_b84_blocked_site_writes_an_empty_result_without_any_model_call(tmp_path, monkeypatch):
+    def fake_crawl(url, domains, config, js_renderer=None):
+        r = CrawlResult(start_url=url)
+        r.pages = [FetchResult(url=url, status="error", status_code=403, error_code="BLOCKED",
+                               error="HTTP 403")]
+        r.start_attempts = 1
+        r.crawl_status, r.crawl_error_code = "blocked", "SITE_BLOCKED"
+        r.crawl_status_reason = f"start URL {url} refused the crawler after 1 attempt(s): HTTP 403"
+        return r
+
+    def no_model(*a, **k):
+        raise AssertionError("no model client may be built for a blocked site")
+
+    monkeypatch.setattr(run_site, "ROOT", tmp_path)
+    monkeypatch.setattr(run_site, "crawl_site", fake_crawl)
+    monkeypatch.setattr(run_site, "OpenAIChatCompleter", no_model)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+
+    assert run_site.main("https://blocked-example.com/") == 0
+    out = json.loads((tmp_path / "data" / "runs" / "blocked-example_com.json").read_text())
+    assert (out["crawl_status"], out["crawl_error_code"]) == ("blocked", "SITE_BLOCKED")
+    assert out["profile"]["coverage"]["crawl_status"] == "blocked"
+    assert all(c["status"] == "not_found" for c in out["claims"]) and out["usage"] is None

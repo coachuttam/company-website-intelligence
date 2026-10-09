@@ -83,6 +83,7 @@ import itertools
 import re
 import time
 import urllib.robotparser
+from email.utils import parsedate_to_datetime
 from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional
 from urllib.parse import urljoin, urlsplit, urlunsplit
@@ -91,7 +92,8 @@ import httpx
 from bs4 import BeautifulSoup
 
 from wi.crawl.clean import _title, is_priority_url, main_text
-from wi.crawl.js_fallback import DEFAULT_MIN_TEXT_CHARS, DEFAULT_TIMEOUT_S, needs_fallback
+from wi.crawl.js_fallback import (DEFAULT_MIN_TEXT_CHARS, DEFAULT_TIMEOUT_S, needs_fallback,
+                                  visible_text_length)
 
 USER_AGENT = "CompanyWebsiteIntelBot/0.1 (+https://samkhya.ai/bot)"
 
@@ -117,6 +119,7 @@ class FetchResult:
     # links resolve against. `url` drops the trailing slash, which would move "board" on
     # /company/team/ up a level to /company/board.
     link_base: Optional[str] = None
+    retry_after_s: Optional[float] = None   # B-84: a 429's Retry-After, in seconds, when given
 
 
 @dataclass
@@ -140,13 +143,17 @@ class CrawlResult:
     # B-73: the crawl stopped at crawl.max_pages with URLs still queued, so some discovered pages
     # were never fetched. Separate from budget_exhausted, which only ever meant the time budget.
     page_cap_reached: bool = False
-    # B-83 (PRD Section 9 / INP-03): the site-level outcome, decided by the start page alone.
-    # "ok", or "unreachable" with crawl_error_code "SITE_UNREACHABLE" when the start URL could not
-    # be fetched even after the bounded retries below. crawl_status_reason says why in plain words.
+    # B-83/B-84 (PRD Section 9 / INP-03): the site-level outcome, decided by the start page alone:
+    # "ok"; "unreachable" (crawl_error_code SITE_UNREACHABLE) when the start URL could not be
+    # fetched even after the bounded retries; "blocked" (SITE_BLOCKED, or ROBOTS_DISALLOWED when
+    # robots.txt disallows the start URL) when the site refuses us. crawl_status_reason says why.
     crawl_status: str = "ok"
     crawl_error_code: Optional[str] = None
     crawl_status_reason: Optional[str] = None
     start_attempts: int = 0     # fetches of the start URL, including retries
+    # B-84: pages after the start page that refused us (401/403/429 or a bot-challenge page):
+    # [{"url", "reason"}]. Never sent to the model; crawl_status stays "ok".
+    blocked_pages: List[dict] = field(default_factory=list)
 
 
 def crawl_diagnostics(result: CrawlResult) -> dict:
@@ -187,6 +194,7 @@ def crawl_diagnostics(result: CrawlResult) -> dict:
         "crawl_error_code": result.crawl_error_code,
         "crawl_status_reason": result.crawl_status_reason,
         "start_attempts": result.start_attempts,
+        "blocked_pages": result.blocked_pages,        # B-84
     }
 
 
@@ -416,9 +424,20 @@ def fetch_page(client: httpx.Client, url: str, max_raw_bytes: int, timeout_s: fl
     try:
         with client.stream("GET", url, timeout=timeout_s, headers={"User-Agent": USER_AGENT}) as resp:
             if resp.status_code >= 400:
+                # B-84: a refusal gets its own error_code. A Cloudflare challenge says so in a
+                # header, whatever the status (often 403 or 503); it is final, never retried.
+                code, note, retry_after = None, "", None
+                if resp.headers.get("cf-mitigated", "").strip().lower() == "challenge":
+                    code, note = "BLOCKED", " (bot challenge: cf-mitigated)"
+                elif resp.status_code in (401, 403):
+                    code = "BLOCKED"
+                elif resp.status_code == 429:
+                    code = "RATE_LIMITED"
+                    retry_after = parse_retry_after(resp.headers.get("retry-after"))
                 return FetchResult(url=url, status="error", status_code=resp.status_code,
-                                    elapsed_s=time.monotonic() - start,
-                                    error=f"HTTP {resp.status_code}")
+                                    elapsed_s=time.monotonic() - start, error_code=code,
+                                    error=f"HTTP {resp.status_code}{note}",
+                                    retry_after_s=retry_after)
             content_type = resp.headers.get("content-type", "")
             if not _is_crawlable_content_type(content_type):
                 return FetchResult(url=url, status="error", status_code=resp.status_code,
@@ -455,6 +474,64 @@ def fetch_page(client: httpx.Client, url: str, max_raw_bytes: int, timeout_s: fl
 # B-83: waits before the 2nd and 3rd fetch of the start URL. Only the start URL is retried, only
 # for a network error, a timeout or a 5xx (never a 4xx), and only while the total time budget lasts.
 START_RETRY_DELAYS_S = (1.0, 2.0)
+
+
+# B-84: the most a 429 on the start URL is waited out per attempt. When the site asks for a longer
+# wait (Retry-After), it is not retried early; the site is reported as blocked instead.
+START_RATE_LIMIT_MAX_WAIT_S = 10.0
+
+
+def parse_retry_after(value: Optional[str]) -> Optional[float]:
+    """Retry-After as seconds: either a number of seconds or an HTTP date. None if absent or
+    unreadable; never negative."""
+    if not value:
+        return None
+    value = value.strip()
+    try:
+        return max(0.0, float(value))
+    except ValueError:
+        pass
+    try:
+        when = parsedate_to_datetime(value)
+    except (TypeError, ValueError, IndexError):
+        return None
+    if when is None:
+        return None
+    return max(0.0, when.timestamp() - time.time())
+
+
+# B-84: bot-protection and CAPTCHA pages. Deliberately short and specific, so an ordinary page that
+# merely mentions a CAPTCHA, or carries a reCAPTCHA on its contact form, is not mistaken for a wall.
+# Strong: a challenge page's own title or the challenge vendor's script/markup.
+_CHALLENGE_TITLES = ("just a moment", "attention required", "verify you are human",
+                     "are you a robot", "access denied", "pardon our interruption", "ddos-guard")
+_CHALLENGE_MARKUP = ("cf_chl_opt", "/cdn-cgi/challenge-platform/", "cf-browser-verification",
+                     "captcha-delivery.com", "_incapsula_resource", "px-captcha")
+# Weak: a CAPTCHA widget, which ordinary pages also carry; counts only on a nearly empty page.
+_CAPTCHA_WIDGETS = ("g-recaptcha", "h-captcha", "cf-turnstile")
+# Visible-text limits (wi/crawl/js_fallback.visible_text_length). The start page decides the whole
+# run, so it is held to the stricter standard: a strong marker AND a very short page.
+START_CHALLENGE_MAX_TEXT = 400
+PAGE_CHALLENGE_MAX_TEXT = 1500
+PAGE_WIDGET_MAX_TEXT = 300
+
+
+def detect_challenge(html: Optional[str], start_page: bool = False) -> Optional[str]:
+    """B-84: the reason this HTML looks like a bot-protection or CAPTCHA page, or None. Only ever
+    used to refuse a page, never to get past one."""
+    if not html:
+        return None
+    lower = html.lower()
+    title = (_title(html) or "").strip().lower()
+    strong = [t for t in _CHALLENGE_TITLES if title.startswith(t)]
+    strong += [m for m in _CHALLENGE_MARKUP if m in lower]
+    weak = [w for w in _CAPTCHA_WIDGETS if w in lower]
+    text_len = visible_text_length(html)
+    if strong and text_len < (START_CHALLENGE_MAX_TEXT if start_page else PAGE_CHALLENGE_MAX_TEXT):
+        return f"bot-protection page ({', '.join(strong)}; {text_len} chars of text)"
+    if not start_page and weak and text_len < PAGE_WIDGET_MAX_TEXT:
+        return f"CAPTCHA page ({', '.join(weak)}; {text_len} chars of text)"
+    return None
 
 
 def _is_retryable(page: FetchResult) -> bool:
@@ -530,6 +607,14 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
 
             if cfg["respect_robots"] and not robots.can_fetch(url):
                 result.skipped_by_robots.append(url)
+                if depth == 0:
+                    # B-84: robots.txt disallows the start page itself. Not fetched (unchanged);
+                    # the site is reported as blocked for us.
+                    result.crawl_status = "blocked"
+                    result.crawl_error_code = "ROBOTS_DISALLOWED"
+                    result.crawl_status_reason = (
+                        f"robots.txt disallows the start URL {url} for user agent {USER_AGENT}")
+                    break
                 continue
 
             wait = min_interval - (time.monotonic() - last_request)
@@ -544,13 +629,40 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
                 # bounded number of times (START_RETRY_DELAYS_S) for network errors, timeouts and
                 # 5xx, never past the total time budget; if it still fails, report the site as
                 # unreachable and stop -- there are no links to follow and nothing to extract.
+                # B-84: a 429 is waited out the same bounded number of times, honouring
+                # Retry-After up to START_RATE_LIMIT_MAX_WAIT_S; a longer requested wait is
+                # respected by not retrying early.
                 result.start_attempts = 1
                 for delay in START_RETRY_DELAYS_S:
-                    if not _is_retryable(page) or time.monotonic() + delay >= deadline:
+                    if page.error_code == "RATE_LIMITED":
+                        wait = page.retry_after_s if page.retry_after_s is not None else delay
+                        if wait > START_RATE_LIMIT_MAX_WAIT_S:
+                            break
+                    elif _is_retryable(page):
+                        wait = delay
+                    else:
                         break
-                    time.sleep(delay)
+                    if time.monotonic() + wait >= deadline:
+                        break
+                    time.sleep(wait)
                     page = fetch_page(client, url, cfg["max_raw_bytes"], cfg["request_timeout_s"])
                     result.start_attempts += 1
+                # B-84: the site refuses us: 401/403, a 429 that outlasted the backoff, a
+                # bot-challenge header, or a bot-protection page (strict start-page standard).
+                # Respect it: no JS rendering, no workaround, nothing extracted.
+                challenge = detect_challenge(page.html, start_page=True) if page.status == "ok" else None
+                if page.error_code in ("BLOCKED", "RATE_LIMITED") or challenge:
+                    why = challenge or page.error
+                    result.pages.append(FetchResult(
+                        url=page.url, status="error", status_code=page.status_code,
+                        elapsed_s=page.elapsed_s, error_code="BLOCKED", error=why,
+                        requested_url=page.requested_url))
+                    result.crawl_status = "blocked"
+                    result.crawl_error_code = "SITE_BLOCKED"
+                    result.crawl_status_reason = (
+                        f"start URL {url} refused the crawler after {result.start_attempts} "
+                        f"attempt(s): {why}")
+                    break
                 if page.status != "ok":
                     result.pages.append(page)
                     result.crawl_status = "unreachable"
@@ -560,6 +672,17 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
                         f"attempt(s): {page.error_code or page.error}"
                     )
                     break
+
+            if depth > 0:
+                # B-84: a later page that refuses us is recorded and skipped, never rendered with
+                # the JS fallback, followed or sent to the model; crawl_status stays "ok".
+                challenge = detect_challenge(page.html) if page.status == "ok" else None
+                if challenge:
+                    page = FetchResult(url=page.url, status="error", status_code=page.status_code,
+                                       elapsed_s=page.elapsed_s, error_code="BLOCKED",
+                                       error=challenge, requested_url=page.requested_url)
+                if page.error_code in ("BLOCKED", "RATE_LIMITED"):
+                    result.blocked_pages.append({"url": page.url, "reason": page.error})
 
             # B-80: the robots.txt and domain checks above ran on the address that was asked for.
             # When a redirect ended somewhere else, check where it ended too; a page outside the
@@ -580,6 +703,9 @@ def crawl_site(start_url: str, approved_domains: List[str], config: dict,
                     and needs_fallback(page.html, cfg.get("js_fallback_min_text_chars",
                                                             DEFAULT_MIN_TEXT_CHARS))):
                 rendered_html = js_renderer(page.url, cfg.get("js_fallback_timeout_s", DEFAULT_TIMEOUT_S))
+                # B-84: a render that turns out to be a bot-protection page is discarded, never used.
+                if rendered_html and detect_challenge(rendered_html, start_page=(depth == 0)):
+                    rendered_html = None
                 if rendered_html:
                     page = FetchResult(
                         url=page.url, status="ok", status_code=page.status_code,
