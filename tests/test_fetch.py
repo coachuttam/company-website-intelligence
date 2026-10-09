@@ -572,7 +572,7 @@ def test_b60_locale_language_recognises_locale_segments_only():
     assert locale_language("https://s.example/pt_br/pricing") == "pt"
     assert locale_language("https://s.example/zh-CN/x") == "zh"
     assert locale_language("https://s.example/pricing") is None
-    assert locale_language("https://s.example/us/pricing") is None   # not a language code
+    assert locale_language("https://s.example/us/pricing") == "en"   # B-90: a country, read as English
     assert locale_language("https://s.example/") is None
 
 
@@ -1270,3 +1270,43 @@ def test_b86_validation_still_rejects_restricted_platforms_through_the_shared_he
     assert validate_company_url("https://www.linkedin.com/company/acme").error_code == "RESTRICTED_PLATFORM"
     assert is_restricted_host("www.linkedin.com") and is_restricted_host("m.facebook.com")
     assert not is_restricted_host("example.co.uk")
+
+
+# --- B-90: country-code path segments ------------------------------------------------------------
+
+def test_b90_english_speaking_country_segments_are_english_and_never_skipped():
+    from wi.crawl.fetch import is_non_english_locale_url
+    for seg in ["us", "uk", "gb", "in", "au", "ca", "nz", "ie", "sg", "za", "UK", "Ca"]:
+        url = f"https://s.example/{seg}/pricing"
+        assert locale_language(url) == "en", seg
+        assert not is_non_english_locale_url(url), seg
+        assert not is_other_locale_url(url, "https://s.example/en"), seg
+
+
+def test_b90_other_country_codes_map_to_their_language_and_are_skipped():
+    from wi.crawl.fetch import is_non_english_locale_url
+    expected = {"jp": "ja", "kr": "ko", "cn": "zh", "tw": "zh", "hk": "zh", "br": "pt", "mx": "es"}
+    for seg, lang in expected.items():
+        url = f"https://s.example/{seg}/security"
+        assert locale_language(url) == lang, seg
+        assert is_non_english_locale_url(url), seg
+
+
+def test_b90_language_with_region_keeps_its_language_meaning():
+    assert locale_language("https://s.example/ca-es/x") == "ca"       # Catalan (Spain), not Canada
+    assert locale_language("https://s.example/en-in/x") == "en"
+    assert locale_language("https://s.example/pt_br/x") == "pt"
+
+
+def test_b90_crawl_keeps_english_country_pages_and_skips_other_countries():
+    links = "".join(f'<a href="/{s}/page">{s}</a> ' for s in ["uk", "ca", "us", "in", "au", "jp", "kr", "cn", "de"])
+    pages = {"https://s.example/en": f"<html><body>Home {links}</body></html>"}
+    pages.update({f"https://s.example/{s}/page": f"<html><body>{s} page text</body></html>"
+                  for s in ["uk", "ca", "us", "in", "au", "jp", "kr", "cn", "de"]})
+    with _locale_site_client(pages) as client:
+        result = crawl_site("https://s.example/en", ["s.example"], BASE_CONFIG, client=client)
+    fetched = {p.url for p in result.pages}
+    for s in ["uk", "ca", "us", "in", "au"]:
+        assert f"https://s.example/{s}/page" in fetched, s
+    assert sorted(result.skipped_as_other_locale) == sorted(
+        f"https://s.example/{s}/page" for s in ["jp", "kr", "cn", "de"])

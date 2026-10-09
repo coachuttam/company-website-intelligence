@@ -322,17 +322,35 @@ _LANGUAGE_CODES = frozenset(
 )
 _LOCALE_SEGMENT = re.compile(r"^([a-z]{2})(?:[-_][a-z0-9]{2,4})?$", re.IGNORECASE)
 
+# B-90: a bare two-letter first segment is often a COUNTRY, not a language. English-speaking
+# countries are English, never "another language" -- several of them are also ISO 639-1 codes
+# (uk Ukrainian, ca Catalan, ie Interlingue, sg Sango, za Zhuang), which made /uk/ and /ca/ pages
+# look like other-language copies. Other country codes map to their main language (found on
+# postman.com: /jp/ pages, Japan, were not recognised because Japanese is "ja"). Only the bare
+# segment is read as a country: "ca-es" or "pt_br" keep meaning their language part.
+_ENGLISH_COUNTRY_SEGMENTS = frozenset("us uk gb in au ca nz ie sg za".split())
+_COUNTRY_TO_LANGUAGE = {
+    "jp": "ja", "kr": "ko", "cn": "zh", "tw": "zh", "hk": "zh", "br": "pt", "mx": "es",
+    "dk": "da", "se": "sv", "cz": "cs", "gr": "el", "ua": "uk", "vn": "vi", "il": "he",
+}
+
 
 def locale_language(url: str) -> Optional[str]:
     """The language code of the URL's first path segment when that segment is a locale such as
-    'en', 'ja', 'pt_br' or 'zh-CN' (lowercased language part only); None when the first segment
-    is not a locale. See the module docstring's B-60 section."""
+    'en', 'ja', 'pt_br' or 'zh-CN' (lowercased language part only), or a country code read as its
+    language (B-90: /us/ /uk/ /ca/ ... -> 'en', /jp/ -> 'ja'); None when the first segment is not a
+    locale. See the module docstring's B-60 section."""
     segments = [s for s in urlsplit(url).path.split("/") if s]
     if not segments:
         return None
-    m = _LOCALE_SEGMENT.match(segments[0])
-    if m and m.group(1).lower() in _LANGUAGE_CODES:
-        return m.group(1).lower()
+    seg = segments[0].lower()
+    if seg in _ENGLISH_COUNTRY_SEGMENTS:
+        return "en"
+    if seg in _COUNTRY_TO_LANGUAGE:
+        return _COUNTRY_TO_LANGUAGE[seg]
+    m = _LOCALE_SEGMENT.match(seg)
+    if m and m.group(1) in _LANGUAGE_CODES:
+        return m.group(1)
     return None
 
 
