@@ -1,0 +1,112 @@
+{
+  "sites": [
+    {
+      "site": "calendly_com",
+      "total_s": 75.174,
+      "phases": {
+        "crawl_s": 45.752,
+        "clean_s": 9.354,
+        "extract_s": 17.505,
+        "second_pass_s": 0.0,
+        "classifier_s": 0.481
+      },
+      "llm_tokens": 35667,
+      "jev_tokens": 3178,
+      "cost_usd": 0.006186,
+      "pages": 40
+    },
+    {
+      "site": "loom_com",
+      "total_s": 88.969,
+      "phases": {
+        "crawl_s": 67.972,
+        "clean_s": 3.192,
+        "extract_s": 16.214,
+        "second_pass_s": 0.0,
+        "classifier_s": 0.448
+      },
+      "llm_tokens": 30086,
+      "jev_tokens": 3299,
+      "cost_usd": 0.005431,
+      "pages": 25
+    },
+    {
+      "site": "typeform_com",
+      "total_s": 80.364,
+      "phases": {
+        "crawl_s": 53.424,
+        "clean_s": 9.057,
+        "extract_s": 15.067,
+        "second_pass_s": 0.0,
+        "classifier_s": 0.647
+      },
+      "llm_tokens": 41367,
+      "jev_tokens": 1901,
+      "cost_usd": 0.00703,
+      "pages": 46
+    },
+    {
+      "site": "notion_com",
+      "total_s": 74.082,
+      "phases": {
+        "crawl_s": 47.283,
+        "clean_s": 7.156,
+        "extract_s": 17.515,
+        "second_pass_s": 0.0,
+        "classifier_s": 0.405
+      },
+      "llm_tokens": 54882,
+      "jev_tokens": 4764,
+      "cost_usd": 0.009148,
+      "pages": 40
+    },
+    {
+      "site": "simplestores_in",
+      "total_s": 142.775,
+      "phases": {
+        "crawl_s": 126.669,
+        "clean_s": 1.159,
+        "extract_s": 13.592,
+        "second_pass_s": 0.0,
+        "classifier_s": 0.568
+      },
+      "llm_tokens": 14867,
+      "jev_tokens": 964,
+      "cost_usd": 0.002971,
+      "pages": 13
+    }
+  ],
+  "skipped": [],
+  "summary": {
+    "sites_measured": 5,
+    "latency_p50_s": 80.364,
+    "latency_p95_s": 132.0138,
+    "llm_tokens_p50": 35667.0,
+    "llm_tokens_p95": 52179.0,
+    "cost_mean_usd": 0.006153199999999999,
+    "cost_p95_usd": 0.0087244,
+    "sites_with_unknown_cost": 0
+  },
+  "targets": {
+    "latency_p50_s": {
+      "value": 80.364,
+      "target": 60,
+      "met": false
+    },
+    "latency_p95_s": {
+      "value": 132.0138,
+      "target": 180,
+      "met": true
+    },
+    "cost_mean_usd": {
+      "value": 0.006153199999999999,
+      "target": 0.1,
+      "met": true
+    },
+    "cost_p95_usd": {
+      "value": 0.0087244,
+      "target": 0.25,
+      "met": true
+    }
+  }
+}
