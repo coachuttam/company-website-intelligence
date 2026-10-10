@@ -1,11 +1,11 @@
 {
   "labeling_metadata": {
-    "company_name": "",
+    "company_name": "Cashfree Payments",
     "website_url": "https://cashfree.com/",
     "split": "held_out_v2",
-    "labeler": "Uttam",
-    "date_labeled": "YYYY-MM-DD",
-    "notes": ""
+    "labeler": "Uttam, with Claude",
+    "date_labeled": "2026-10-10",
+    "notes": "Labelled by Uttam with the help of Claude and screenshots of the live pages, 2026-10-10. Claude read the pages and drafted evidence and values; Uttam took the screenshots, checked the quotes against the live pages and made the final decisions. Pipeline not run, data/ not opened. Evidence taken from live-page DOM reads (innerText, alt and aria-label attributes) of the home, about-us, case-study and payment-gateway-charges pages on 2026-10-10, plus Uttam's screenshots of the menus and footer. Headquarters: no 'headquarter' or 'head office' text on about-us (Uttam Cmd+F, and DOM text search of home and about-us); privacy and terms pages were not searched. Customers: the home-page strip and the about-us logo grid are logos with empty alt text (filenames only), so they are excluded under Decision (c); case-study URL slugs name more companies (ixigo, Zoomcar, Wakefit, Tata CLiQ, CRED, Zepto, Grip Invest, Branch, Furlenco, Porter) but slugs are not visible text, so excluded. Certifications: names come from aria-labels on the about-us footer badges (the ISO 9001 badge image alt is 'kvqa'); the two RBI authorisations (Payment Aggregator 266/2025, PPI Provider 209/2024) are regulatory licences, not attestations, so excluded under Decision (a). Partnerships: Mastercard and Swiggy come from one sentence on the Agentic Payments description and are a borderline call; integrations (Shopify, Wix, WooCommerce, PayPal, WordPress, Zoho) are excluded under Decision (b); investors (Y Combinator, Krafton, SBI, Startups@PayPal, Apis Partners) are not partners. Products: 40 names from the site menu; 'Accept International Payments' and 'Send International Payments' left out as action headings; hero names 'Cashfree Here' and 'Cashfree Relay' are alternates of 'Agentic Payments' and 'Agentic Management (Relay)'. Pricing: festive offer valid till 31-Mar-27 and capped at sales up to 20L; the Payouts fee table (NEFT/RTGS/IMPS per transfer) is a rate card, not a plan. free_trial: 'Sign Up for Free*' is free signup, not a trial."
   },
   "labeling_instructions": {
     "source_policy": "Use only information the company states on its own public website. No outside knowledge, no assumptions.",
@@ -35,61 +35,280 @@
   "fields": {
     "company_identity.name": {
       "status": "extracted",
-      "value": "",
-      "source_url": "",
-      "evidence": ""
+      "value": "Cashfree Payments",
+      "source_url": "https://www.cashfree.com/about-us/",
+      "evidence": "Cashfree Payments enables 1 Million+ growing businesses"
     },
     "company_identity.description": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "Cashfree Payments enables 1 Million+ growing businesses in India and across the globe to collect payments, make payouts, manage international payments, and more.",
+      "source_url": "https://www.cashfree.com/about-us/",
+      "evidence": "Cashfree Payments enables 1 Million+ growing businesses in India and across the globe to collect payments, make payouts, manage international payments, and more."
     },
     "company_identity.headquarters": {
       "status": "not_found",
       "source_url": ""
     },
     "products.names": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Payment Gateway",
+        "flowWise",
+        "RiskShield Payment Gateway",
+        "RiskShield Payouts",
+        "Payment Links",
+        "Buy Now Pay Later",
+        "Payment Forms",
+        "Easy Split",
+        "BBPS-Biller",
+        "softPOS",
+        "UPI QR Code",
+        "One Click Checkout",
+        "Agentic Payments",
+        "Agentic Management (Relay)",
+        "Subscriptions",
+        "UPI AutoPay",
+        "eNACH",
+        "Payouts",
+        "Cashgram",
+        "Fund Sources",
+        "One Escrow",
+        "International Payment Gateway",
+        "Global Collections",
+        "Global Payouts",
+        "Secure ID",
+        "Bank Account Verification",
+        "IFSC Verification",
+        "Mule Sentinel",
+        "Reverse Penny Drop Verification",
+        "Aadhaar Verification",
+        "Aadhaar eSign",
+        "Passport Verification API",
+        "Driving License Verification API",
+        "DigiLocker API",
+        "GST Verification",
+        "KYC Link",
+        "Face Match API",
+        "Geolocation API",
+        "Instant Settlements",
+        "Money Transfer"
+      ],
+      "source_url": [
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/"
+      ],
+      "evidence": [
+        "Payment Gateway",
+        "flowWise",
+        "RiskShield Payment Gateway",
+        "RiskShield Payouts",
+        "Payment Links",
+        "Buy Now Pay Later",
+        "Payment Forms",
+        "Easy Split",
+        "BBPS-Biller",
+        "softPOS",
+        "UPI QR Code",
+        "One Click Checkout",
+        "Agentic Payments",
+        "Agentic Management (Relay)",
+        "Subscriptions",
+        "UPI AutoPay",
+        "eNACH",
+        "Payouts",
+        "Cashgram",
+        "Fund Sources",
+        "One Escrow",
+        "International Payment Gateway",
+        "Global Collections",
+        "Global Payouts",
+        "Secure ID",
+        "Bank Account Verification",
+        "IFSC Verification",
+        "Mule Sentinel",
+        "Reverse Penny Drop Verification",
+        "Aadhaar Verification",
+        "Aadhaar eSign",
+        "Passport Verification API",
+        "Driving License Verification API",
+        "DigiLocker API",
+        "GST Verification",
+        "KYC Link",
+        "Face Match API",
+        "Geolocation API",
+        "Instant Settlements",
+        "Money Transfer"
+      ]
     },
     "products.delivery_model": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Software: API-first, cloud-hosted payment, payout and identity-verification services used through APIs and SDKs, a merchant dashboard, and no-code links and forms",
+      "source_url": "https://www.cashfree.com/",
+      "evidence": "Payment Links | Payment Forms | Documentation | Go live in minutes",
+      "notes": "The last quote is from https://www.cashfree.com/payment-gateway-charges/."
     },
     "customers.segments": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "Startups, SMBs and enterprises",
+      "source_url": "https://www.cashfree.com/about-us/",
+      "evidence": "From startups to large enterprises | Cashfree Payments is for businesses of all shapes and sizes"
     },
     "customers.industries": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Travel & OTA",
+        "E-commerce & D2C",
+        "BFSI",
+        "Edtech"
+      ],
+      "source_url": [
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/"
+      ],
+      "evidence": [
+        "Travel & OTA",
+        "E-commerce & D2C",
+        "BFSI",
+        "Edtech"
+      ],
+      "notes": "Solutions menu."
     },
     "pricing.public_plans": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Festive Offer for new Merchants — 0% (was 1.95%)",
+        "Enterprises — Custom pricing"
+      ],
+      "source_url": [
+        "https://www.cashfree.com/payment-gateway-charges/",
+        "https://www.cashfree.com/payment-gateway-charges/"
+      ],
+      "evidence": [
+        "For a limited period, get 0% 1.95% | *Festive Offer for new Merchants",
+        "ENTERPRISES Custom pricing designed for enterprises"
+      ]
     },
     "pricing.sales_motion": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Self-serve and sales-led",
+      "source_url": "https://www.cashfree.com/payment-gateway-charges/",
+      "evidence": "Sign Up for Free* | Contact Sales | Custom pricing designed for enterprises"
     },
     "pricing.free_trial": {
       "status": "not_found",
       "source_url": ""
     },
     "pricing.revenue_model": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Transaction fees: percentage fee on payments, flat per-transfer fee on payouts, custom pricing for enterprises",
+      "source_url": "https://www.cashfree.com/payment-gateway-charges/",
+      "evidence": "For a limited period, get 0% 1.95% | NEFT ₹ 3.00 | Custom pricing designed for enterprises"
     },
     "traction.named_customers": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "IndiaBonds",
+        "Delhi Watch Company",
+        "redBus",
+        "MyPB",
+        "Sepoy & Co.",
+        "Atomic Pharmacy",
+        "Shesha Ayurveda",
+        "Safaa"
+      ],
+      "source_url": [
+        "https://www.cashfree.com/case-study/",
+        "https://www.cashfree.com/case-study/",
+        "https://www.cashfree.com/case-study/",
+        "https://www.cashfree.com/case-study/",
+        "https://www.cashfree.com/case-study/",
+        "https://www.cashfree.com/case-study/",
+        "https://www.cashfree.com/case-study/",
+        "https://www.cashfree.com/case-study/"
+      ],
+      "evidence": [
+        "How IndiaBonds Improved Success Rate with Cashfree's TPV Solution",
+        "70 Orders Every Second: How Delhi Watch Company Clocked Rs. 1.1 Cr in 20 Minutes with One Click Checkout",
+        "How redBus Improved Credit Card Payment Success Rates by ~4.8% with Cashfree",
+        "How MyPB Reduced RTO by 86% and Hit 62.4% Conversions in 4 Months with Cashfree One Click Checkout",
+        "How Sepoy & Co. Took Its Premium Mixer Brand to 15% Higher Conversions with Cashfree One Click Checkout",
+        "How Atomic Pharmacy Improved Checkout Conversion from 29% to 33% with Cashfree’s New One Click Checkout Flow",
+        "From Shark Tank to Scale: How Cashfree helped Shesha Ayurveda handle a 5X surge",
+        "How Safaa Delivered a Premium, Zero-Friction Checkout Experience with Apple Pay on Cashfree International Payment Gateway"
+      ]
     },
     "traction.certifications": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "PCI DSS",
+        "ISO 9001",
+        "ISO 27001"
+      ],
+      "source_url": [
+        "https://www.cashfree.com/about-us/",
+        "https://www.cashfree.com/about-us/",
+        "https://www.cashfree.com/about-us/"
+      ],
+      "evidence": [
+        "PCI DSS Compliance Certificate (PDF, 2.6 MB, opens in new tab)",
+        "ISO 9001 Quality Management Certificate (PDF, 381 KB, opens in new tab)",
+        "ISO 27001 Information Security Certificate (PDF, 786 KB, opens in new tab)"
+      ]
     },
     "traction.partnerships": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Mastercard",
+        "Swiggy"
+      ],
+      "source_url": [
+        "https://www.cashfree.com/",
+        "https://www.cashfree.com/"
+      ],
+      "evidence": [
+        "built on the MCP Apps standard with Mastercard and Swiggy",
+        "built on the MCP Apps standard with Mastercard and Swiggy"
+      ]
     },
     "comparisons.named_alternatives": {
       "status": "not_found",
