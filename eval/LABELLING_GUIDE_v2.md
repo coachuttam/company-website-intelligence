@@ -70,12 +70,21 @@ page, a product-page title/heading, or explicit 'Introducing X' branding".
 **(a) Laws and frameworks shown as badges** (for example GDPR, CCPA/CPRA badges next to SOC 2 or
 ISO badges): do they count as `traction.certifications`?
 
-Decision:
+Decision: NO. A law or regulation (GDPR, CCPA/CPRA, HIPAA as a law) is not a certification, even
+when a badge says "compliant". `traction.certifications` counts third-party attestations, standards
+and assurance programmes the site presents as credentials: SOC 1/2/3, ISO standards, PCI DSS,
+HITRUST, FedRAMP, CSA STAR, TISAX, IRAP, vendor assurance programmes (e.g. Microsoft SSPA). Where a
+badge carries no status wording, the item still counts and the notes say so. Anything excluded under
+this rule is named in that field's notes.
 
 **(b) `traction.partnerships`:** named partners only, or integrations (apps the product connects
 to) too?
 
-Decision:
+Decision: NAMED PARTNERS ONLY. Count a company when the site presents it as a partner (partner
+programme or directory, technology / channel / strategic / solution partner). A plain integrations
+or app-marketplace list does not count. Where a programme has tiers and a long directory, label the
+top tier (up to 15 names) and state in notes how many partners exist and which tiers were not
+labelled.
 
 **(c) List fields** (`products.names`, `traction.named_customers`, `customers.industries`,
 `traction.certifications`, `traction.partnerships`, `comparisons.named_alternatives`,
@@ -84,7 +93,40 @@ navigation-menu items count as products?
 
 Decision:
 
-Decided by: ____________   Date: ____________
+- Label every name the site clearly states, except `traction.named_customers` and
+  `traction.partnerships`, which are capped at 15, chosen by prominence: names in a sentence about
+  customers, featured case-study headlines or attributions, the top partner tier.
+- A customer or partner counts only if its name appears as visible text (sentence, headline,
+  attribution line) or in logo alt text that was checked. Logo-only entries with no readable name
+  text are not labelled; notes list them.
+- Matching in scoring is exact after casefolding, so use the site's own spelling, taken from the
+  page that is dedicated to the topic (security page for certifications, product menu for
+  products). Put alternate spellings in notes. Never list the same item twice under two spellings.
+- `products.names` follows the template rule: a proper name with its own product page. General
+  pages (Security, Integrations, Pricing, Docs, Download Apps) and generic words (Whiteboard,
+  Slides, Tables) do not count. Navigation items count only if they meet the rule.
+- `customers.industries`, `comparisons.named_alternatives`, `pricing.public_plans`: all stated. A
+  tool named only as an import source, or only inside a customer quote, is not an alternative.
+
+**(d) `company_identity.headquarters`:**
+
+Decision: label a place only if a page says it is the headquarters, head office or where the
+company is based. A postal or notices address on a legal page, or a list of offices, is not a
+headquarters statement: label `not_found` and record the address and offices in notes.
+
+**Open points, settled for all 8 sites:**
+
+- `pricing.public_plans`: "Plan name — price/unit" in the style of the Calendly dev label; billing
+  period goes in notes.
+- `products.delivery_model`: one sentence in the form "Category: description in the site's own
+  terms" (categories: software, service, marketplace, physical), status `inferred`, with the quotes
+  it rests on.
+- `pricing.sales_motion`: the short form "Self-serve", "Sales-led", or "Self-serve and sales-led";
+  which plans are which goes in notes.
+
+Decided by: Uttam, with Claude (labelling help). Date: 2026-10-10. Written after the Miro draft and
+before the other 7 labels and before any pipeline output for these sites; Miro's label was drafted
+under the same rules.
 
 ## Open points noticed in the dev labels (not decided here)
 
