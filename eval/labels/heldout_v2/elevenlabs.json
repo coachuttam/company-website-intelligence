@@ -1,11 +1,11 @@
 {
   "labeling_metadata": {
-    "company_name": "",
+    "company_name": "ElevenLabs",
     "website_url": "https://elevenlabs.io/",
     "split": "held_out_v2",
-    "labeler": "Uttam",
-    "date_labeled": "YYYY-MM-DD",
-    "notes": ""
+    "labeler": "Uttam, with Claude",
+    "date_labeled": "2026-10-10",
+    "notes": "Labelled by Uttam with the help of Claude and screenshots of the live pages, 2026-10-10. Claude read the pages and drafted evidence and values; Uttam took the screenshots, checked the quotes against the live pages and made the final decisions. Pipeline not run, data/ not opened. Home page read rendered in Claude's browser pane (innerText, alt and aria-label attributes); pricing, about, enterprise, safety, privacy-policy, eu-us-data-privacy-framework-policy, terms-of-use, customer-stories and agents/integrations were read as server-sent page text via fetch from the open page, not as rendered views. Geography: the home-page 'Trusted by leading developers and enterprises' strip visible from Uttam's location (India) lists Meesho, Cars24, Pocket FM, Mahindra & Mahindra, Razorpay, TVS Motor, EXL Service, Physics Wallah, Urban Company, Eternal by Zomato, Havells, JioStar, 99acres, Great Learning, Twilio, The Walt Disney Studios, KPN; a second, hidden set (Stripe, Telus, Cisco, Epic Games, NVIDIA, Revolut, Meta, Zoom, Square, Ramp, IBM, Deutsche Telekom, Klarna, Harvey, Salesforce) is in the HTML and on /customer-stories; the label uses the visible set, capped at 15 by page order; 'IDFC-logo.svg' is a filename, not a name, so excluded. Customer names are accessible-name link text on logo tiles (visually hidden), accepted like the title/aria-label precedent. Headquarters: the about page says 'as it expands London HQ' inside a news headline; the privacy policy and terms give 169 Madison Ave #2484, New York as a Data Protection Office / legal-notice address only (Decision (d) address, not used). This is a judgment call. Pricing: the pricing page default is the Creative tab (Free to Business plus Enterprise); Agents and API tabs have other views not captured; first-month promos ($1 Starter until Oct 18, $11 Creator) and annual billing (10x monthly) are not plans; Startup Grants Program is not a plan. free_trial: the Free plan is a free tier and 'Try v4 with 2x credits for two weeks' is a paid-plan promotion, not a trial. Certifications: FedRAMP 20x Class A is from a dated About-page headline (1 Oct 2026); EU-US Data Privacy Framework (borderline programme) from its dedicated policy page, eu-us-data-privacy-framework-policy (the privacy policy spells it 'EU-U.S. Data Privacy Framework'); HIPAA-eligible configurations are law/eligibility, not a certification, so excluded under Decision (a); the Trust Center (compliance.elevenlabs.io) is a separate domain and was not followed. Partnerships: named in visible text as partner/partnership/strategic agreement; excluded: Deutsche Telekom, IBM, Salesforce (partnership only in URL slug or no partnership wording in text), Ukrainian public services (not a single named partner), investors and integrations (Zapier, Stripe, Twilio, etc.) under Decision (b). Products: the three platforms, the Products-menu items and 'Dubbing'; excluded: model versions (Eleven v3, v4, Flash, Multilingual, Turbo, Scribe, Eleven Music, Music v2, Dubbing v2), Dubbing Studio, Productions, Flows, Voice Library, Iconic Marketplace, Integrations, API Reference, API Key and vertical pages. Industries: 'Customer Support' (agents menu) is a use case, so excluded. named_alternatives: no comparison or alternatives pages in the menus or footer; blog not searched."
   },
   "labeling_instructions": {
     "source_policy": "Use only information the company states on its own public website. No outside knowledge, no assumptions.",
@@ -35,61 +35,291 @@
   "fields": {
     "company_identity.name": {
       "status": "extracted",
-      "value": "",
-      "source_url": "",
-      "evidence": ""
+      "value": "ElevenLabs",
+      "source_url": "https://elevenlabs.io/about",
+      "evidence": "ElevenLabs is an AI research and product company"
     },
     "company_identity.description": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "ElevenLabs is an AI research and product company transforming the way we interact with technology.",
+      "source_url": "https://elevenlabs.io/about",
+      "evidence": "ElevenLabs is an AI research and product company transforming the way we interact with technology."
     },
     "company_identity.headquarters": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "London",
+      "source_url": "https://elevenlabs.io/about",
+      "evidence": "as it expands London HQ"
     },
     "products.names": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "ElevenCreative",
+        "ElevenAgents",
+        "ElevenAPI",
+        "Text to Speech",
+        "Speech to Text",
+        "Voice Changer",
+        "Text to Sound Effects",
+        "Voice Cloning",
+        "Voice Isolator",
+        "AI Music Generator",
+        "Studio",
+        "Voice Design",
+        "AI Voice Generator",
+        "AI Image Generator",
+        "AI Video Generator",
+        "Ads Engine",
+        "Dubbing",
+        "Voice Agents",
+        "Conversational AI",
+        "Chatbots",
+        "Agents API",
+        "Speech Engine",
+        "Dubbing API",
+        "Text to Speech API",
+        "Speech to Text API",
+        "Sound Effects API",
+        "Music API"
+      ],
+      "source_url": [
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/"
+      ],
+      "evidence": [
+        "ElevenCreative",
+        "ElevenAgents",
+        "ElevenAPI",
+        "Text to Speech",
+        "Speech to Text",
+        "Voice Changer",
+        "Text to Sound Effects",
+        "Voice Cloning",
+        "Voice Isolator",
+        "AI Music Generator",
+        "Studio",
+        "Voice Design",
+        "AI Voice Generator",
+        "AI Image Generator",
+        "AI Video Generator",
+        "Ads Engine",
+        "Dubbing",
+        "Voice Agents",
+        "Conversational AI",
+        "Chatbots",
+        "Agents API",
+        "Speech Engine",
+        "Dubbing API",
+        "Text to Speech API",
+        "Speech to Text API",
+        "Sound Effects API",
+        "Music API"
+      ]
     },
     "products.delivery_model": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Software: AI audio and voice-agent platform delivered through web apps and developer APIs/SDKs",
+      "source_url": "https://elevenlabs.io/about",
+      "evidence": "ElevenAgents lets businesses build and deploy AI voice and chat agents for customer support, sales, and more. | ElevenAPI gives developers access to our leading AI audio foundation models, with low-latency streaming and SDKs for building voice into any product."
     },
     "customers.segments": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "Enterprises, creators and developers",
+      "source_url": "https://elevenlabs.io/",
+      "evidence": "Powering the best enterprises, creators, and developers."
     },
     "customers.industries": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Telecommunications",
+        "Financial Services",
+        "Healthcare",
+        "Government",
+        "Technology",
+        "Retail & E-commerce",
+        "Travel & Hospitality"
+      ],
+      "source_url": [
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/"
+      ],
+      "evidence": [
+        "Telecommunications",
+        "Financial Services",
+        "Healthcare",
+        "Government",
+        "Technology",
+        "Retail & E-commerce",
+        "Travel & Hospitality"
+      ],
+      "notes": "ElevenAgents menu."
     },
     "pricing.public_plans": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Free — $0/month",
+        "Starter — $6/month",
+        "Creator — $22/month",
+        "Pro — $99/month",
+        "Scale — $299/month",
+        "Business — $990/month",
+        "Enterprise — Custom pricing"
+      ],
+      "source_url": [
+        "https://elevenlabs.io/pricing",
+        "https://elevenlabs.io/pricing",
+        "https://elevenlabs.io/pricing",
+        "https://elevenlabs.io/pricing",
+        "https://elevenlabs.io/pricing",
+        "https://elevenlabs.io/pricing",
+        "https://elevenlabs.io/pricing"
+      ],
+      "evidence": [
+        "Free $0 (10,000 credits)",
+        "Starter $6 (30,000 credits)",
+        "Creator $22 (121,000 credits",
+        "Pro $99 (600,000 credits)",
+        "Scale $299 (1,800,000 credits, 3 seats)",
+        "Business $990 (6,000,000 credits, 10 seats)",
+        "Enterprise is custom"
+      ]
     },
     "pricing.sales_motion": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Self-serve and sales-led",
+      "source_url": "https://elevenlabs.io/pricing",
+      "evidence": "Sign up | Contact sales | Custom pricing"
     },
     "pricing.free_trial": {
       "status": "not_found",
       "source_url": ""
     },
     "pricing.revenue_model": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Subscription tiers with usage credits, plus custom enterprise pricing",
+      "source_url": "https://elevenlabs.io/pricing",
+      "evidence": "All products draw from one shared monthly credit pool | Pay-as-you-go top-up credits | Custom pricing"
     },
     "traction.named_customers": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Meesho",
+        "Cars24",
+        "Pocket FM",
+        "Mahindra & Mahindra",
+        "Razorpay",
+        "TVS Motor",
+        "EXL Service",
+        "Physics Wallah",
+        "Urban Company",
+        "Eternal by Zomato",
+        "Havells",
+        "JioStar",
+        "99acres",
+        "Great Learning",
+        "Twilio"
+      ],
+      "source_url": [
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/",
+        "https://elevenlabs.io/"
+      ],
+      "evidence": [
+        "Meesho",
+        "Cars24",
+        "Pocket FM",
+        "Mahindra & Mahindra",
+        "Razorpay",
+        "TVS Motor",
+        "EXL Service",
+        "Physics Wallah",
+        "Urban Company",
+        "Eternal by Zomato",
+        "Havells",
+        "JioStar",
+        "99acres",
+        "Great Learning",
+        "Twilio"
+      ]
     },
     "traction.certifications": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "FedRAMP 20x Class A",
+        "EU-US Data Privacy Framework"
+      ],
+      "source_url": [
+        "https://elevenlabs.io/about",
+        "https://elevenlabs.io/eu-us-data-privacy-framework-policy"
+      ],
+      "evidence": [
+        "ElevenLabs is now FedRAMP 20x Class A certified",
+        "ElevenLabs has certified that it adheres to the EU-US Data Privacy Framework | ElevenLabs’ DPF Certification"
+      ],
+      "notes": "Borderline programme, see notes. Privacy policy spells it 'EU-U.S. Data Privacy Framework (EU-U.S. DPF)'."
     },
     "traction.partnerships": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "UK Government",
+        "Universal Music Group",
+        "Bertelsmann",
+        "Square"
+      ],
+      "source_url": [
+        "https://elevenlabs.io/about",
+        "https://elevenlabs.io/about",
+        "https://elevenlabs.io/enterprise",
+        "https://elevenlabs.io/customer-stories"
+      ],
+      "evidence": [
+        "ElevenLabs partners with the UK Government to bring voice AI to public services",
+        "Universal Music Group and ElevenLabs announce multi-year strategic agreement",
+        "Bertelsmann and ElevenLabs partner to support storytelling with AI",
+        "Square + ElevenLabs partnership"
+      ]
     },
     "comparisons.named_alternatives": {
       "status": "not_found",
