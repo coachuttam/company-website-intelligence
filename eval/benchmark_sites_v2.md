@@ -13,7 +13,7 @@ crawl-status reasons (see the replacement log), leaving the **final set of 8**:
 | V4 | cohere.com | `eval/labels/heldout_v2/cohere.json` | UNLABELED |
 | V5 | framer.com | `eval/labels/heldout_v2/framer.json` | UNLABELED |
 | V6 | chargebee.com | `eval/labels/heldout_v2/chargebee.json` | UNLABELED |
-| V7 | mercury.com | `eval/labels/heldout_v2/mercury.json` | UNLABELED |
+| V7 | mercury.com | `eval/labels/heldout_v2/mercury.json` | LABELED |
 | V8 | elevenlabs.io | `eval/labels/heldout_v2/elevenlabs.json` | UNLABELED |
 
 **Sample size:** n = 8, so each per-field score moves in steps of 12.5 points (one site), and the

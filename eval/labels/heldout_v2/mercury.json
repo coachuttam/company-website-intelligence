@@ -1,11 +1,11 @@
 {
   "labeling_metadata": {
-    "company_name": "",
+    "company_name": "Mercury",
     "website_url": "https://mercury.com/",
     "split": "held_out_v2",
-    "labeler": "Uttam",
-    "date_labeled": "YYYY-MM-DD",
-    "notes": ""
+    "labeler": "Uttam, with Claude",
+    "date_labeled": "2026-10-10",
+    "notes": "Labelled by Uttam with the help of Claude and screenshots of the live pages, 2026-10-10. Claude read the pages and drafted evidence and values; Uttam took the screenshots, checked the quotes against the live pages and made the final decisions. Pipeline not run, data/ not opened. Live-page checks on 2026-10-10 (about-page quotes, monthly prices, Solutions menu labels, partner logo title attributes) were read from the page DOM through Claude's browser pane."
   },
   "labeling_instructions": {
     "source_policy": "Use only information the company states on its own public website. No outside knowledge, no assumptions.",
@@ -35,65 +35,235 @@
   "fields": {
     "company_identity.name": {
       "status": "extracted",
-      "value": "",
-      "source_url": "",
-      "evidence": ""
+      "value": "Mercury",
+      "source_url": "https://mercury.com/",
+      "evidence": "Mercury is a fintech company, not an FDIC-insured bank."
     },
     "company_identity.description": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "Mercury is a fintech company, not an FDIC-insured bank, whose banking serves as the hub of an entrepreneur's financial operations: checking and savings, cards, payments, invoices and bill pay.",
+      "source_url": "https://mercury.com/about",
+      "evidence": "Transformative banking for ambitious entrepreneurs | Mercury is a fintech company, not an FDIC-insured bank. | With Mercury, banking has evolved into the nucleus of your financial operations. The source-of-truth for your money movement, where you can quickly and easily make payments, send invoices, pay bills, monitor spend, and understand your cash flow.",
+      "notes": "Quotes read from the live /about page DOM on 2026-10-10. Wording 'financial technology company' appears on other pages, not /about."
     },
     "company_identity.headquarters": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "United States",
+      "source_url": "https://mercury.com/legal/privacy",
+      "evidence": "Mercury is headquartered in the United States",
+      "notes": "Privacy Policy, Section 10 (International Data Transfers). Country level only; no city or postal address on the site; legal entity Mercury Technologies, Inc."
     },
     "products.names": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Checking & Savings",
+        "Working Capital Loans",
+        "Venture Debt",
+        "Treasury by Mercury Advisory",
+        "Business Credit Cards",
+        "Spend Management",
+        "Invoicing",
+        "Command",
+        "Insights",
+        "Books",
+        "Personal Banking"
+      ],
+      "source_url": [
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/"
+      ],
+      "evidence": [
+        "Checking & Savings",
+        "Working Capital Loans",
+        "Venture Debt",
+        "Treasury by Mercury Advisory",
+        "Business Credit Cards",
+        "Spend Management",
+        "Invoicing",
+        "Command",
+        "Insights",
+        "Books",
+        "Personal Banking"
+      ],
+      "notes": "Products menu. Excluded as umbrella/generic: Business Banking, Payments, Accounting Integrations, API, Perks, Security, Status. Morgan Stanley and State Street funds shown as \"powered by\" are third-party, not Mercury products."
     },
     "products.delivery_model": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Software: online business banking (web app, iOS and Android apps, API) with banking services provided through partner banks",
+      "source_url": "https://mercury.com/",
+      "evidence": "Apply online in 10 minutes | Banking services provided through Choice Financial Group and Column N.A., Members FDIC. | Bank on-the-go with an intuitive mobile app. | Use our CLI, MCP, and APIs to take action directly from your tools.",
+      "notes": "The last two quotes are from https://mercury.com/business-banking."
     },
     "customers.segments": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "Startups, small businesses and scaling companies",
+      "source_url": "https://mercury.com/",
+      "evidence": "Online Business Banking For Startups, Small Businesses & Scaling Companies",
+      "notes": "Page title."
     },
     "customers.industries": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Tech",
+        "Ecommerce",
+        "Agencies, Consultants & Firms",
+        "VC Funds",
+        "Crypto",
+        "Accounting Firms",
+        "LLCs",
+        "Life Science",
+        "Climate",
+        "Real Estate & Construction",
+        "Healthcare Services"
+      ],
+      "source_url": [
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/",
+        "https://mercury.com/"
+      ],
+      "evidence": [
+        "Tech",
+        "Ecommerce",
+        "Agencies, Consultants & Firms",
+        "VC Funds",
+        "Crypto",
+        "Accounting Firms",
+        "LLCs",
+        "Life Science",
+        "Climate",
+        "Real Estate & Construction",
+        "Healthcare Services"
+      ],
+      "notes": "Solutions menu. Some entries are business types rather than industries; all kept because the site lists them under Solutions. \"Agencies, Consultants & Firms\" is one menu entry (link /agencies-and-consultants). Menu labels and links read from the live Solutions menu DOM on 2026-10-10."
     },
     "pricing.public_plans": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Mercury — $0/mo",
+        "Mercury Plus — $29.90/mo",
+        "Mercury Pro — $299/mo"
+      ],
+      "source_url": [
+        "https://mercury.com/pricing",
+        "https://mercury.com/pricing",
+        "https://mercury.com/pricing"
+      ],
+      "evidence": [
+        "Mercury $0/mo.",
+        "Mercury Plus $29.90/mo.",
+        "Mercury Pro $299/mo."
+      ],
+      "notes": "Prices are as shown on page load with the \"Annual Pricing (15% off)\" toggle on; page loads with annual billing (?pricing=annual); with the Annual Pricing (15% off) toggle off (?pricing=monthly) the prices are Mercury $0/mo., Mercury Plus $35/mo., Mercury Pro $350/mo. Annual prices used as the label values. Pro page text: \"Get in touch with our team for custom pricing and plan options.\" Excluded as add-ons: Mercury Books \"$35/mo, waived until Dec 31, 2026\" and Mercury Personal \"$240/year\" (free with any business plan)."
     },
     "pricing.sales_motion": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Self-serve and sales-led",
+      "source_url": "https://mercury.com/",
+      "evidence": "Open account | Contact sales | Get in touch with our team for custom pricing and plan options.",
+      "notes": "The last quote is from https://mercury.com/pricing."
     },
     "pricing.free_trial": {
       "status": "not_found",
-      "source_url": ""
+      "source_url": "",
+      "notes": "No trial wording on home, pricing or product pages. A $0 plan and an interactive demo (\"Launch demo\") exist, and a partner perk \"6 months free Xero\" is shown; none is a trial, so nothing is labelled."
     },
     "pricing.revenue_model": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Subscription tiers plus transaction fees",
+      "source_url": "https://mercury.com/pricing",
+      "evidence": "$29.90/mo. | $299/mo. | There is a 1% conversion fee for non-USD international wires."
     },
     "traction.named_customers": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Linear",
+        "Supabase"
+      ],
+      "source_url": [
+        "https://mercury.com/",
+        "https://mercury.com/"
+      ],
+      "evidence": [
+        "Founder, Linear",
+        "Founder and CEO, Supabase"
+      ],
+      "notes": "Testimonial attributions. Further testimonial companies seen via page fetch but NOT verified on the live page and therefore not labelled: Gainful, Ways & Means, Common Paper, Freedom Biosciences, Manta Sleep. Investor logos (Sequoia, a16z, etc.) and press logos (Forbes, Fortune, Fast Company) are not customers."
     },
     "traction.certifications": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "SOC 2 Type II",
+        "PCI"
+      ],
+      "source_url": [
+        "https://mercury.com/security",
+        "https://mercury.com/security"
+      ],
+      "evidence": [
+        "SOC 2 Type II compliance",
+        "PCI standards | we uphold PCI compliance to ensure it stays safe"
+      ],
+      "notes": "Site wording used; long forms \"SOC 2-compliant\", \"PCI compliance\". FDIC and SIPC are insurance, excluded. The page never says \"certified\" or \"attested\"; kept under Decision (a)."
     },
     "traction.partnerships": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Clerky",
+        "Kruze Consulting",
+        "On Deck",
+        "Techstars",
+        "Pilot",
+        "Orrick",
+        "Sensiba"
+      ],
+      "source_url": [
+        "https://mercury.com/partnerships",
+        "https://mercury.com/partnerships",
+        "https://mercury.com/partnerships",
+        "https://mercury.com/partnerships",
+        "https://mercury.com/partnerships",
+        "https://mercury.com/partnerships",
+        "https://mercury.com/partnerships"
+      ],
+      "evidence": [
+        "title=\"Clerky\"",
+        "title=\"Kruze Consulting\"",
+        "title=\"On Deck\"",
+        "title=\"Techstars\"",
+        "title=\"Pilot\"",
+        "title=\"Orrick\"",
+        "title=\"Sensiba\""
+      ],
+      "notes": "Logo carousel under \"Become Mercury's next partner\". Logos are inline SVGs with no alt text. Names are taken from the title attribute on each logo's wrapper element, checked in the live page DOM on 2026-10-10; the visible wordmarks match, except the Kruze logo reads 'Kruze' and its title is 'Kruze Consulting' (title spelling used). Decision (c) read as accepting a logo's title attribute as its accessible name. The page says \"Join 500+ partners across various industries — VCs, accountants, law firms, and more partner with Mercury\". Banking partners Choice Financial Group and Column N.A. appear only in a banking disclaimer and are excluded. QuickBooks, Xero and NetSuite are integrations, excluded. Morgan Stanley and State Street (\"powered by\") excluded."
     },
     "comparisons.named_alternatives": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Chase"
+      ],
+      "source_url": [
+        "https://mercury.com/mercury-business-banking-vs-chase"
+      ],
+      "evidence": [
+        "Mercury Business Banking vs. Chase"
+      ]
     }
   }
 }
