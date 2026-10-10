@@ -169,3 +169,9 @@ None of these was applied in this report.
 5. Short `delivery_model` and `revenue_model` label conventions in future sets.
 
 Any of these must be measured on a fresh, blind set: the v2 sites are now development data.
+
+**Update, 2026-10-11:** step 2, a fallback extraction pass for list fields returned as `not_found`, was
+tried after the held-out run on branch `post-heldout-v2-fallback` and failed on the dev set: the 3-round
+mean was 61.3% against 65.8% for the unchanged code run back to back, with unsupported verdicts rising
+from 12 to 22. It was not merged. See `eval/FALLBACK_EXPERIMENT.md`. The 35% above remains the recorded
+held-out result.

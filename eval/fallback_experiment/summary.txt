@@ -1,0 +1,95 @@
+a) headline per round
+  main     61.3 / 66.7 / 69.3   mean 65.8
+  fallback 60.0 / 62.7 / 61.3   mean 61.3
+
+b) verdict counts summed over 3 rounds
+  overall  | correct | correct_partial | correct_semantic | correct_abstention | incorrect | miss | unsupported
+  main     | 38 | 24 | 29 | 57 | 27 | 38 | 12
+  fallback | 39 | 22 | 30 | 47 | 40 | 25 | 22
+  per field (main -> fallback), only non-zero verdicts:
+  company_identity.name: main {'correct': 15} | fallback {'correct': 15}
+  company_identity.description: main {'correct': 3, 'correct_semantic': 6, 'incorrect': 3, 'miss': 3} | fallback {'correct': 3, 'correct_semantic': 6, 'incorrect': 3, 'miss': 3}
+  company_identity.headquarters: main {'correct_semantic': 3, 'correct_abstention': 12} | fallback {'correct_semantic': 3, 'correct_abstention': 12}
+  products.names: main {'correct_partial': 5, 'incorrect': 4, 'miss': 6} | fallback {'correct_partial': 3, 'incorrect': 6, 'miss': 6}
+  products.delivery_model: main {'correct_semantic': 6, 'incorrect': 6, 'unsupported': 3} | fallback {'correct_semantic': 6, 'incorrect': 6, 'unsupported': 3}
+  customers.segments: main {'correct_abstention': 6, 'incorrect': 3, 'miss': 6} | fallback {'correct_abstention': 6, 'incorrect': 5, 'miss': 4}
+  customers.industries: main {'correct_partial': 3, 'correct_abstention': 8, 'miss': 3, 'unsupported': 1} | fallback {'correct_partial': 3, 'correct_abstention': 3, 'incorrect': 3, 'unsupported': 6}
+  pricing.public_plans: main {'correct': 7, 'correct_partial': 7, 'incorrect': 1} | fallback {'correct': 9, 'correct_partial': 4, 'miss': 2}
+  pricing.sales_motion: main {'correct_semantic': 14, 'incorrect': 1} | fallback {'correct_semantic': 15}
+  pricing.free_trial: main {'correct': 1, 'correct_abstention': 1, 'incorrect': 6, 'miss': 5, 'unsupported': 2} | fallback {'correct_abstention': 2, 'incorrect': 8, 'miss': 4, 'unsupported': 1}
+  pricing.revenue_model: main {'correct': 12, 'incorrect': 3} | fallback {'correct': 12, 'incorrect': 3}
+  traction.named_customers: main {'correct_partial': 6, 'miss': 6, 'unsupported': 3} | fallback {'correct_partial': 6, 'incorrect': 6, 'unsupported': 3}
+  traction.certifications: main {'correct_partial': 3, 'correct_abstention': 6, 'miss': 3, 'unsupported': 3} | fallback {'correct_partial': 6, 'correct_abstention': 5, 'unsupported': 4}
+  traction.partnerships: main {'correct_abstention': 15} | fallback {'correct_abstention': 10, 'unsupported': 5}
+  comparisons.named_alternatives: main {'correct_abstention': 9, 'miss': 6} | fallback {'correct_abstention': 9, 'miss': 6}
+
+c) fields where fallback differs from main by >= 2 verdicts (summed over 3 rounds)
+  products.names: correct_partial -2, incorrect +2
+  customers.segments: incorrect +2, miss -2
+  customers.industries: correct_abstention -5, incorrect +3, miss -3, unsupported +5
+  pricing.public_plans: correct +2, correct_partial -3, miss +2
+  pricing.free_trial: incorrect +2
+  traction.named_customers: incorrect +6, miss -6
+  traction.certifications: correct_partial +3, miss -3
+  traction.partnerships: correct_abstention -5, unsupported +5
+
+d) fallback records (fallback build)
+  round 1: runs with a call 5/5, skipped 0 [], fields attempted 23, filled 10, rejected 2, calls 5, seconds 28.4
+     calendly_com: filled ['customers.industries', 'traction.named_customers']
+     loom_com: filled ['customers.segments', 'customers.industries', 'traction.certifications', 'traction.partnerships']
+     typeform_com: filled ['traction.named_customers', 'traction.certifications']
+     notion_com: filled ['customers.industries']
+     simplestores_in: filled ['traction.partnerships']
+  round 2: runs with a call 5/5, skipped 0 [], fields attempted 22, filled 7, rejected 2, calls 5, seconds 27.6
+     calendly_com: filled ['customers.industries', 'traction.named_customers']
+     loom_com: filled ['customers.segments', 'customers.industries', 'traction.certifications']
+     typeform_com: filled ['traction.named_customers']
+     simplestores_in: filled ['traction.partnerships']
+  round 3: runs with a call 5/5, skipped 0 [], fields attempted 23, filled 8, rejected 3, calls 5, seconds 26.6
+     calendly_com: filled ['customers.industries', 'traction.named_customers']
+     loom_com: filled ['customers.industries', 'traction.certifications', 'traction.partnerships']
+     typeform_com: filled ['traction.named_customers']
+     notion_com: filled ['customers.industries']
+     simplestores_in: filled ['traction.partnerships']
+
+e) latency (timing.total_s)
+  main     p50 83.4s  p95 144.7s  (n=15)
+  fallback p50 86.4s  p95 152.5s  (n=15)
+  mean fallback phase seconds per run: 5.6s
+
+f) pass test
+  (1) fallback mean 61.3 >= main mean 65.8 - 1: FAIL
+  (2) fallback unsupported 22 <= main 12 + 3: FAIL
+  (3) fallback filled 25 >= 5: PASS
+  overall: FAIL
+
+g) every filled field
+  r1 calendly_com customers.industries: value=['SaaS'] | evidence=['As one of the fastest-growing SaaS companies worldwide, ClickUp has expanded its customer base to 800,000 teams in just over five years.'] | source=https://calendly.com/customers/clickup
+  r1 calendly_com traction.named_customers: value=['ClickUp', 'Ancestry.com', 'Vonage'] | evidence=['ClickUp: 57% faster support ticket resolution', 'Ancestry.com: 50% faster handoff to sales', 'Vonage: 160% more customers reached'] | source=https://calendly.com/learn/customer-success-teams
+  r1 loom_com customers.segments: value='Enterprises' | evidence='Thousands of leading enterprises trust Loom.' | source=https://www.loom.com/enterprise
+  r1 loom_com customers.industries: value=['Financial Services', 'Technology'] | evidence=['Financial Services and Technology', 'Financial Services and Technology'] | source=https://www.loom.com/customers/brex
+  r1 loom_com traction.certifications: value=['GDPR'] | evidence=['GDPR, CCPA, and SOC 2 Type 2 compliant'] | source=https://www.loom.com/enterprise
+  r1 loom_com traction.partnerships: value=['Atlassian'] | evidence='Loom was acquired by Atlassian last year.' | source=https://www.loom.com/pricing
+  r1 typeform_com traction.named_customers: value=['Gated', 'Azra Games', 'BombBomb', 'Timely'] | evidence=['Gated: learning by listening with Typeform', 'Gated has become the firewall for my mental health. - Travis Boudreaux, CTO at Azra Games, supports Wounded Warrior Project', 'Gated brings a sense of calm in the digitally polluted storm we all try to sift through. - Rea Ross, Brand and Community Marketing Speciality at BombBomb, supports Operation Underground Railroad', 'It keeps all the clutter out of my inbox and I love that if people really want my attention, they can contribute to something great! - Adam Burns, RevOps Manager at Timely, supports Wikimedia Foundation'] | source=https://www.typeform.com/blog/gated-customer-story
+  r1 typeform_com traction.certifications: value=['SOC2 Type II', 'ISO/IEC 27001:2022', 'ISO/IEC 27018:2019', 'ISO/IEC 27017:2015', 'ISO/IEC 42001', 'HIPAA', 'GDPR', 'CSA STAR Level 1', 'PCI DSS'] | evidence=['System and Organization Controls 2 (SOC2) Type II', 'ISO/IEC 27001:2022', 'ISO/EIC 27018:2019', 'ISO/EIC 27017:2015', 'ISO/IEC 42001', 'Health Insurance Portability and Accountability Act (HIPAA)', 'General Data Protection Regulation (GDPR)', 'CSA STAR Level 1', 'PCI DSS'] | source=https://help.typeform.com/hc/en-us/articles/360029259552-Security-at-Typeform
+  r1 notion_com customers.industries: value=['Retail'] | evidence=['Faire connects independent brands and retailers worldwide.'] | source=https://www.notion.com/customers/faire
+  r1 simplestores_in traction.partnerships: value=['Country distributors in the Gulf, Malaysia and Europe'] | evidence=['We are recruiting country distributors in the Gulf, Malaysia and Europe.'] | source=https://simplestores.in/partners
+  r2 calendly_com customers.industries: value=['SaaS'] | evidence=['As one of the fastest-growing SaaS companies worldwide, ClickUp has expanded its customer base to 800,000 teams in just over five years.'] | source=https://calendly.com/customers/clickup
+  r2 calendly_com traction.named_customers: value=['ClickUp', 'Ancestry.com', 'Vonage'] | evidence=['ClickUp: 57% faster support ticket resolution', 'Ancestry.com: 50% faster handoff to sales', 'Vonage: 160% more customers reached'] | source=https://calendly.com/learn/customer-success-teams
+  r2 loom_com customers.segments: value='Teams across organizations' | evidence='Async video can be used for internal and external messages, presentations, and updates by teams across the organization.' | source=https://www.loom.com/enterprise
+  r2 loom_com customers.industries: value=['Financial Services'] | evidence=['Industry Financial Services and Technology'] | source=https://www.loom.com/customers/brex
+  r2 loom_com traction.certifications: value=['GDPR', 'CCPA'] | evidence=['GDPR, CCPA, and SOC 2 Type 2 compliant', 'GDPR, CCPA, and SOC 2 Type 2 compliant.'] | source=https://www.loom.com/enterprise
+  r2 typeform_com traction.named_customers: value=['Gated', 'Azra Games', 'BombBomb'] | evidence=['Gated: learning by listening with Typeform', 'Travis Boudreaux, CTO at Azra Games, supports Wounded Warrior Project', 'Rea Ross, Brand and Community Marketing Speciality at BombBomb, supports Operation Underground Railroad'] | source=https://www.typeform.com/blog/gated-customer-story
+  r2 simplestores_in traction.partnerships: value=['Country distributors for Gulf, Malaysia & Europe'] | evidence=['We are recruiting country distributors in the Gulf, Malaysia and Europe.'] | source=https://simplestores.in/partners
+  r3 calendly_com customers.industries: value=['SaaS'] | evidence=['As one of the fastest-growing SaaS companies worldwide, ClickUp has expanded its customer base to 800,000 teams in just over five years.'] | source=https://calendly.com/customers/clickup
+  r3 calendly_com traction.named_customers: value=['ClickUp', 'Ancestry.com', 'Vonage'] | evidence=['ClickUp: 57% faster support ticket resolution', 'Ancestry.com: 50% faster handoff to sales', 'Vonage: 160% more customers reached'] | source=https://calendly.com/learn/customer-success-teams
+  r3 loom_com customers.industries: value=['Financial Services'] | evidence=['Industry Financial Services and Technology'] | source=https://www.loom.com/customers/brex
+  r3 loom_com traction.certifications: value=['GDPR'] | evidence=['GDPR, CCPA, and SOC 2 Type 2 compliant'] | source=https://www.loom.com/enterprise
+  r3 loom_com traction.partnerships: value=['Salesforce'] | evidence=['Salesforce integration (beta)'] | source=https://www.loom.com/enterprise
+  r3 typeform_com traction.named_customers: value=['Gated', 'Azra Games', 'BombBomb'] | evidence=['Gated: learning by listening with Typeform', 'Travis Boudreaux, CTO at Azra Games, supports Wounded Warrior Project', 'Rea Ross, Brand and Community Marketing Speciality at BombBomb, supports Operation Underground Railroad'] | source=https://www.typeform.com/blog/gated-customer-story
+  r3 notion_com customers.industries: value=['Retail'] | evidence=['Faire connects independent brands and retailers worldwide.'] | source=https://www.notion.com/customers/faire
+  r3 simplestores_in traction.partnerships: value=['Country Distributors for Gulf, Malaysia & Europe'] | evidence=['We are recruiting country distributors in the Gulf, Malaysia and Europe.'] | source=https://simplestores.in/partners
+
+cost (usage.estimated_cost_usd + classifier + judge)
+  main     extraction $0.0901  judge $0.0037  jev $0.0017  total $0.0955
+  fallback extraction $0.1266  judge $0.0038  jev $0.0017  total $0.1322

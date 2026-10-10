@@ -83,6 +83,14 @@ Post-hoc and read-only; no change has been made. Details in `eval/HELDOUT_V2_REP
 - **List-field scoring is generous on overlap.** Any one shared item scores `correct_partial`, a full
   right call: 1 of 15 customers counts the same as 15 of 15, and extra true items earn nothing
   (`wi/eval/scoring.py`, `_has_list_overlap`). The headline does not measure list completeness.
+- **The evidence gate checks that a quote exists, not who or what it is about.** A value passes when
+  its quote is on a fetched page and contains the value; nothing checks that the quote is about this
+  company and this field. A customer's industry, a customer's users, an acquirer, an integration or a
+  law can all pass as real quotes (seen in the fallback experiment below).
+- **A fallback extraction pass was tried and rejected (2026-10-11).** One extra call for list fields
+  left `not_found` lowered the dev mean from 65.8% to 61.3% and raised unsupported verdicts from 12 to
+  22, because its fills were real text about the wrong thing and the gate cannot tell. Not merged; see
+  `eval/FALLBACK_EXPERIMENT.md`.
 
 ## Latency and cost
 
