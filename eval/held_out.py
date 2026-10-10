@@ -13,6 +13,8 @@ Usage:
     python eval/held_out.py --semantic-judge   # B-45, 2026-09-27 (fields widened B-46): see
                                                 # eval/baseline.py's docstring -- opt-in, off by default
     python eval/held_out.py --set v2 [--semantic-judge]   # B-97: held-out set v2 (see below)
+    python eval/held_out.py [--set v2] --normalised        # B-99: also print the category-normalised
+                                                # metric (post-hoc, secondary; docs/SCORING.md)
 
 Held-out set v2 (B-97, 2026-10-10): `--set v2` scores the 8 sites of eval/benchmark_sites_v2.md
 instead of the old 10 (which are contaminated and stay the default only so their results remain
@@ -182,6 +184,7 @@ def main_v2(argv: List[str], label_dir: Path = V2_LABEL_DIR, checksum_file: Path
         resolved_pairs, label_dir, run_dir, "held_out_v2_set", report_path,
         f"{len(resolved_pairs)} held-out v2 site(s)",
         semantic_judge=judge, semantic_judge_model=model,
+        normalised="--normalised" in argv,
     )
     if report is None:
         return code
@@ -250,6 +253,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         resolved_pairs, label_dir, run_dir, "held_out_set", report_path,
         f"{len(resolved_pairs)} held-out site(s)",
         semantic_judge=judge, semantic_judge_model=model,
+        normalised="--normalised" in argv,
     )
     if report is None:
         return code

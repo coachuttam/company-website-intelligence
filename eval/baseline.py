@@ -20,6 +20,9 @@ Prints:
     human can spot-check cases the strict, non-paraphrase-aware normalisation may have scored
     unfairly (see wi/eval/scoring.py's module docstring)
 
+`--normalised` (B-99) also prints the category-normalised metric (post-hoc, secondary;
+docs/SCORING.md) and adds a "normalised" key to the report; without it nothing changes.
+
 Also writes eval/baseline_report.json with the same data, for diffing against a future baseline
 (e.g. after the Week 3 prompt-optimisation trial).
 
@@ -128,6 +131,7 @@ def run_scoring_set(
     per_field_heading: str,
     semantic_judge=None,
     semantic_judge_model: Optional[str] = None,
+    normalised: bool = False,
 ) -> Tuple[Optional[dict], int]:
     """Score one named (label_file, run_file) pair list end-to-end: per-site, per-field (AC-09),
     overall + extraction/inference/conflict breakdown (AC-11), and a human-spot-check listing.
@@ -140,7 +144,11 @@ def run_scoring_set(
     wi.eval.scoring.apply_semantic_judging() right after score_run(), upgrading eligible
     `incorrect` free-text verdicts to `correct_semantic` before anything downstream (per-site,
     per-field, overall, the report file) sees them. Left as None by default -- this function
-    makes no LLM call under any circumstance unless the caller explicitly opts in."""
+    makes no LLM call under any circumstance unless the caller explicitly opts in.
+
+    `normalised` (B-99, the --normalised flag): also prints a "category-normalised (post-hoc,
+    secondary)" block and adds a "normalised" key to the report (wi/eval/normalise.py,
+    docs/SCORING.md). Off by default, and then the output and report are exactly as before."""
     all_scores: List[Tuple[str, FieldScore]] = []  # (site_name, score)
     per_site_results = {}
     missing = []
@@ -263,6 +271,17 @@ def run_scoring_set(
         "overall": {**overall_summary, **breakdown},
         "semantic_judge": judge_summary,
     }
+    if normalised:
+        from wi.eval.normalise import normalised_summary
+        norm = normalised_summary(flat_scores)
+        report["normalised"] = norm
+        print("\ncategory-normalised (post-hoc, secondary; rules in docs/SCORING.md):")
+        print(f"  strict headline: {norm['strict_accuracy']:.0%} ({norm['strict_right_calls']}/{norm['total']})"
+              f"  |  normalised headline: {norm['accuracy']:.0%} ({norm['right_calls']}/{norm['total']})")
+        for field, counts in norm["upgraded_by_field"].items():
+            print(f"  {field}: " + ", ".join(f"{k}={v}" for k, v in counts.items()))
+        if not norm["upgraded_by_field"]:
+            print("  no field upgraded")
     report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(f"\nWrote {report_path.relative_to(ROOT)}")
     return report, 0
@@ -300,6 +319,7 @@ def main() -> int:
     _report, code = run_scoring_set(
         DEV_SET, label_dir, run_dir, "dev_set", report_path, "all 5 sites combined",
         semantic_judge=judge, semantic_judge_model=model,
+        normalised="--normalised" in sys.argv[1:],
     )
     return code
 

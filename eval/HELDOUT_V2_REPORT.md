@@ -142,6 +142,43 @@ The score is a fair measurement of the pipeline against the labels.
   - This figure is secondary and does not replace 35%.
   - `revenue_model` is not comparable and was left as scored.
 
+### Category-normalised figure (post-hoc, secondary, added 2026-10-11)
+
+The delivery_model-only figure above (40.8%) stays as it is. A fuller post-hoc reading uses the
+category-normalised metric (B-99, rules in `docs/SCORING.md`, fixed before computing). It gives credit
+when the category of `products.delivery_model` or `pricing.revenue_model` matches, and it applies the
+same rules to the dev set and to v2.
+
+**v2 result:** 55 of 120 = **45.8%**, against 35% strict.
+
+| Field | Upgraded | Unchanged |
+| --- | --- | --- |
+| `products.delivery_model` | 7 incorrect → correct_normalised (software = software on every site) | 1 miss |
+| `pricing.revenue_model` | 4 → correct_normalised (Cashfree transaction, Cohere usage, Framer and Miro subscription); 2 → correct_partial_normalised (ElevenLabs subscription+usage, Mercury subscription+transaction, against "subscription") | 2 misses |
+
+**Dev, same rules** (main-control runs of 2026-10-11, `eval/fallback_experiment/`):
+
+| Round | Strict | Normalised |
+| --- | ---: | ---: |
+| 1 | 61.3% | 65.3% |
+| 2 | 66.7% | 70.7% |
+| 3 | 69.3% | 73.3% |
+| **Mean** | **65.8%** | **69.8%** |
+
+**Method:**
+- **Recomputed strict verdicts:** recomputed in-process with `score_run`, without the semantic judge,
+  from the run files (v2: `data/archive/heldout_v2_prefix/runs`, identical to `data/runs`; dev:
+  `data/archive/dev_compare/main_r1-3_runs`). For the two fields they match the committed reports'
+  counts. The judge's 9 v2 upgrades cannot be re-run offline, but none of them is on these two fields.
+- **Dev judge upgrades:** on dev the judge upgraded 2 `delivery_model` answers per round, and all 4
+  pre-judge incorrect answers match on category, so the 2 left incorrect are upgraded whichever they
+  were.
+- **Headlines:** strict right calls are taken from the committed reports.
+
+**Reading.** The strict 35% remains the recorded held-out headline. The normalised figures only make
+dev and v2 comparable on these two fields. The dev-to-v2 gap is 30.8 points strict and 24.0 points
+normalised.
+
 ## 6. Caveats
 
 - **ElevenLabs:** the home-page "Trusted by" logo strip showed an India-specific set from the
