@@ -1,11 +1,11 @@
 {
   "labeling_metadata": {
-    "company_name": "",
+    "company_name": "LeadSquared",
     "website_url": "https://leadsquared.com/",
     "split": "held_out_v2",
-    "labeler": "Uttam",
-    "date_labeled": "YYYY-MM-DD",
-    "notes": ""
+    "labeler": "Uttam, with Claude",
+    "date_labeled": "2026-10-10",
+    "notes": "Labelled by Uttam with the help of Claude and screenshots of the live pages, 2026-10-10. Claude read the pages and drafted evidence and values; Uttam took the screenshots, checked the quotes against the live pages and made the final decisions. Pipeline not run, data/ not opened. Live-page checks on 2026-10-10 (about, security, contact, partners, both pricing pages, compare page, partner logo alt text, customer logo alt text on the about page) were read from the page DOM through Claude's browser pane. The case-studies page was not read, and logo alt text on the home page was not checked."
   },
   "labeling_instructions": {
     "source_policy": "Use only information the company states on its own public website. No outside knowledge, no assumptions.",
@@ -35,65 +35,237 @@
   "fields": {
     "company_identity.name": {
       "status": "extracted",
-      "value": "",
-      "source_url": "",
-      "evidence": ""
+      "value": "LeadSquared",
+      "source_url": "https://www.leadsquared.com/",
+      "evidence": "© 2026 LeadSquared"
     },
     "company_identity.description": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "LeadSquared is an AI-powered CRM and growth platform that unites marketing, sales, service, onboarding and operations in one connected system.",
+      "source_url": "https://www.leadsquared.com/our-story/",
+      "evidence": "LeadSquared unites every growth function — marketing, sales, service, onboarding, and operations — into one connected system, giving enterprises the speed, intelligence, and control they need to scale."
     },
     "company_identity.headquarters": {
       "status": "not_found",
-      "source_url": ""
+      "source_url": "",
+      "notes": "No page states a headquarters or head office. The site footer shows 'Corporate Office Address: LeadSquared 2nd Floor, Omega Block, Embassy Tech Square, Kadubeesanahalli, Outer Ring Road, Bengaluru, Karnataka – 560103'. /contact/ lists offices in Bengaluru, Mumbai, Noida, New Jersey (Edison), Johannesburg, Dubai and Saudi Arabia, and /our-story/ has a 'Global presence' section with India, USA, UAE and South Africa addresses. Under Decision (d) an address or office list is not a headquarters statement. Pages checked: https://www.leadsquared.com/contact/ and /our-story/."
     },
     "products.names": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Sales CRM",
+        "Service CRM",
+        "Marketing Automation",
+        "Mobile CRM App",
+        "Customer Portal",
+        "Performance Management",
+        "Lead Management System",
+        "Invorto",
+        "FloStack"
+      ],
+      "source_url": [
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/"
+      ],
+      "evidence": [
+        "Sales CRM",
+        "Service CRM",
+        "Marketing Automation",
+        "Mobile CRM App",
+        "Customer Portal",
+        "Performance Management",
+        "Lead Management System",
+        "Invorto — AI that handles calls, qualifies leads, and books follow-ups, without a human on the line.",
+        "FloStack — Personalized buying experiences for every prospect."
+      ],
+      "notes": "Footer Products list (first seven) and home \"Products that power growth\" cards (Invorto, FloStack). Other names the site uses for the same products: header menu 'Sales, Field Sales, Marketing, Service, Flostack'; home cards 'Marketing Suite, Service Cloud, Sales, Field Operations'. Single generic words and non-product footer links (Integrations, API, Dev Platform, Help Portal, Pricing) excluded."
     },
     "products.delivery_model": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Software: cloud-based CRM platform hosted on AWS, with a mobile app and APIs",
+      "source_url": "https://www.leadsquared.com/security/",
+      "evidence": "LeadSquared applications and services are all hosted in Amazon Web Services across its multiple regions. | Mobile App | API",
+      "notes": "The last two are footer labels on https://www.leadsquared.com/."
     },
     "customers.segments": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "Enterprises",
+      "source_url": "https://www.leadsquared.com/our-story/",
+      "evidence": "giving enterprises the speed, intelligence, and control they need to scale",
+      "notes": "The pricing pages also offer 'Special Pricing for Select Startups (terms and conditions apply)'. Single value kept per the field rule."
     },
     "customers.industries": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Financial Services",
+        "Manufacturing",
+        "Automotive",
+        "Healthcare",
+        "Education",
+        "Digital Native Businesses",
+        "Insurance",
+        "Banking",
+        "Lending",
+        "Real Estate",
+        "Marketplace",
+        "Travel"
+      ],
+      "source_url": [
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/",
+        "https://www.leadsquared.com/"
+      ],
+      "evidence": [
+        "Financial Services",
+        "Manufacturing",
+        "Automotive",
+        "Healthcare",
+        "Education",
+        "Digital Native Businesses",
+        "Insurance CRM",
+        "Banking CRM",
+        "Lending CRM",
+        "Real Estate",
+        "Marketplace CRM",
+        "Travel CRM"
+      ],
+      "notes": "First six from the header Industries menu and home \"Industry-smart\" section; last six from the footer Industries list. Footer labels have the 'CRM' suffix dropped. Education and Manufacturing appear in both lists and are listed once. The header menu also shows 'Others', excluded as generic."
     },
     "pricing.public_plans": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Sales Pro — ₹2,500/user/mo",
+        "Sales Super — ₹5,000/user/mo",
+        "Marketing Pro — ₹90,000/account",
+        "Marketing Super — ₹149,000/account"
+      ],
+      "source_url": [
+        "https://www.leadsquared.com/sales-crm-pricing/",
+        "https://www.leadsquared.com/sales-crm-pricing/",
+        "https://www.leadsquared.com/marketing-automation-pricing/",
+        "https://www.leadsquared.com/marketing-automation-pricing/"
+      ],
+      "evidence": [
+        "Sales Pro ₹2,500 user/mo",
+        "Sales Super ₹5,000 user/mo",
+        "Marketing Pro ₹90,000 per account",
+        "Marketing Super ₹149,000 per account"
+      ],
+      "notes": "The marketing pages state 'per account' with no billing period. Every plan button reads 'Let's Talk'. /pricing/ redirects to the marketing page. The Service CRM has no public plan page."
     },
     "pricing.sales_motion": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Sales-led",
+      "source_url": "https://www.leadsquared.com/sales-crm-pricing/",
+      "evidence": "Let's Talk | Book a demo",
+      "notes": "Public prices exist but every plan's call to action is Let's Talk; the home page offers 'Book a demo' and no sign-up."
     },
     "pricing.free_trial": {
       "status": "not_found",
-      "source_url": ""
+      "source_url": "",
+      "notes": "No trial wording on the home, pricing or compare pages, in any link text, or in the pricing-page FAQ answers (checked by Uttam on 2026-10-10). 'Special Pricing for Select Startups' is a discount, not a trial."
     },
     "pricing.revenue_model": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Subscription: per-user (sales) and per-account (marketing)",
+      "source_url": "https://www.leadsquared.com/sales-crm-pricing/",
+      "evidence": "₹2,500 user/mo | ₹90,000 per account",
+      "notes": "The second quote is from https://www.leadsquared.com/marketing-automation-pricing/."
     },
     "traction.named_customers": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Bajaj Capital"
+      ],
+      "source_url": [
+        "https://www.leadsquared.com/our-story/"
+      ],
+      "evidence": [
+        "LeadSquared has brought structure and efficiency to our processes, enabling teams across Bajaj Capital to quickly adapt to market shifts while remaining service-ready for every customer."
+      ],
+      "notes": "Logo-only customers seen on /our-story/ and the home page, not labelled because the logo alt text is generic ('company logo' on /our-story/) or has not been checked: University of the Southwest, Posterity Health, College Vidya, Keystone Universe of Education, Prism Johnson Limited, LIC HFL, a logo whose file name reads Sacramento-Ultrasound-Institute, Hippo Homes, co·learn, Irish Expert, CK Birla Hospital, Muthoot Housing Finance, HDFC Securities, Kotak. The site's own image file names are not used as evidence. Meritto appears only inside a customer quote and is excluded. Investors shown on /our-story/ (Westbridge Capital, Gaja Capital, IFC, Jyoti Bansal) are not customers."
     },
     "traction.certifications": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "ISO 27001:2022",
+        "CERT-In empanelled"
+      ],
+      "source_url": [
+        "https://www.leadsquared.com/security/",
+        "https://www.leadsquared.com/"
+      ],
+      "evidence": [
+        "LeadSquared is ISO 27001:2022 certified by the British Standards Institute (BSI).",
+        "audited by CERT-In empanelled auditors"
+      ],
+      "notes": "Home Security & Compliance tile: AUDITED — CERT-In empanelled — Security audits by Government-empanelled auditors. DPDP-ready and GDPR are laws and excluded under Decision (a). CERT-In empanelled describes the auditors; included as a third-party audit badge the site lists with its certifications. Awards (Crozdesk, G2, Deloitte Fast 50, etc.) are not certifications."
     },
     "traction.partnerships": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Nagarro",
+        "Ozonetel",
+        "Wipro",
+        "Visionet",
+        "Areneva",
+        "dgtl",
+        "Tata Tele Business Services"
+      ],
+      "source_url": [
+        "https://www.leadsquared.com/partners/",
+        "https://www.leadsquared.com/partners/",
+        "https://www.leadsquared.com/partners/",
+        "https://www.leadsquared.com/partners/",
+        "https://www.leadsquared.com/partners/",
+        "https://www.leadsquared.com/partners/",
+        "https://www.leadsquared.com/partners/"
+      ],
+      "evidence": [
+        "alt=\"nagarro\"",
+        "alt=\"ozonetel-1\"",
+        "alt=\"wipro\"",
+        "alt=\"visionet\"",
+        "alt=\"areneva logo\"",
+        "alt=\"dgtl logo\"",
+        "alt=\"tele business services\""
+      ],
+      "notes": "\"Our leading partners\" logo strip. Names confirmed from the logo alt text in the live DOM on 2026-10-10 and from the visible wordmarks; the alt text is lowercase or file-style, so the visible wordmark spelling is used (Tata Tele Business Services is the wordmark; alt reads 'tele business services'). An eighth logo, 'maestroSIS OPUS by BocaVox' (alt 'opus sis leadsquared partner program'), is not labelled because the spelling is ambiguous. The page lists partner programmes (Affiliate, Solutions, Technology, Startup) and a partner directory; '000+ Partners' is an animated counter."
     },
     "comparisons.named_alternatives": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "HubSpot",
+        "Salesforce",
+        "Infusionsoft"
+      ],
+      "source_url": [
+        "https://www.leadsquared.com/compare-crm/",
+        "https://www.leadsquared.com/compare-crm/",
+        "https://www.leadsquared.com/compare-crm/"
+      ],
+      "evidence": [
+        "Compare with hubspot",
+        "Compare with salesforce",
+        "Compare with infusionsoft"
+      ],
+      "notes": "Comparison pages: /hubspot-alternative/, /leadsquared-vs-salesforce-comparison/, /infusionsoft-alternative/. The compare page shows the names in lowercase."
     }
   }
 }

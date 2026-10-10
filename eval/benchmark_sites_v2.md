@@ -8,7 +8,7 @@ crawl-status reasons (see the replacement log), leaving the **final set of 8**:
 | # | Site | Label file | Label status |
 | --- | --- | --- | --- |
 | V1 | miro.com | `eval/labels/heldout_v2/miro.json` | LABELED |
-| V2 | leadsquared.com | `eval/labels/heldout_v2/leadsquared.json` | UNLABELED |
+| V2 | leadsquared.com | `eval/labels/heldout_v2/leadsquared.json` | LABELED |
 | V3 | cashfree.com | `eval/labels/heldout_v2/cashfree.json` | UNLABELED |
 | V4 | cohere.com | `eval/labels/heldout_v2/cohere.json` | UNLABELED |
 | V5 | framer.com | `eval/labels/heldout_v2/framer.json` | UNLABELED |
