@@ -48,6 +48,14 @@ Status as of 2026-10-10, code at `EXTRACTION_LOGIC_VERSION` 26, `prompt_version`
   on these sites is no longer a held-out measurement. A fresh set (v2) was labelled by hand before
   any run, the code tagged, and the set run once (`eval/HELDOUT_V2_REPORT.md`); the v2 sites are now
   development data too.
+- **Dev and held-out label conventions differ.** The dev labels (made 2026-09-28, before the v2
+  labelling guide) count laws as certifications in one case (Loom: SOC 2, GDPR, CCPA), use the bare
+  value "Subscription" for `pricing.revenue_model` on 4 of 5 sites, and use free-text descriptions
+  ("Digital software delivered online ...") for `products.delivery_model`. The v2 labels follow
+  Decision (a) (laws are not certifications) and use descriptive values ("Software: <description>",
+  "Subscription tiers plus transaction fees"). `pricing.revenue_model` is strict-match only. So the
+  dev and v2 headlines are not strictly comparable, and any future fix should be measured on a fresh
+  set labelled under one convention.
 - **The dev set is saturated.** Calendly, Loom, Typeform, Notion and SimpleStores have been used to
   find and check every recent fix, so the dev headline overstates performance on unseen sites.
 - **Peeked sites** (run outside the dev set, so excluded from the fresh held-out set) are listed in
