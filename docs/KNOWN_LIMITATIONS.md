@@ -1,6 +1,6 @@
-# DRAFT: Known limitations (for the handoff docs)
+# Known limitations (for the handoff docs)
 
-Status as of 2026-10-09, code at `EXTRACTION_LOGIC_VERSION` 26, `prompt_version` 16, Jev on.
+Status as of 2026-10-10, code at `EXTRACTION_LOGIC_VERSION` 26, `prompt_version` 16, Jev on.
 
 ## Development history
 
@@ -19,7 +19,8 @@ Status as of 2026-10-09, code at `EXTRACTION_LOGIC_VERSION` 26, `prompt_version`
   the same-window comparison of 2026-10-09 (3 rounds, each running all three builds back to back;
   `eval/baseline_report_cmp_*_nc1-3.json`), current code (build C, tag `pre-compare-b93`) scored
   64.0 / 62.7 / 64.0, mean 63.6%; the post-B-81 code (build A) scored 65.8% in the same window. The
-  80% target applies to held-out sites, which have not been measured on this code (see below).
+  80% target applies to held-out sites: held-out set v2 (8 sites, tag `pre-heldout-v2`, run once on
+  2026-10-10) scored **35%**, so AC-02 is not met (`eval/HELDOUT_V2_REPORT.md`).
 - **How much the numbers move.** ±3 points holds for 3-round means measured within one day. Single
   rounds varied by up to about 8 points (build A: 61.3 to 69.3), and the same code moved about 2
   points between days (build A: 67.6% on 2026-10-07, 65.8% on 2026-10-09). Single fields swing much
@@ -44,12 +45,44 @@ Status as of 2026-10-09, code at `EXTRACTION_LOGIC_VERSION` 26, `prompt_version`
   B-46 names held-out sites, and B-46 (semantic-judge widening) followed the same results. B-51
   re-labelled one field, `customers.segments`, in all 10 held-out label files after comparing them
   with the live sites. (B-37 and B-38 came from the dev set, before the first held-out run.) A score
-  on these sites is no longer a held-out measurement. A fresh set must be labelled by hand before
-  any run, the code tagged, and the set run once.
+  on these sites is no longer a held-out measurement. A fresh set (v2) was labelled by hand before
+  any run, the code tagged, and the set run once (`eval/HELDOUT_V2_REPORT.md`); the v2 sites are now
+  development data too.
 - **The dev set is saturated.** Calendly, Loom, Typeform, Notion and SimpleStores have been used to
   find and check every recent fix, so the dev headline overstates performance on unseen sites.
 - **Peeked sites** (run outside the dev set, so excluded from the fresh held-out set) are listed in
   `eval/peeked_sites.txt`.
+
+- **Two held-out v2 candidates could not be crawled.** athenahealth.com answers HTTP 403 to the
+  crawler (`SITE_BLOCKED`) and fractal.ai failed with a TLS error in this Python environment
+  (`SITE_UNREACHABLE`), both in `eval/preflight_v2.md`. They were excluded from the set on
+  2026-10-09 for crawl status only, not replaced (`eval/benchmark_sites_v2.md`). Both are real
+  crawler failures on live sites, not test artifacts.
+
+## Found on held-out set v2 (2026-10-10)
+
+Post-hoc and read-only; no change has been made. Details in `eval/HELDOUT_V2_REPORT.md`.
+
+- **The bare-label rule rejects product names that equal the brand or a menu label.** On 6 of 8
+  sites `products.names` was rejected whole because each quote was the name itself ("North",
+  "Sales CRM", "Mercury Command"). The rule exists to stop menu and card labels (the Loom cases),
+  but on these sites the menu label is often the only text naming the product.
+- **List fields that need synthesis across many pages often come back `not_found`.** In 13 of the
+  25 model `not_found` misses the label's text was in the cleaned text sent to the model, sometimes
+  on the first page (Cashfree partners) and sometimes near the end of a 137k-character input (Framer
+  customers on page 33 of 34). One extraction call over 34 to 40 pages misses them.
+- **The cleaner drops navigation, footer and logo alt text.** Homepages kept 1.5k to 5k characters
+  of 0.6 MB to 1.9 MB of HTML; industry and segment menus, footer "Compare" columns and logo-wall
+  names were removed (8 of the 25 model misses). See also "Text the cleaner drops" below.
+- **Large sites hit the 40-page cap and the time budget.** The cap was hit on 7 of 8 v2 sites and
+  Framer hit `total_budget_s` at 34 pages; 4 label source pages were never crawled (a privacy page,
+  a comparison page, an about page). p50 latency was 94.1 s.
+- **Some content depends on where the visitor is.** ElevenLabs showed an India-specific "Trusted
+  by" logo set to the labeller, and Framer showed INR prices to the labeller but USD to the crawler.
+  A label and a run can therefore see different text on the same page.
+- **List-field scoring is generous on overlap.** Any one shared item scores `correct_partial`, a full
+  right call: 1 of 15 customers counts the same as 15 of 15, and extra true items earn nothing
+  (`wi/eval/scoring.py`, `_has_list_overlap`). The headline does not measure list completeness.
 
 ## Latency and cost
 

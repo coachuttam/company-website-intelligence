@@ -2129,3 +2129,5 @@ but cannot run Uttam's actual crawler/LLM pipeline against the real sites.
 - 2026-10-09: dev set documented as 5 sites vs 8 planned in PRD; PRD §12.1 notes the deviation, pending Abhishek's re-approval.
 
 - 2026-10-10: Held-out v2 first scoring run (8 sites, tag pre-heldout-v2, run_site.py --no-cache, --semantic-judge on): headline 35%, extraction 61%, inference 25%; AC-02 (>=80%) NOT MET. Dev headline was 64-68%. Misses 43/120: 25 model returned not_found, 17 evidence-gate rejections (6 are the bare-label rule on products.names), 1 classifier; label source page not crawled for 8. Post-hoc diagnosis only, no pipeline, label or scoring changes.
+
+- 2026-10-10: Correction to the held-out v2 line above: the dev headline is 63.6% (mean of the cmp_C rounds, tag pre-compare-b93) and 67.6% (post-B-81 build, b81 rounds), not "64-68%". The full held-out v2 result and diagnosis are in eval/HELDOUT_V2_REPORT.md.

@@ -371,7 +371,7 @@ Built **only after the Week 3 website-profile gate passes**, as a bounded spike 
 
 ### 12.1 Held-out evaluation set v2
 
-*Added in v1.1. Status: Labels pending; not yet run.*
+*Added in v1.1. Status: labelled, frozen (`eval/labels_v2.sha256`, tag `pre-heldout-v2`) and run once on 2026-10-10: headline 35%, AC-02 not met (`eval/HELDOUT_V2_REPORT.md`).*
 
 **Purpose:** a fresh held-out set. The original 10-site held-out set was contaminated: fixes B-39 to B-54 were made using its failures, and B-51 relabelled `customers.segments` in all 10 of its label files. It is therefore not used for the headline AC-02 number.
 
@@ -396,7 +396,7 @@ Built **only after the Week 3 website-profile gate passes**, as a bounded spike 
 
 **Records:** `eval/benchmark_sites_v2.md` (selection, status, replacement log), `eval/LABELLING_GUIDE_v2.md` (labelling rules and decisions), `eval/preflight_v2.md` (crawl pre-flight), `eval/checksum_labels.py` (checksum write and verify).
 
-`eval/held_out.py` still hard-codes the old 10 sites and needs a change before v2 can be scored.
+`eval/held_out.py` scores v2 with `--set v2` (B-97); the old 10 sites stay its default only so their results remain reproducible.
 
 Deviation from the original plan: the development set used for measurement has 5 labelled sites (Calendly, Loom, Typeform, Notion, SimpleStores), not the 8 proposed in §12 and Appendix A; headline development numbers are over these 5.
 

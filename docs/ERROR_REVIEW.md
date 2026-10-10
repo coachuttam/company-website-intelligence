@@ -1,4 +1,4 @@
-# DRAFT: Error review, post-B-81 dev measurement
+# Error review, post-B-81 dev measurement and held-out v2
 
 Dev set (Calendly, Loom, Typeform, Notion, SimpleStores), 3 rounds, `--no-cache`, scored with
 `eval/baseline.py --semantic-judge`, code at `EXTRACTION_LOGIC_VERSION` 22 with Jev on.
@@ -93,3 +93,19 @@ R1/R2/R3 give the verdict in each round (blank = a right call that round).
 | Abstention quality | 20/23 | 19/23 | 20/23 | 85.5% | Correct abstentions / fields the label marks `not_found`. |
 | Miss rate | 14/52 | 14/52 | 15/52 | 27.6% | Misses / fields the label gives a value. |
 | Headline accuracy | 69.3% | 66.7% | 66.7% | 67.6% | Right calls / 75 (judge on). |
+
+## Held-out v2 misses (2026-10-10)
+
+The single held-out v2 run (8 sites, tag `pre-heldout-v2`, headline 35%) had 43 misses out of 120
+field-scores. Grouped by cause from each run's `rejected`, `schema_errors` and `classifier` records
+and its cleaned-text snapshot; post-hoc and read-only. Full report: `eval/HELDOUT_V2_REPORT.md`.
+
+| Cause | Misses | Notes |
+| --- | ---: | --- |
+| Model returned `not_found`, text was sent | 13 | Label text in the cleaned text sent to the model; recall over one call on 34 to 40 pages. |
+| Model returned `not_found`, text never sent | 12 | 4 source pages not crawled; 8 crawled pages whose menus, footers or logo alt text the cleaner removed. |
+| Input-budget truncation | 0 | No source page was dropped or cut before the model call. |
+| Gate: bare-label rule (`products.names`) | 6 | Quote equals the value. |
+| Gate: quote not found | 8 | 4 formatting differences (dropped `%`, table cells joined, two quotes on one line, plan name and price in separate cells); 4 are one invented Chargebee sentence reused for four fields. |
+| Gate: quote does not support the value | 3 | Includes Mercury's company name, cited from a page title without "Mercury". |
+| Classifier abstained | 1 | LeadSquared `pricing.revenue_model`. |
