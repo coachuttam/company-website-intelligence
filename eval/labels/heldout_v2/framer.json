@@ -1,11 +1,11 @@
 {
   "labeling_metadata": {
-    "company_name": "",
+    "company_name": "Framer",
     "website_url": "https://framer.com/",
     "split": "held_out_v2",
-    "labeler": "Uttam",
-    "date_labeled": "YYYY-MM-DD",
-    "notes": ""
+    "labeler": "Uttam, with Claude",
+    "date_labeled": "2026-10-10",
+    "notes": "Labelled by Uttam with the help of Claude and screenshots of the live pages, 2026-10-10. Claude read the pages and drafted evidence and values; Uttam took the screenshots, checked the quotes against the live pages and made the final decisions. Pipeline not run, data/ not opened. The home and pricing pages were read from the page DOM through Claude's browser pane; the security page, trust center, stories page and footer lists were read from Uttam's screenshots. Logo alt text on the stories and home pages was not checked. Prices on the pricing page are shown in Indian rupees because the labeller is in India; Framer shows local currency, so a visitor elsewhere may see different amounts."
   },
   "labeling_instructions": {
     "source_policy": "Use only information the company states on its own public website. No outside knowledge, no assumptions.",
@@ -35,65 +35,234 @@
   "fields": {
     "company_identity.name": {
       "status": "extracted",
-      "value": "",
-      "source_url": "",
-      "evidence": ""
+      "value": "Framer",
+      "source_url": "https://www.framer.com/",
+      "evidence": "Framer © 2026"
     },
     "company_identity.description": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "Framer is an AI design agent and website platform for every step from idea to launch.",
+      "source_url": "https://www.framer.com/",
+      "evidence": "Framer is the design agent for every step from idea to launch | A professional design agent, native to the canvas. It works directly on your site to generate and refine in place, with every change visible, editable, and under your control."
     },
     "company_identity.headquarters": {
       "status": "not_found",
-      "source_url": ""
+      "source_url": "",
+      "notes": "No headquarters or head-office statement found by Uttam on the site, 2026-10-10."
     },
     "products.names": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Agents",
+        "External Agents",
+        "Skills",
+        "Convert",
+        "Desktop App",
+        "Templates",
+        "Components",
+        "Vectors",
+        "Plugins"
+      ],
+      "source_url": [
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/"
+      ],
+      "evidence": [
+        "Agents",
+        "External Agents",
+        "Skills",
+        "Convert",
+        "Desktop App",
+        "Templates",
+        "Components",
+        "Vectors",
+        "Plugins"
+      ],
+      "notes": "Footer labels: Agents, External Agents, Skills, Convert (Product column); Desktop App (Resources column); Templates, Components, Vectors, Plugins (Marketplace column). Generic feature words in the footer Product column are excluded under Decision (c): AI, Design, Collaborate, CMS, Hosting, Performance, SEO, Publish, Updates (a changelog). Gallery and Hire Experts excluded as directories/services, not products."
     },
     "products.delivery_model": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Software: web-based design and site-building platform hosted on AWS, with a desktop app",
+      "source_url": "https://www.framer.com/legal/security",
+      "evidence": "All of Framer's services are hosted in Amazon Web Services (AWS) facilities in the United States | Download app",
+      "notes": "\"Download app\" is the home page button, https://www.framer.com/."
     },
     "customers.segments": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "Startups to enterprises",
+      "source_url": "https://www.framer.com/stories/",
+      "evidence": "From startups to enterprises",
+      "notes": "The pricing FAQ describes plan audiences: Basic for 'students, freelancers, and small studios'; Pro for 'teams at agencies, startups, and scale-ups'; Enterprise for 'teams that need custom limits, annual billing, and dedicated support'."
     },
     "customers.industries": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Designers",
+        "Agencies",
+        "Marketers",
+        "Growth",
+        "Builders",
+        "Engineers",
+        "Site Teams",
+        "Founders"
+      ],
+      "source_url": [
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/"
+      ],
+      "evidence": [
+        "Designers",
+        "Agencies",
+        "Marketers",
+        "Growth",
+        "Builders",
+        "Engineers",
+        "Site Teams",
+        "Founders"
+      ],
+      "notes": "Solutions menu, grouped Creators, Marketing, Code, Business. These are roles and teams rather than verticals; the site names no industries. Kept because the field rule accepts professions the site itself names."
     },
     "pricing.public_plans": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Free — ₹0",
+        "Basic — ₹361/month",
+        "Pro — ₹1,084/month",
+        "Enterprise — Custom"
+      ],
+      "source_url": [
+        "https://www.framer.com/pricing",
+        "https://www.framer.com/pricing",
+        "https://www.framer.com/pricing",
+        "https://www.framer.com/pricing"
+      ],
+      "evidence": [
+        "Free ₹0",
+        "Basic ₹361 per month",
+        "Pro ₹1,084 per month",
+        "Enterprise Custom"
+      ],
+      "notes": "Prices as shown to the labeller in India, with 'Yearly billing' switched on by default; the amounts are in rupees and Framer shows local currency, so other visitors may see other amounts. Plan names are the same for all visitors. Excluded as add-ons or seats: Additional editors ₹722/month, content editors ₹361, locales ₹722 per locale, Convert and Advanced hosting add-ons."
     },
     "pricing.sales_motion": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Self-serve and sales-led",
+      "source_url": "https://www.framer.com/pricing",
+      "evidence": "Start for Free | Start with Pro | Request Trial",
+      "notes": "Free, Basic and Pro have public prices and start buttons; Enterprise shows 'Custom' and a Request Trial button."
     },
     "pricing.free_trial": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "Request Trial",
+      "source_url": "https://www.framer.com/pricing",
+      "evidence": "Request Trial",
+      "notes": "Button on the Enterprise row. The Free plan is tagged 'Try for free' with '500 AI credits to try' and a 'Start for Free' button, and the pricing heading reads 'Start free, then scale your site'. 'Request Trial' is the only literal trial wording and sits on the Enterprise row."
     },
     "pricing.revenue_model": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Subscription plans with per-editor seats and paid add-ons",
+      "source_url": "https://www.framer.com/pricing",
+      "evidence": "₹361 per month | Additional editors are ₹722 / month | ₹722 per locale"
     },
     "traction.named_customers": {
       "status": "not_found",
-      "source_url": ""
+      "source_url": "",
+      "notes": "The stories page ('From startups to enterprises') and the home page show customer logos only, and the logo alt text was not checked, so none is labelled under Decision (c). Logos seen on /stories/: miro, Zapier, Microsoft, NBA, Mixpanel, Perplexity, Legora, ElevenLabs, Huel, Dribbble, Planhat, Ramp, Mollie, Plaid, Luma AI, DoorDash, Contra, Mutiny, bunq, Cal.com, TypeSafe AI, Flora, happn, Whereby, Designer Fund, Partiful, The Telegraph, Twingate, GitBook, Hodinkee, TicketSwap, plus one logo not identified."
     },
     "traction.certifications": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "ISO 27001",
+        "SOC 2"
+      ],
+      "source_url": [
+        "https://www.framer.com/legal/security",
+        "https://www.framer.com/legal/security"
+      ],
+      "evidence": [
+        "Framer has achieved ISO 27001 compliance.",
+        "Framer has successfully completed the SOC 2 Type 2 audit."
+      ],
+      "notes": "Security-page headings used for the spellings. The Trust Center (app.eu.vanta.com/framer.com/trust/...) lists 'SOC 2' and 'ISO 27001:2022'. GDPR and CCPA are laws and excluded under Decision (a)."
     },
     "traction.partnerships": {
       "status": "not_found",
-      "source_url": ""
+      "source_url": "",
+      "notes": "No named partner companies found. The footer shows Experts, Affiliates and Ambassadors programmes; integrations are excluded under Decision (b)."
     },
     "comparisons.named_alternatives": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Webflow",
+        "Figma",
+        "Wix",
+        "Squarespace",
+        "WordPress",
+        "Readymag",
+        "Ceros",
+        "Unbounce",
+        "Lovable",
+        "Claude Code",
+        "ChatGPT",
+        "Codex",
+        "Contentful",
+        "Sanity",
+        "AEM",
+        "Replit",
+        "v0"
+      ],
+      "source_url": [
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/",
+        "https://www.framer.com/"
+      ],
+      "evidence": [
+        "Webflow",
+        "Figma",
+        "Wix",
+        "Squarespace",
+        "WordPress",
+        "Readymag",
+        "Ceros",
+        "Unbounce",
+        "Lovable",
+        "Claude Code",
+        "ChatGPT",
+        "Codex",
+        "Contentful",
+        "Sanity",
+        "AEM",
+        "Replit",
+        "v0"
+      ],
+      "notes": "Footer 'Compare' column. Several are AI tools (Lovable, Claude Code, ChatGPT, Codex, Replit, v0); all kept because the site lists them under Compare."
     }
   }
 }
