@@ -130,7 +130,7 @@ B-72 to B-94 were motivated partly by informal spot-checks on non-dev sites: fre
 | `wi/profile/`, `wi/render/` | Canonical profile; read-only reference page (no model call) |
 | `wi/eval/`, `eval/` | Scoring, latency report, gate check, dev and held-out scripts, labels, saved reports |
 | `tests/` | Offline tests; `tests/BEHAVIOURS.md` lists every behaviour and its test |
-| `docs/` | PRD, error review (DRAFT), known limitations (DRAFT) |
+| `docs/` | PRD, error review, known limitations |
 | `data/runs/`, `data/pages/` | Run outputs and rendered pages (not committed) |
 
 ## Rules
@@ -140,5 +140,5 @@ B-72 to B-94 were motivated partly by informal spot-checks on non-dev sites: fre
 3. Changed logic in `wi/extract/pipeline.py` or `wi/validate/evidence.py`: bump `EXTRACTION_LOGIC_VERSION` in `wi/crawl/cache.py`. Changed prompt: bump `prompt_version` in `config.yaml`. Both invalidate the run cache.
 4. Every behaviour change needs a test and a row in `tests/BEHAVIOURS.md`.
 5. Use `--no-cache` for any measurement, and judge a change on 3 or more runs.
-6. Do not tune on the dev set any further, never edit a label to match an output, and run the fresh held-out set once, on tagged code.
+6. Do not tune on the dev set any further and never edit a label to match an output. The v2 held-out set has been run once on the tagged code (`pre-heldout-v2`) and scored 35%; the v2 sites are now development data, so any further held-out measurement needs a new, blind set labelled under one convention (see `eval/HELDOUT_V2_REPORT.md`, section 7, and `eval/FALLBACK_EXPERIMENT.md`).
 7. The 15-field schema is frozen.
