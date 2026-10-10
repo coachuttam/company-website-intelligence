@@ -1,11 +1,11 @@
 {
   "labeling_metadata": {
-    "company_name": "",
+    "company_name": "Chargebee",
     "website_url": "https://chargebee.com/",
     "split": "held_out_v2",
-    "labeler": "Uttam",
-    "date_labeled": "YYYY-MM-DD",
-    "notes": ""
+    "labeler": "Uttam, with Claude",
+    "date_labeled": "2026-10-10",
+    "notes": "Labelled by Uttam with the help of Claude and screenshots of the live pages, 2026-10-10. Claude read the pages and drafted evidence and values; Uttam took the screenshots, checked the quotes against the live pages and made the final decisions. Pipeline not run, data/ not opened. Home, pricing, security, company and partners pages were read rendered in Claude's browser pane (innerText; pricing tabs Billing, CPQ, RevRec and Growth clicked); customers, company/contact and trial-signup were read as server-sent page text via fetch from the open page. Pricing: eight plans across four product tabs; the page uses 'Enterprise' for three different plans, so they are labelled 'Billing Enterprise', 'RevRec Enterprise' and 'Growth Enterprise'; Flow is priced '$0 + 0.80%' or '$99 + 0.65%' of monthly invoicing volume depending on a slider (the static HTML adds '$66K breakeven'); Billing Enterprise, CPQ and Performance list no price (demo/sales/request-pricing buttons). free_trial: 'Start Free Trial' is the home-page button wording ('Start your free trial' on the signup page); no trial length is stated. Headquarters: not_found; company/contact lists office addresses (including Amsterdam, Dublin, Chennai, Bengaluru) and the footer says 'Chargebee Inc.', but no page says headquarters or head office (Decision (d)). Customers: the customer library lists dozens of companies; the label takes 15 by page prominence: featured and 'Proof in Practice' names on /customers/, the named stories on the home page, then testimonial companies on /company/; not included for cap: A Cloud Guru, Agorapulse, Archa, Ava, AX Semantics, b-cube.ai, Bark, BitGym, BizzyCar, SA International (tab text ambiguous), Whereby, Deliverr, LegalZoom, Zapier, Brevo and others in the library or footer. Certifications: GDPR, CCPA and HIPAA are laws, excluded under Decision (a); the Data Privacy Framework item is a borderline programme (the page names the EU-U.S. DPF, the UK Extension and the Swiss-U.S. DPF in one sentence; one item is labelled, as for ElevenLabs). Partnerships: not_found; the partners page describes categories (PSPs, ISVs, solution partners) and names no partner company in text (one badge image with alt 'Augment' links to goaugment.io and is not treated as a stated partnership); the 40+ payment gateways and marketplace apps are integrations under Decision (b). Products: the named product lines Billing, Payments, CPQ, Growth, RevRec, Receivables, Chargebee MCP and Chargebee Pay; Billing sub-features in the menu (Billing Automation, Billing for AI, Billing for Agents, Usage-based, Provisioning & Usage Limits, Price Book, Invoicing, Subscription Management, Global Payments Coverage, Payments Intelligence, Payment Retries) are features, not products. Industries: from the Solutions menu. named_alternatives: no competitor named on any page read; blog, glossary and comparison pages were not searched."
   },
   "labeling_instructions": {
     "source_policy": "Use only information the company states on its own public website. No outside knowledge, no assumptions.",
@@ -35,57 +35,229 @@
   "fields": {
     "company_identity.name": {
       "status": "extracted",
-      "value": "",
-      "source_url": "",
-      "evidence": ""
+      "value": "Chargebee",
+      "source_url": "https://www.chargebee.com/company/",
+      "evidence": "Chargebee provides the revenue infrastructure for the world's leading AI, SaaS, and consumer subscription businesses."
     },
     "company_identity.description": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "Chargebee provides the revenue infrastructure for the world's leading AI, SaaS, and consumer subscription businesses.",
+      "source_url": "https://www.chargebee.com/company/",
+      "evidence": "Chargebee provides the revenue infrastructure for the world's leading AI, SaaS, and consumer subscription businesses."
     },
     "company_identity.headquarters": {
       "status": "not_found",
       "source_url": ""
     },
     "products.names": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Billing",
+        "Payments",
+        "CPQ",
+        "Growth",
+        "RevRec",
+        "Receivables",
+        "Chargebee MCP",
+        "Chargebee Pay"
+      ],
+      "source_url": [
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/"
+      ],
+      "evidence": [
+        "Billing",
+        "Payments",
+        "CPQ",
+        "Growth",
+        "RevRec",
+        "Receivables",
+        "Chargebee MCP",
+        "Chargebee Pay"
+      ]
     },
     "products.delivery_model": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Software: cloud subscription-billing and revenue platform used through web apps and APIs",
+      "source_url": "https://www.chargebee.com/",
+      "evidence": "Build and scale faster with developer-friendly APIs | Accelerate development with 480+ pre-built workflows and API endpoints."
     },
     "customers.segments": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "AI, SaaS and consumer subscription businesses, from startups to enterprises",
+      "source_url": "https://www.chargebee.com/company/",
+      "evidence": "Chargebee provides the revenue infrastructure for the world's leading AI, SaaS, and consumer subscription businesses. | From start-ups to enterprise organizations",
+      "notes": "The second quote is from https://www.chargebee.com/partners/."
     },
     "customers.industries": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Gen-AI",
+        "B2B SaaS & Software",
+        "Digital Media & Publishing",
+        "Gaming, Streaming & Entertainment",
+        "Digital Health & Wellness",
+        "Consumer Memberships",
+        "Elearning",
+        "Connected Hardware & Subscriptions"
+      ],
+      "source_url": [
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/"
+      ],
+      "evidence": [
+        "Gen-AI",
+        "B2B SaaS & Software",
+        "Digital Media & Publishing",
+        "Gaming, Streaming & Entertainment",
+        "Digital Health & Wellness",
+        "Consumer Memberships",
+        "Elearning",
+        "Connected Hardware & Subscriptions"
+      ]
     },
     "pricing.public_plans": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Flow — $0 + 0.80% or $99 + 0.65% of monthly invoicing volume",
+        "Billing Enterprise — Schedule a demo (no price listed)",
+        "CPQ Lite — Free for the first 50 quotes",
+        "CPQ — Talk to sales (no price listed)",
+        "Performance — Request pricing (book a demo)",
+        "RevRec Enterprise — Quote tailored to your needs",
+        "Starter — $0",
+        "Growth Enterprise — Custom pricing based on number of active subscribers"
+      ],
+      "source_url": [
+        "https://www.chargebee.com/pricing/",
+        "https://www.chargebee.com/pricing/",
+        "https://www.chargebee.com/pricing/",
+        "https://www.chargebee.com/pricing/",
+        "https://www.chargebee.com/pricing/",
+        "https://www.chargebee.com/pricing/",
+        "https://www.chargebee.com/pricing/",
+        "https://www.chargebee.com/pricing/"
+      ],
+      "evidence": [
+        "Flow | MONTHLY INVOICING VOLUME | $0 + 0.80% | $99 + 0.65%",
+        "Enterprise | Built for companies running billing at global scale | SCHEDULE A DEMO",
+        "CPQ Lite | Free | for the first 50 quotes",
+        "CPQ | For high-velocity sales teams selling to midmarket and enterprise teams. | TALK TO SALES",
+        "Performance | Book a demo and request pricing",
+        "Enterprise | Get a quote tailored to your needs",
+        "Starter | $0 | (Exclusively for Chargebee Billing customers)",
+        "Scalable Custom Pricing | based on number of active subscribers"
+      ],
+      "notes": "Plans from the Billing, CPQ, RevRec and Growth tabs; see notes."
     },
     "pricing.sales_motion": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Self-serve and sales-led",
+      "source_url": "https://www.chargebee.com/",
+      "evidence": "Start Free Trial | Get a Demo"
     },
     "pricing.free_trial": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": "Start Free Trial",
+      "source_url": "https://www.chargebee.com/",
+      "evidence": "Start Free Trial"
     },
     "pricing.revenue_model": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "inferred",
+      "value": "Volume-based: percentage of monthly invoicing volume plus optional base fee, with custom enterprise pricing",
+      "source_url": "https://www.chargebee.com/pricing/",
+      "evidence": "MONTHLY INVOICING VOLUME | $0 + 0.80% | $99 + 0.65% | SCHEDULE A DEMO"
     },
     "traction.named_customers": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "Salesforge",
+        "CodeRabbit",
+        "Phrase",
+        "FX Replay",
+        "Coefficient",
+        "Condé Nast",
+        "FMG",
+        "Shadow",
+        "NextBillion.ai",
+        "Pret",
+        "Sesame",
+        "Zenchef",
+        "DeepL",
+        "Lambda",
+        "Gorgias"
+      ],
+      "source_url": [
+        "https://www.chargebee.com/customers/",
+        "https://www.chargebee.com/customers/",
+        "https://www.chargebee.com/customers/",
+        "https://www.chargebee.com/customers/",
+        "https://www.chargebee.com/customers/",
+        "https://www.chargebee.com/customers/",
+        "https://www.chargebee.com/customers/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/",
+        "https://www.chargebee.com/company/",
+        "https://www.chargebee.com/company/",
+        "https://www.chargebee.com/company/"
+      ],
+      "evidence": [
+        "How Salesforge Built a Seven-Product AI Company on Chargebee and Never Hired a Billing Engineer",
+        "AI Code Review Meets Smart Billing: CodeRabbit's Path to Scale",
+        "The Billing Infrastructure Behind Phrase's Post-Acquisition Growth",
+        "From One Plan to a Growth Engine: How FX Replay Built for Every Trader With Chargebee",
+        "How Coefficient Runs Self-Serve, Enterprise, and AI Monetization on One Billing Platform",
+        "Cover to Cover: Condé Nast's Value-Driven Journey to Increased Subscriber Retention",
+        "Proof in Practice: How Leading Companies Monetize AI and Manage Billing Complexity | FMG",
+        "How Shadow launched products 3x faster and entered 5 new markets",
+        "How NextBillion.ai Implemented Flexible Pricing Strategies to Drive Predictable Growth",
+        "Balint Bertok, Head of Digital Products - Pret customer story",
+        "Rafael Soriano, Head of Data - Sesame customer story",
+        "Julien Balmont, CO-Founder and CTO - Zenchef customer story",
+        "Chargebee provides DeepL with the robust infrastructure to deliver a seamless experience",
+        "Varun Singh, Head of Information Systems, Lambda",
+        "Kunal Agarwal, CFO, Gorgias"
+      ]
     },
     "traction.certifications": {
-      "status": "not_found",
-      "source_url": ""
+      "status": "extracted",
+      "value": [
+        "PCI DSS Level 1",
+        "ISO 27001:2022",
+        "SOC 1 Type II",
+        "SOC 2 Type II",
+        "EU-U.S. Data Privacy Framework"
+      ],
+      "source_url": [
+        "https://www.chargebee.com/security/",
+        "https://www.chargebee.com/security/",
+        "https://www.chargebee.com/security/",
+        "https://www.chargebee.com/security/",
+        "https://www.chargebee.com/security/"
+      ],
+      "evidence": [
+        "Chargebee is PCI DSS Level 1 certified",
+        "Chargebee is certified under ISO 27001:2022",
+        "Chargebee’s SOC 1 Type II report provides independent assurance of our financial controls and systems.",
+        "Chargebee's SOC 2 Type II compliance confirms our robust data security, availability, and confidentiality practices.",
+        "Chargebee is certified under the EU-U.S. Data Privacy Framework"
+      ],
+      "notes": "Borderline programme, see notes."
     },
     "traction.partnerships": {
       "status": "not_found",

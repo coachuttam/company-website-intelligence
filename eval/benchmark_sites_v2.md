@@ -12,7 +12,7 @@ crawl-status reasons (see the replacement log), leaving the **final set of 8**:
 | V3 | cashfree.com | `eval/labels/heldout_v2/cashfree.json` | LABELED |
 | V4 | cohere.com | `eval/labels/heldout_v2/cohere.json` | LABELED |
 | V5 | framer.com | `eval/labels/heldout_v2/framer.json` | LABELED |
-| V6 | chargebee.com | `eval/labels/heldout_v2/chargebee.json` | UNLABELED |
+| V6 | chargebee.com | `eval/labels/heldout_v2/chargebee.json` | LABELED |
 | V7 | mercury.com | `eval/labels/heldout_v2/mercury.json` | LABELED |
 | V8 | elevenlabs.io | `eval/labels/heldout_v2/elevenlabs.json` | LABELED |
 
