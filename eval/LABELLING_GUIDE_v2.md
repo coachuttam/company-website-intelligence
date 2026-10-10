@@ -7,7 +7,7 @@ dev labels are inconsistent, that is listed under "Open points" rather than deci
 
 ## Before you start
 
-1. **Write the three Decisions below first, then freeze them.** Do not change them once labelling
+1. **Write the four Decisions below first, then freeze them.** Do not change them once labelling
    has started.
 2. **Label blind.** Do not run `run_site.py` (or any pipeline step) on these sites, and do not open
    anything under `data/runs/`, `data/clean/` or `data/pages/` for them, until the labels are
@@ -128,7 +128,7 @@ Decided by: Uttam, with Claude (labelling help). Date: 2026-10-10. Written after
 before the other 7 labels and before any pipeline output for these sites; Miro's label was drafted
 under the same rules.
 
-## Open points noticed in the dev labels (not decided here)
+## Open points noticed in the dev labels (settled above)
 
 - `pricing.public_plans`: Calendly's label records "plan name and price" ("Standard — $10/seat/mo");
   the other four dev labels record plan names only. B-58's scoring convention is "plan name plus
@@ -140,4 +140,4 @@ under the same rules.
 - `pricing.sales_motion`: four dev labels use the short form "Self-serve and sales-led"; Calendly's
   spells out which plans are which.
 
-If you settle any of these, write it next to the three Decisions above before labelling.
+If you settle any of these, write it next to the four Decisions above before labelling.
