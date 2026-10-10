@@ -7,7 +7,7 @@ crawl-status reasons (see the replacement log), leaving the **final set of 8**:
 
 | # | Site | Label file | Label status |
 | --- | --- | --- | --- |
-| V1 | miro.com | `eval/labels/heldout_v2/miro.json` | UNLABELED |
+| V1 | miro.com | `eval/labels/heldout_v2/miro.json` | LABELED |
 | V2 | leadsquared.com | `eval/labels/heldout_v2/leadsquared.json` | UNLABELED |
 | V3 | cashfree.com | `eval/labels/heldout_v2/cashfree.json` | UNLABELED |
 | V4 | cohere.com | `eval/labels/heldout_v2/cohere.json` | UNLABELED |
@@ -79,7 +79,9 @@ Both exclusions are real crawler failures on live sites, not test artifacts. The
 ## Freeze protocol (in this order)
 
 1. **Label all 8 by hand**, following `eval/LABELLING_GUIDE_v2.md`, without running the pipeline
-   on these sites or opening any of its output for them.
+   on these sites or opening any of its output for them. Labels were made by Uttam with the help
+   of Claude (evidence gathering and drafting) and screenshots of the live pages; no pipeline
+   output was seen.
 2. **Checksum:** `python eval/checksum_labels.py --write` writes `eval/labels_v2.sha256`.
 3. **Tag the code** `pre-heldout-v2` (only after steps 1 and 2).
 4. **Run once:** `python run_site.py <url> --no-cache` for each of the 8 sites on the tagged code,
