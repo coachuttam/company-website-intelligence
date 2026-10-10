@@ -5,7 +5,7 @@
     "split": "held_out_v2",
     "labeler": "Uttam, with Claude",
     "date_labeled": "2026-10-10",
-    "notes": "Labelled by Uttam with the help of Claude and screenshots of the live pages, 2026-10-10. Claude read the pages and drafted evidence and values; Uttam took the screenshots, checked the quotes against the live pages and made the final decisions. Pipeline not run, data/ not opened."
+    "notes": "Labelled by Uttam with the help of Claude and screenshots of the live pages, 2026-10-10. Claude read the pages and drafted evidence and values; Uttam took the screenshots, checked the quotes against the live pages and made the final decisions. Pipeline not run, data/ not opened. Update 2026-10-10 (before checksum): named_customers extended from 10 to 15 after an alt-text check of https://miro.com/customers/. The logo wall there uses alt text such as 'Publix Logo'. This replaces the earlier decision not to label the wall, which was made before alt text was checked."
   },
   "labeling_instructions": {
     "source_policy": "Use only information the company states on its own public website. No outside knowledge, no assumptions.",
@@ -196,7 +196,12 @@
         "EPAM Systems",
         "Hearst",
         "NFL",
-        "Red Hat"
+        "Red Hat",
+        "Publix",
+        "CVS Health",
+        "Ulta Beauty",
+        "Comcast",
+        "Danaher"
       ],
       "source_url": [
         "https://miro.com/about/",
@@ -204,6 +209,11 @@
         "https://miro.com/about/",
         "https://miro.com/about/",
         "https://miro.com/about/",
+        "https://miro.com/customers/",
+        "https://miro.com/customers/",
+        "https://miro.com/customers/",
+        "https://miro.com/customers/",
+        "https://miro.com/customers/",
         "https://miro.com/customers/",
         "https://miro.com/customers/",
         "https://miro.com/customers/",
@@ -220,9 +230,14 @@
         "Director of Product Management at EPAM Systems",
         "Senior Director of Project Management at Hearst",
         "Director of Product at NFL",
-        "How Red Hat built the foundation to scale AI across the organization"
+        "How Red Hat built the foundation to scale AI across the organization",
+        "Publix Logo",
+        "CVS Health Logo",
+        "Ulta Beauty Logo",
+        "Comcast Logo",
+        "Danaher Logo"
       ],
-      "notes": "Customers page lists 80+ companies in a shuffled grid. Labelled names the company states in text: about-page sentence, featured case-study cards. HP and DocuSign are featured cards but show only a logo (no company name in visible text), so not labelled. Enterprise page logo wall (Danaher, Comcast, Ulta Beauty, CVS Health, Kimberly-Clark, Hanes, Rabobank, Slalom, Publix, Yamaha, Ubisoft, Accenture, Dropbox, PepsiCo) not labelled."
+      "notes": "Customers page lists 80+ companies in a shuffled grid. Labelled names the company states in text: about-page sentence, featured case-study cards. HP and DocuSign cards on /customers/ have alt text 'hp' and 'docusign' that only repeat the image filenames, so not labelled. Five names added from the /customers/ logo-wall alt text (checked), page order, capped at 15. Not included for cap or spelling: Kimberly-Clark (alt text misspelled as 'kimberley clark logo'), Ubisoft, Dropbox, Accenture, Yamaha, Rabobank, Hanes, PepsiCo and others on the wall."
     },
     "traction.certifications": {
       "status": "extracted",
