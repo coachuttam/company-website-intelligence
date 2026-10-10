@@ -5,7 +5,7 @@
     "split": "held_out_v2",
     "labeler": "Uttam, with Claude",
     "date_labeled": "2026-10-10",
-    "notes": "Labelled by Uttam with the help of Claude and screenshots of the live pages, 2026-10-10. Claude read the pages and drafted evidence and values; Uttam took the screenshots, checked the quotes against the live pages and made the final decisions. Pipeline not run, data/ not opened. The home and pricing pages were read from the page DOM through Claude's browser pane; the security page, trust center, stories page and footer lists were read from Uttam's screenshots. Logo alt text on the stories and home pages was not checked. Prices on the pricing page are shown in Indian rupees because the labeller is in India; Framer shows local currency, so a visitor elsewhere may see different amounts."
+    "notes": "Labelled by Uttam with the help of Claude and screenshots of the live pages, 2026-10-10. Claude read the pages and drafted evidence and values; Uttam took the screenshots, checked the quotes against the live pages and made the final decisions. Pipeline not run, data/ not opened. The home and pricing pages were read from the page DOM through Claude's browser pane; the security page, trust center, stories page and footer lists were read from Uttam's screenshots. Logo alt text on the stories and home pages was not checked. Prices on the pricing page are shown in Indian rupees because the labeller is in India; Framer shows local currency, so a visitor elsewhere may see different amounts. Update 2026-10-10 (before checksum): named_customers filled after an alt-text check of https://www.framer.com/stories/ (the 'How teams win with Framer' logo strip uses alt text '<Name> logo'); capped at 15 by page order; not included for cap: DoorDash, Contra, Mutiny, RuneScape, bunq. Logo links go to customer stories or to Framer-built sites. This replaces the earlier not_found, which was recorded before the alt text was checked."
   },
   "labeling_instructions": {
     "source_policy": "Use only information the company states on its own public website. No outside knowledge, no assumptions.",
@@ -178,9 +178,59 @@
       "evidence": "₹361 per month | Additional editors are ₹722 / month | ₹722 per locale"
     },
     "traction.named_customers": {
-      "status": "not_found",
-      "source_url": "",
-      "notes": "The stories page ('From startups to enterprises') and the home page show customer logos only, and the logo alt text was not checked, so none is labelled under Decision (c). Logos seen on /stories/: miro, Zapier, Microsoft, NBA, Mixpanel, Perplexity, Legora, ElevenLabs, Huel, Dribbble, Planhat, Ramp, Mollie, Plaid, Luma AI, DoorDash, Contra, Mutiny, bunq, Cal.com, TypeSafe AI, Flora, happn, Whereby, Designer Fund, Partiful, The Telegraph, Twingate, GitBook, Hodinkee, TicketSwap, plus one logo not identified."
+      "status": "extracted",
+      "value": [
+        "Miro",
+        "Zapier",
+        "Microsoft",
+        "NBA",
+        "Mixpanel",
+        "Perplexity",
+        "Legora",
+        "ElevenLabs",
+        "Huel",
+        "Dribbble",
+        "Planhat",
+        "Ramp",
+        "Mollie",
+        "Plaid",
+        "Luma AI"
+      ],
+      "source_url": [
+        "https://www.framer.com/stories/",
+        "https://www.framer.com/stories/",
+        "https://www.framer.com/stories/",
+        "https://www.framer.com/stories/",
+        "https://www.framer.com/stories/",
+        "https://www.framer.com/stories/",
+        "https://www.framer.com/stories/",
+        "https://www.framer.com/stories/",
+        "https://www.framer.com/stories/",
+        "https://www.framer.com/stories/",
+        "https://www.framer.com/stories/",
+        "https://www.framer.com/stories/",
+        "https://www.framer.com/stories/",
+        "https://www.framer.com/stories/",
+        "https://www.framer.com/stories/"
+      ],
+      "evidence": [
+        "How teams win with Framer | Miro logo",
+        "How teams win with Framer | Zapier logo",
+        "How teams win with Framer | Microsoft logo",
+        "How teams win with Framer | NBA logo",
+        "How teams win with Framer | Mixpanel logo",
+        "How teams win with Framer | Perplexity logo",
+        "How teams win with Framer | Legora logo",
+        "How teams win with Framer | ElevenLabs logo",
+        "How teams win with Framer | Huel logo",
+        "How teams win with Framer | Dribbble logo",
+        "How teams win with Framer | Planhat logo",
+        "How teams win with Framer | Ramp logo",
+        "How teams win with Framer | Mollie logo",
+        "How teams win with Framer | Plaid logo",
+        "How teams win with Framer | Luma AI logo"
+      ],
+      "notes": "Names from logo alt text (checked), page order, capped at 15."
     },
     "traction.certifications": {
       "status": "extracted",
