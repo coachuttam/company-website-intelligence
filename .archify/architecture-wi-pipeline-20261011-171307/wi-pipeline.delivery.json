@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "2250655c-55c1-41e8-baac-a306013d0ffc",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/Users/uttam/company_website_intelligence/.archify/architecture-wi-pipeline-20261011-171307/candidate.json",
+  "output": "/Users/uttam/company_website_intelligence/.archify/architecture-wi-pipeline-20261011-171307/wi-pipeline.html",
+  "specification": {
+    "sha256": "59cfa3db612ef3e246bfcd4504e96e4f85ebda5f023fb6dc8bfaa76cf98b313a",
+    "bytes": 20627
+  },
+  "artifact": {
+    "sha256": "a91faf3a4b0e946b3697a1ddb0b18798be592ab015218a991ff15c3a73632774",
+    "bytes": 808749
+  }
+}

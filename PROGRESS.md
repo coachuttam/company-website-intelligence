@@ -2143,3 +2143,5 @@ but cannot run Uttam's actual crawler/LLM pipeline against the real sites.
 - 2026-10-11: fix3 (B-103, price-window evidence for public_plans, branch fix3-plan-price-evidence 47ea010) failed the 13-site pass test: combined strict 51.3% vs control 51.5%; only ElevenLabs improved; kept unmerged. A further cleaner exploration was planned but not done. Details in eval/DEV13_RESULTS.md.
 
 - 2026-10-11: gpt-4.1 as extraction model (B-107, branch strong-model 2f049d9) failed all three 13-site pass tests: combined strict 50.3% vs 50.5%, unsupported 17 -> 45, cost p50 $0.100 / p95 $0.133 (14/26 runs over $0.10); kept unmerged, gpt-4o-mini stays. Details in eval/DEV13_RESULTS.md.
+
+- 2026-10-11: Presentable report (B-108: print stylesheet, print-only cover, `python -m wi.render <run.json> --pdf` via optional Playwright; Snowflake PDF 9 pages) and inline SVG charts (B-109: field coverage by status, pages used as evidence, 90-day news timeline). Architecture diagram regenerated with Archify to include wi/news and the render news section; copies at docs/architecture.svg and .png. No model calls.

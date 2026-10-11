@@ -145,6 +145,8 @@ B-72 to B-94 were motivated partly by informal spot-checks on non-dev sites: fre
 
 ## Project layout
 
+Architecture diagram: `docs/architecture.svg` (also `docs/architecture.png`), including the optional news path and the profile page/PDF. It was generated with Archify; the interactive source is under `.archify/`, which is not in the zip.
+
 | Path | Purpose |
 | --- | --- |
 | `run_site.py` | One URL in, one run JSON out |
