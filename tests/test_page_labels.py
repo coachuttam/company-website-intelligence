@@ -176,3 +176,16 @@ def test_nav_drops_cookie_consent_and_ui_prefixed_items():
            "<a href='/f'>Link to Acme LinkedIn</a><a href='/g'>Manage preferences</a><a href='/h'>Partners</a></footer>")
     html = f"<html><body><main>{PROSE}</main>{nav}</body></html>"
     assert nav_items(html) == ["Customers", "Partners"]
+
+
+def test_filler_integration_and_caption_filters():
+    for raw, reason in [("Placeholder graphic", "filler"), ("Image placeholder", "filler"), ("Hero graphic", "filler"),
+                        ("read more", "filler"), ("Learn more about us", "filler"), ("Addon", "filler"),
+                        ("Zoom integration", "integration"), ("HubSpot app", "integration"),
+                        ("SmartBug. wordmark logo in bold black text", "too_many_words"),
+                        ("Resolve support tickets in Slack", "too_many_words")]:
+        assert filter_label(raw) == (None, reason), raw
+    assert filter_label("Iceland AC Services") == ("Iceland AC Services", None)
+    assert filter_label("Opendoor") == ("Opendoor", None)
+    assert filter_label("Bank of New Zealand") == ("Bank of New Zealand", None)   # 4 words kept
+    assert filter_label("Appian") == ("Appian", None)                             # 'app' only as a word ending

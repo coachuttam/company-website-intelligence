@@ -25,7 +25,11 @@ DESIGN.
      - does not contain a store, cookie or consent phrase ("app store", "google play", "cookie",
        "consent", "privacy settings", "manage preferences");
      - is not a browser or platform name standing alone (chrome, firefox, safari, edge, outlook,
-       android, ios).
+       android, ios);
+     - does not contain a filler word ("placeholder", "graphic", "read more", "learn more", "addon");
+     - does not end in " integration" or " app" (integration logos such as "Zoom integration" or
+       "HubSpot app" are not partnerships, labelling guide Decision (b));
+     - has at most 4 words (a longer alt is a descriptive caption, not a name).
    Duplicates are dropped after casefolding, at most 60 labels per page.
    Block: one line, "[logo and image labels] name1 | name2 | ...".
 2. Site-wide first occurrence. A label is kept only on the first page where it appears; later pages
@@ -89,6 +93,9 @@ STORE_CONSENT_PHRASES = ("app store", "google play", "cookie", "cookies", "conse
                          "manage preferences")
 COOKIE_CONSENT_PHRASES = ("cookie", "cookies", "consent", "privacy settings", "manage preferences")
 STANDALONE_PLATFORMS = frozenset({"chrome", "firefox", "safari", "edge", "outlook", "android", "ios"})
+FILLER_PHRASES = ("placeholder", "graphic", "read more", "learn more", "addon")
+INTEGRATION_SUFFIXES = (" integration", " app")
+MAX_WORDS = 4
 TRAILING_GENERIC = re.compile(r"[\s_-]+(logo|icon|image|badge)s?$", re.IGNORECASE)
 FILE_EXTENSION = re.compile(r"\.(png|jpe?g|gif|svg|webp|avif|bmp|ico|tiff?|pdf)$", re.IGNORECASE)
 SLUG = re.compile(r"^[a-z0-9]+(?:[_-][a-z0-9]+)+$")
@@ -102,7 +109,8 @@ _IMAGE_TAGS = ("img", "svg")
 
 # reasons a candidate label was dropped, for the before/after report
 REASONS = ("site_chrome", "length", "no_letter", "file_name", "slug", "empty_after_strip", "generic",
-           "ui_prefix", "store_or_consent", "platform_word", "duplicate", "seen_on_earlier_page", "cap")
+           "ui_prefix", "store_or_consent", "platform_word", "filler", "integration", "too_many_words",
+           "duplicate", "seen_on_earlier_page", "cap")
 
 
 def _norm(text: str) -> str:
@@ -132,6 +140,12 @@ def filter_label(raw: str) -> Tuple[Optional[str], Optional[str]]:
         return None, "store_or_consent"
     if low in STANDALONE_PLATFORMS:
         return None, "platform_word"
+    if any(p in low for p in FILLER_PHRASES):
+        return None, "filler"
+    if low.endswith(INTEGRATION_SUFFIXES):
+        return None, "integration"
+    if len(stripped.split()) > MAX_WORDS:
+        return None, "too_many_words"
     return stripped, None
 
 
