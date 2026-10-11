@@ -7,6 +7,9 @@ Usage:
 Then check the gate:
     python eval/check_gate.py data/runs/basecamp.json
 
+Add --news to also write the company's own news snapshot to data/news/<site>.json (B-104, PRD
+Section 8 P1; off by default; never changes the run JSON). Same as python -m wi.news <run.json>.
+
 Add --no-cache to force a genuine fresh LLM call even when a site's page content, prompt,
 schema and model all match a previous run's cached result:
     python run_site.py https://basecamp.com/ --no-cache
@@ -56,7 +59,7 @@ from wi.profile.builder import build_profile
 ROOT = Path(__file__).resolve().parent
 
 
-def main(raw_url: str, use_cache: bool = True) -> int:
+def main(raw_url: str, use_cache: bool = True, news: bool = False) -> int:
     # B-74 (AC-10): wall-clock seconds per stage plus the end-to-end total, written to the run
     # JSON's "timing" key; eval/latency_report.py turns those into p50/p95 per website.
     timer = PhaseTimer()
@@ -365,14 +368,26 @@ def main(raw_url: str, use_cache: bool = True) -> int:
     )
     print(f"Wrote {out_path}")
     print(f"Next: python eval/check_gate.py {out_path.relative_to(ROOT)}")
+
+    # B-104 (PRD Section 8, P1, off by default): the company's own news snapshot, written to its own
+    # file after the run JSON is complete, so it can never change or block the website profile.
+    if news:
+        try:
+            from wi.news.collect import collect_for_run
+            report, news_path = collect_for_run(out_path, ROOT / "data" / "news")
+            if report is not None:
+                print(f"  news: {report.status}, {len(report.items)} item(s) -> {news_path}")
+        except Exception as e:   # never fail the run because of news
+            print(f"  news unavailable (profile unaffected): {type(e).__name__}: {e}")
     return 0
 
 
 if __name__ == "__main__":
     args = sys.argv[1:]
     no_cache = "--no-cache" in args
-    positional = [a for a in args if a != "--no-cache"]
+    news = "--news" in args   # B-104: optional company-own news snapshot (data/news/<slug>.json)
+    positional = [a for a in args if a not in ("--no-cache", "--news")]
     if len(positional) != 1:
         print(__doc__)
         sys.exit(2)
-    sys.exit(main(positional[0], use_cache=not no_cache))
+    sys.exit(main(positional[0], use_cache=not no_cache, news=news))
