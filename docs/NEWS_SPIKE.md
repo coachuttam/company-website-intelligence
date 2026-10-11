@@ -44,3 +44,43 @@ nothing is scored.
 - **Two sites have no company feed** (Notion and Mercury).
 
 A next step, not done, would separate newsroom/press feeds from blog feeds before classifying.
+
+## Corroboration, cut line 1 (B-106, 2026-10-11)
+
+**What it does.** For each qualifying company item, one GDELT DOC 2.0 headline search covers ±7 days
+around the item's date. Matching is by rules on the headline only:
+- **No article fetching, no model calls.**
+- **Statuses:** `possible_coverage`, `not_corroborated` or `not_checked`, never "corroborated" or
+  "verified".
+
+**Rules, fixed before any result was seen:**
+- **Qualifying items (step 0):** the feed URL path contains news, newsroom, press, press-releases or
+  media, OR the rule-based event type is not "other".
+- **Match:** the company name as a whole phrase (outside the domain text), plus the company's domain
+  or a product name, in the third-party headline.
+- **Independence:** the headline is not on the company's domain or a press wire, and is dated within
+  ±7 days.
+- **Limits:** at most 5 GDELT queries and 120 s per company, one GDELT request every 5 s. A 429 or
+  timeout gives `not_checked` and is not retried.
+
+**Result on the same 5 sites (no model calls, $0):**
+
+| Site | Items | Qualified | GDELT queries (failed) | Candidates seen / matched | Statuses |
+| --- | ---: | ---: | --- | --- | --- |
+| snowflake.com | 10 | 0 | 0 | 0 / 0 | 10 not_checked |
+| cashfree.com | 10 | 1 | 1 (1 timeout) | 0 / 0 | 10 not_checked |
+| chargebee.com | 9 | 4 | 4 (3 HTTP 429) | 0 / 0 | 1 not_corroborated, 8 not_checked |
+| notion.com | 0 | – | – | – | no company feed |
+| mercury.com | 0 | – | – | – | no company feed |
+
+- **Latency:** p50 11.9 s, max 70.4 s (n = 5).
+- **What it shows:**
+  - Only 5 of 29 items qualified, and all 5 are blog articles whose rule-based event type was not
+    "other". No feed was a newsroom/press feed.
+  - GDELT answered once (0 articles); the other 4 queries timed out or were rate-limited.
+  - No candidate headline was found, so entity-match precision cannot be measured on this sample.
+- **AC-12 is still partial.**
+- **What a useful result would need (not done):**
+  - sites with a real newsroom/press feed;
+  - a slower GDELT pace, or a scheduled run;
+  - the article-fetching stage (cut line 2) before anything could be called corroborated.

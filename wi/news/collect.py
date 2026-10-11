@@ -6,9 +6,10 @@ import json
 import time
 from datetime import date, timedelta
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Callable, Optional, Sequence
 
 from wi.news.classify import event_type
+from wi.news.corroborate import corroborate
 from wi.news.dedupe import dedupe
 from wi.news.entity import Company, belongs_to, company_from_run
 from wi.news.http import Fetcher
@@ -22,7 +23,10 @@ def _record(started: float, clock, **counts) -> dict:
 
 
 def collect(company: Company, fetcher: Optional[Fetcher] = None, today: Optional[date] = None,
-            clock: Callable[[], float] = time.monotonic, lookback_days: int = LOOKBACK_DAYS) -> NewsReport:
+            clock: Callable[[], float] = time.monotonic, lookback_days: int = LOOKBACK_DAYS,
+            products: Sequence[str] = (), corroboration: bool = True) -> NewsReport:
+    """`corroboration` (B-106): search GDELT for independent headlines about each qualifying item
+    (cut line 1, rules only; see wi/news/corroborate.py). Any failure there leaves the item not_checked."""
     today = today or date.today()
     started = clock()
     base = dict(company_id=company.company_id, company_name=company.name, domain=company.domain,
@@ -45,11 +49,22 @@ def collect(company: Company, fetcher: Optional[Fetcher] = None, today: Optional
                 published_at=e.published.isoformat(), retrieved_at=today.isoformat(), evidence=evidence,
                 event_type=event_type(e.title, e.summary),
                 relevance_status="matched" if evidence else "inaccessible",
-                note=None if evidence else "feed gives a headline only; article not fetched (cut line)"))
+                note=None if evidence else "feed gives a headline only; article not fetched (cut line)",
+                feed_url=e.feed_url or None))
+        corr_counts = {}
+        if corroboration and items:
+            try:
+                corr_counts = corroborate(items, company, list(products), fetcher, clock=clock)
+            except Exception as e:   # never breaks the snapshot
+                corr_counts = {"error": f"{type(e).__name__}: {e}"}
+            corr_counts["statuses"] = {s: sum(1 for i in items if i.corroboration and i.corroboration.status == s)
+                                       for s in ("possible_coverage", "not_corroborated", "not_checked")}
         counts = dict(feeds_ok=sum(1 for x in log if x["kind"] == "feed" and x["status"] == "ok"),
                       entries_seen=len(entries), off_domain_entries=len(entries) - len(own),
                       undated_entries=undated, in_lookback=len(recent), duplicates_collapsed=collapsed,
                       items_kept=len(items))
+        if corr_counts:
+            counts["corroboration"] = corr_counts
         status = "ok" if items else "not_found"
         reason = None if items else ("no company feed found" if counts["feeds_ok"] == 0
                                      else f"no dated company item in the last {lookback_days} days")
@@ -67,7 +82,10 @@ def collect_for_run(run_path: Path, out_dir: Path, fetcher: Optional[Fetcher] = 
     company = company_from_run(run)
     if company is None:
         return None, None
-    report = collect(company, fetcher=fetcher, today=today)
+    products = next((c.get("value") or [] for c in run.get("claims", [])
+                     if c.get("field") == "products.names" and c.get("status") != "not_found"), [])
+    report = collect(company, fetcher=fetcher, today=today,
+                     products=products if isinstance(products, list) else [products])
     out_dir.mkdir(parents=True, exist_ok=True)
     out = out_dir / Path(run_path).name
     out.write_text(json.dumps(report.model_dump(mode="json"), indent=2), encoding="utf-8")

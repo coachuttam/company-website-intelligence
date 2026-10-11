@@ -15,6 +15,23 @@ EventType = Literal["funding", "product_launch", "partnership", "customer_contra
                     "expansion", "acquisition", "hiring_layoffs", "legal_regulatory", "other"]
 
 
+class CoverageSource(BaseModel):
+    source_class: Literal["third_party_news"] = "third_party_news"
+    publisher: str            # the article's domain, as GDELT reports it
+    url: str
+    published_at: str
+    headline: str
+    excerpt: Optional[str] = None   # None at cut line 1: the article is not fetched
+    match: Literal["rules"] = "rules"
+
+
+class Corroboration(BaseModel):
+    """Cut line 1 (B-106): headline-only search, so never "corroborated" and never "verified"."""
+    status: Literal["possible_coverage", "not_corroborated", "not_checked"]
+    reason: str
+    sources: List[CoverageSource] = []
+
+
 class NewsItem(BaseModel):
     news_id: str
     company_id: str
@@ -28,6 +45,8 @@ class NewsItem(BaseModel):
     event_type: EventType
     relevance_status: Literal["matched", "inaccessible"]
     note: Optional[str] = None
+    feed_url: Optional[str] = None
+    corroboration: Optional[Corroboration] = None
 
     @model_validator(mode="after")
     def _evidence_or_inaccessible(self):

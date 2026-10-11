@@ -29,18 +29,21 @@ def httpx_getter(url: str, timeout_s: float) -> Response:
 class Fetcher:
     def __init__(self, get: Getter = httpx_getter, timeout_s: float = 15.0,
                  clock: Callable[[], float] = time.monotonic, sleep: Callable[[float], None] = time.sleep,
-                 min_interval_s: float = 1.0):
+                 min_interval_s: float = 1.0, host_intervals: Optional[Dict[str, float]] = None):
         self._get, self._timeout, self._clock, self._sleep = get, timeout_s, clock, sleep
         self._interval = min_interval_s
+        self._host_intervals = dict(host_intervals if host_intervals is not None
+                                    else {"api.gdeltproject.org": 5.0})
         self._robots: Dict[str, urllib.robotparser.RobotFileParser] = {}
         self._last: Dict[str, float] = {}
 
     def _wait(self, host: str) -> None:
         last = self._last.get(host)
+        interval = self._host_intervals.get(host, self._interval)
         if last is not None:
             gap = self._clock() - last
-            if gap < self._interval:
-                self._sleep(self._interval - gap)
+            if gap < interval:
+                self._sleep(interval - gap)
         self._last[host] = self._clock()
 
     def allowed(self, url: str) -> bool:
