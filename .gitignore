@@ -12,6 +12,7 @@ __pycache__/
 data/raw/*
 data/clean/*
 data/runs/*
+data/news/*
 data/pages/*
 !data/**/.gitkeep
 

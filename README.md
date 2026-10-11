@@ -77,6 +77,8 @@ python run_site.py https://www.example.com/ --no-cache   # a fresh model call; u
 
 This crawls the site (same domain only, robots.txt respected, at most 40 pages, depth 2, 120 s, 1 request per second; `config.yaml`), cleans each page, makes one extraction call to `gpt-4o-mini`, checks every claim's quote against the page it cites, and writes `data/runs/<domain>.json`.
 
+Add `--news` (off by default) to also write the company's own news snapshot to `data/news/<domain>.json`; it never changes the run JSON and makes no model call (`docs/NEWS_SPIKE.md`; AC-12 partial).
+
 **Exit codes:** 0 when a run JSON was written, including unreachable, blocked and redirected sites; 1 when the URL is rejected before any crawl (`INVALID_URL`, `RESTRICTED_PLATFORM`, also for a start URL that redirects to a restricted platform) or when `OPENAI_API_KEY` is missing for a normally crawled site. Checked here: an invalid URL and a LinkedIn URL both print `REJECTED (...)` and exit 1.
 
 ### The run JSON (`data/runs/<domain>.json`)

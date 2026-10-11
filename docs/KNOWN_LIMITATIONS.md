@@ -100,6 +100,13 @@ Post-hoc and read-only; no change has been made. Details in `eval/HELDOUT_V2_REP
   22, because its fills were real text about the wrong thing and the gate cannot tell. Not merged; see
   `eval/FALLBACK_EXPERIMENT.md`.
 
+## News snapshot (P1, cut line only)
+
+- **AC-12 is partial.** Only the company's own feeds are read (no GDELT, no third-party articles, no
+  model calls), so entity-match precision is not informative. Most feeds found are blog feeds:
+  items are often articles rather than announcements, and the rule-based event type misfires on them.
+  See `docs/NEWS_SPIKE.md`.
+
 ## Latency and cost
 
 - **p50 latency misses its target.** Current code (build C, `eval/latency_report_cmp_C_nc1-3.json`):

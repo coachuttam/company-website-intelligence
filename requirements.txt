@@ -14,3 +14,6 @@ pydantic>=2.6          # Typed claim and profile schemas
 rapidfuzz>=3.6         # Near-verbatim quote matching for the evidence check
 pyyaml>=6.0            # Reads config.yaml
 python-dotenv>=1.0     # Loads API keys from .env (never commit .env)
+
+# --- P1 news snapshot (wi/news, off by default) ---
+feedparser>=6.0        # RSS/Atom parsing for the company's own newsroom feeds
