@@ -28,6 +28,27 @@ cp .env.example .env                         # then fill in the keys you have (n
 
 `requirements-dev.txt` includes `requirements.txt`. `requirements-llm.txt` installs the `openai` client; it is needed for real runs **and for the tests** (9 LLM-client tests fail without it). Playwright, used only by the optional JS-page fallback, is not installed by these files (see `requirements-optional.txt`); without it the fallback is skipped.
 
+### Starting from the handoff files
+
+- **`company_website_intelligence_all.bundle`** (full history, every branch and tag):
+  `git clone company_website_intelligence_all.bundle company_website_intelligence`, then follow the
+  setup above. `HANDOFF_SHA256.txt` holds the checksums of the bundle and the zip
+  (`shasum -a 256 -c HANDOFF_SHA256.txt`).
+- **`company_website_intelligence_main.zip`** (the `main` branch only): it is not a git repository
+  and holds no `data/` folder.
+  - **Before running the tests,** run `git init` in the unzipped folder. One test
+    (`tests/test_snapshot.py::test_b88_snapshots_are_git_ignored`) asks git whether `data/clean/` is
+    ignored, and fails outside a repository.
+  - **No saved runs:** there are no saved runs, snapshots or rendered pages, so the "Check and render
+    a saved run" and "Evaluation" steps below need a run first (which needs `OPENAI_API_KEY`). The
+    `data/` folders are created on the first run.
+  - **No git restore:** the `git checkout -- eval/<file>` advice for restoring overwritten reports
+    does not apply until the folder is a git repository with a first commit, so copy a report before
+    re-running a scorer.
+- **Expected warnings during setup and tests:** pip may print "lxml does not provide the extra
+  'html_clean'" and pytest prints urllib3's `NotOpenSSLWarning` on macOS's LibreSSL Python. Neither
+  affects the results.
+
 ### Environment variables (`.env`)
 
 Only the names are listed here. Never commit `.env` or print its values.
