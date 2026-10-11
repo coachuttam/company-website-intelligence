@@ -80,8 +80,9 @@ The control's combined strict score moved 0.5 points between its two rounds (dev
 Figures are strict / normalised (%). The control's spread between rounds was 1.0 point.
 
 **products.names:** miss −12, partial +7, correct +2, incorrect +3.
-- All 3 extra incorrect answers are Chargebee naming: "Chargebee Billing" against the label's
-  "Billing" scores as disjoint.
+- Of the 3 extra incorrect answers, 2 are Chargebee naming (one per round): "Chargebee Billing"
+  against the label's "Billing" scores as disjoint. The third is Loom round 1, which had no upgrades,
+  so it is run-to-run noise.
 - 39 items were upgraded over the 2 rounds.
 
 **Unsupported:** unchanged at 16.
