@@ -115,9 +115,13 @@ def main(raw_url: str, use_cache: bool = True) -> int:
                 print(f"    - {p.url}: {p.error_code or 'ERROR'} - {p.error}")
 
     with timer.phase("clean"):
-        home = homepage_url(p.url for p in ok_pages)   # B-100: the only page given the navigation block
+        # B-100: the homepage is the only page given the navigation block; one per-run set keeps each
+        # image label on its first page only, in the pipeline's page order (the crawl result's order).
+        home = homepage_url(p.url for p in ok_pages)
+        seen_labels: set = set()
         clean_pages = [
-            clean_page(p.url, p.html, resolve_char_cap(p.url, config), homepage=(p.url == home))
+            clean_page(p.url, p.html, resolve_char_cap(p.url, config), homepage=(p.url == home),
+                       seen_labels=seen_labels)
             for p in ok_pages
         ]
     default_cap = config["crawl"]["max_clean_chars"]

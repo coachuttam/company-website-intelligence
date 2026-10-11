@@ -130,3 +130,49 @@ def test_snapshot_format_still_loads():
     page = snap["pages"][0]
     assert {"clean_text", "clean_chars", "clean_truncated", "clean_sha256", "sent_to_model"} <= set(page)
     assert page["clean_text"] == cp.text and LABELS_HEADER in page["clean_text"]
+
+
+# refinement: main content only, site-wide first occurrence, more generic filters
+def test_labels_in_site_chrome_are_skipped_and_main_content_kept():
+    html = ("<html><body><header><img alt='Header Co'></header><nav><svg aria-label='Nav Co'></svg></nav>"
+            "<div role='navigation'><img alt='Role Nav Co'></div><div role='contentinfo'><img alt='Info Co'></div>"
+            f"<main><h1>Acme</h1>{PROSE}<img alt='Globex Logo'></main>"
+            "<footer><img alt='Footer Co'><a aria-label='Footer Social' href='/x'>x</a></footer></body></html>")
+    stats = {}
+    assert image_labels(html, stats) == ["Globex"]
+    assert stats["site_chrome"] == 6   # header, nav, 2 role elements, footer img and footer link
+
+
+def test_site_wide_first_occurrence_follows_page_order():
+    seen = set()
+    p1 = _page("<img alt='Globex'><img alt='Initech'>")
+    p2 = _page("<img alt='globex'><img alt='Hooli'>")
+    p3 = _page("<img alt='Hooli'><img alt='Umbrella'>")
+    stats = {}
+    out = [clean_page(f"https://acme.example/p{i}", h, 12000, seen_labels=seen).text for i, h in enumerate((p1, p2, p3))]
+    assert out[0].endswith(f"{LABELS_HEADER} Globex | Initech")
+    assert out[1].endswith(f"{LABELS_HEADER} Hooli")
+    assert out[2].endswith(f"{LABELS_HEADER} Umbrella")
+    assert image_labels(p2, stats, {"globex"}) == ["Hooli"] and stats["seen_on_earlier_page"] == 1
+    # cleaned on its own (no shared set), a page keeps its own labels
+    assert clean_page("https://acme.example/p1", p2, 12000).text.endswith(f"{LABELS_HEADER} globex | Hooli")
+
+
+def test_ui_prefix_store_consent_and_platform_filters():
+    for raw, reason in [("Open Full control over your calendar", "ui_prefix"), ("Link to Acme X account", "ui_prefix"),
+                        ("Back to home", "ui_prefix"), ("Skip to content", "ui_prefix"),
+                        ("Download on the App Store", "ui_prefix"), ("Get it on Google Play", "ui_prefix"),
+                        ("Google Play", "store_or_consent"), ("Cookie Settings", "store_or_consent"),
+                        ("Manage preferences", "store_or_consent"), ("Chrome", "platform_word"),
+                        ("Outlook", "platform_word"), ("iOS", "platform_word")]:
+        assert filter_label(raw) == (None, reason), raw
+    assert filter_label("Microsoft Outlook team") == ("Microsoft Outlook team", None)   # not standing alone
+    assert filter_label("Opendoor") == ("Opendoor", None)                               # prefix needs the space
+
+
+def test_nav_drops_cookie_consent_and_ui_prefixed_items():
+    nav = ("<footer><a href='/a'>Customers</a><a href='/c'>Cookie Settings</a>"
+           "<a href='/d'>Check our cookies policy to delete cookies</a><a href='/e'>Open chat</a>"
+           "<a href='/f'>Link to Acme LinkedIn</a><a href='/g'>Manage preferences</a><a href='/h'>Partners</a></footer>")
+    html = f"<html><body><main>{PROSE}</main>{nav}</body></html>"
+    assert nav_items(html) == ["Customers", "Partners"]

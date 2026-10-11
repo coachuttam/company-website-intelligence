@@ -245,9 +245,12 @@ def main_text(url: str, html: str) -> str:
     return text
 
 
-def clean_page(url: str, html: str, max_clean_chars: int, homepage: bool = False) -> CleanPage:
+def clean_page(url: str, html: str, max_clean_chars: int, homepage: bool = False,
+               seen_labels: Optional[set] = None) -> CleanPage:
     """`homepage` (B-100): the caller's shortest-path page of the site, the only page that gets the
-    "[site navigation]" block. See wi/crawl/page_labels.py for both appended blocks."""
+    "[site navigation]" block. `seen_labels`: one per-run set shared across a run's pages, cleaned in
+    pipeline page order, so an image label is kept only on its first page. See
+    wi/crawl/page_labels.py for both appended blocks."""
     text = main_text(url, html)
 
     truncated = len(text) > max_clean_chars
@@ -262,10 +265,11 @@ def clean_page(url: str, html: str, max_clean_chars: int, homepage: bool = False
         if cue_block:
             text = text + "\n" + cue_block
 
-    # B-100 (wi/crawl/page_labels.py): logo and image labels on every page, and the navigation, header
-    # and footer link texts on the homepage only. Appended after the cap, each within its own budget,
+    # B-100 (wi/crawl/page_labels.py): logo and image labels from the main content (each kept only on
+    # its first page when the caller shares seen_labels), and the navigation, header and footer link
+    # texts on the homepage only. Appended after the cap, each within its own budget,
     # so main content is never pushed out; nothing is added when a page has neither.
-    labels = labels_block(html)
+    labels = labels_block(html, seen=seen_labels)
     if labels:
         text = text + "\n" + labels
     if homepage:
