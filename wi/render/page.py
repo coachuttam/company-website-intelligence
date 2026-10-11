@@ -289,6 +289,35 @@ def _announcement(a: Dict[str, Any]) -> str:
     )
 
 
+NEWS_TITLE = "Latest news (company's own feed, not verified)"
+
+
+def _news_section(news: Dict[str, Any]) -> str:
+    """B-105: the separate news section, from data/news/<slug>.json (wi/news, B-104). Third-party
+    and company feeds alike are shown as reported items, never as verified facts."""
+    status = news.get("status")
+    items = news.get("items") or []
+    intro = ('<p class="note">From the company\'s own news or blog feed, last '
+             + esc(news.get("lookback_days") or 90) + " days, retrieved " + esc(news.get("retrieved_at"))
+             + ". Not part of the profile above, not verified, and not scored. Event types are rule-based.</p>")
+    if status != "ok" or not items:
+        reason = news.get("reason") or "no item found"
+        return _section(NEWS_TITLE, "news", intro + '<p class="muted">' + esc(status or "not_found")
+                        + ": " + esc(reason) + "</p>")
+    rows = []
+    for it in items:
+        url = str(it.get("url") or "")
+        headline = esc(it.get("headline"))
+        if url.lower().startswith(("http://", "https://")):
+            headline = ('<a href="' + esc(url) + '" rel="noopener noreferrer" target="_blank">' + headline + "</a>")
+        rows.append(
+            "<li>" + esc(it.get("published_at")) + " &middot; " + headline
+            + ' <span class="muted">&middot; ' + esc(it.get("publisher")) + " &middot; "
+            + esc(it.get("source_class")) + " &middot; event type (rule-based): "
+            + esc(it.get("event_type") or "other") + "</span></li>")
+    return _section(NEWS_TITLE, "news", intro + "<ul>" + "".join(rows) + "</ul>")
+
+
 def _domain(run: Dict[str, Any]) -> str:
     pages = (run.get("crawl") or {}).get("pages") or []
     if pages and pages[0].get("url"):
@@ -366,8 +395,10 @@ def _ledger(claims: List[Dict[str, Any]]) -> str:
     return '<div class="ledger">' + "".join(items) + "</div>"
 
 
-def render_profile_html(run: Dict[str, Any], source_name: str = "") -> str:
-    """Render one run dict (the JSON run_site.py writes) to a complete HTML document string."""
+def render_profile_html(run: Dict[str, Any], source_name: str = "", news: Optional[Dict[str, Any]] = None) -> str:
+    """Render one run dict (the JSON run_site.py writes) to a complete HTML document string.
+    `news` (B-105): the run's news report, shown as a separate section at the bottom when given;
+    without it the page is exactly as before."""
     profile = run.get("profile") or {}
     claims = run.get("claims") or []
     # B-89: attach each claim's per-quote sources (run-level evidence_sources) for the drawer.
@@ -438,6 +469,8 @@ def render_profile_html(run: Dict[str, Any], source_name: str = "") -> str:
 
     sections.append(_section("Gaps and conflicts", "gaps", _gaps(profile.get("gaps_conflicts") or [], lookup)))
     sections.append(_section("Evidence ledger", "ledger", _ledger(claims)))
+    if news is not None:
+        sections.append(_news_section(news))
 
     foot = (
         "<footer>Rendered from saved JSON"
@@ -456,13 +489,21 @@ def render_profile_html(run: Dict[str, Any], source_name: str = "") -> str:
 
 def render_file(run_path: Any, out_path: Any = None) -> Path:
     """Read a run JSON file and write its HTML page. Default output: data/pages/<stem>.html next
-    to the run's data/ folder (created if missing). Returns the written path."""
+    to the run's data/ folder (created if missing). Returns the written path. B-105: when
+    data/news/<same name>.json exists next to the run's data/ folder, its news section is added."""
     src = Path(run_path)
     run = json.loads(src.read_text(encoding="utf-8"))
+    news = None
+    news_path = src.parent.parent / "news" / src.name
+    if news_path.is_file():
+        try:
+            news = json.loads(news_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            news = None   # an unreadable news file never stops the profile page
     if out_path is None:
         out = src.parent.parent / "pages" / (src.stem + ".html")
     else:
         out = Path(out_path)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(render_profile_html(run, source_name=src.name), encoding="utf-8")
+    out.write_text(render_profile_html(run, source_name=src.name, news=news), encoding="utf-8")
     return out
