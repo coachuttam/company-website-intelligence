@@ -16,13 +16,14 @@ class Entry(NamedTuple):
     published: Optional[date]
     summary: str
     feed_title: str
+    feed_url: str = ""
 
 
 def _text(html: str) -> str:
     return " ".join(BeautifulSoup(html or "", "lxml").get_text(" ").split())
 
 
-def parse_feed(body: bytes) -> List[Entry]:
+def parse_feed(body: bytes, feed_url: str = "") -> List[Entry]:
     """Every entry of an RSS/Atom feed. A body that is not a feed gives []."""
     parsed = feedparser.parse(body)
     if not parsed.entries:
@@ -34,7 +35,8 @@ def parse_feed(body: bytes) -> List[Entry]:
         published = (datetime.fromtimestamp(calendar.timegm(stamp), tz=timezone.utc).date() if stamp else None)
         summary = _text(e.get("summary", "") or "")
         out.append(Entry(title=_text(e.get("title", "")), link=(e.get("link") or "").strip(), published=published,
-                         summary=re.sub(r"\s+", " ", summary)[:400], feed_title=feed_title))
+                         summary=re.sub(r"\s+", " ", summary)[:400], feed_title=feed_title,
+                         feed_url=feed_url))
     return out
 
 

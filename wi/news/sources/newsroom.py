@@ -58,7 +58,7 @@ def discover_and_read(company: Company, fetcher: Fetcher, deadline_ok) -> Tuple[
         if r is None or not looks_like_feed(r.content_type, r.body):
             log.append({"url": url, "kind": "feed", "status": "skipped", "reason": reason if r is None else "not a feed"})
             continue
-        found = parse_feed(r.body)
+        found = parse_feed(r.body, url)
         log.append({"url": url, "kind": "feed", "status": "ok", "reason": f"{len(found)} entries"})
         entries.extend(found)
     return entries, log
