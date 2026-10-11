@@ -115,11 +115,11 @@ def test_a_quote_from_a_block_is_found_by_the_gate():
 
 # 6. versions and snapshot
 def test_version_bump_changes_the_cache_key(monkeypatch):
-    assert cache_module.EXTRACTION_LOGIC_VERSION == 27
+    assert cache_module.EXTRACTION_LOGIC_VERSION == 28   # 27 was B-100; 28 is B-102
     pages = [CleanPage(url="https://acme.example/", title="Acme", text="x")]
-    k27 = cache_module.run_fingerprint("https://acme.example/", pages, {})
+    current = cache_module.run_fingerprint("https://acme.example/", pages, {})
     monkeypatch.setattr(cache_module, "EXTRACTION_LOGIC_VERSION", 26)
-    assert cache_module.run_fingerprint("https://acme.example/", pages, {}) != k27
+    assert cache_module.run_fingerprint("https://acme.example/", pages, {}) != current
 
 
 def test_snapshot_format_still_loads():

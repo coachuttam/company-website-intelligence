@@ -167,7 +167,9 @@ from wi.crawl.fetch import content_hash
 # evidence (and the removal noted), so a stale cached claim would keep the made-up lines.
 # 27 (2026-10-11, B-100): clean_page appends logo and image labels to every page and the navigation,
 # header and footer link texts to the homepage, so the text the model and the gate see changes.
-EXTRACTION_LOGIC_VERSION = 27
+# 28 (2026-10-11, B-102): a bare products.names quote is upgraded to a sentence naming the product
+# from the sent pages before the gate runs, so accepted claims and the cache payload change.
+EXTRACTION_LOGIC_VERSION = 28
 
 
 def run_fingerprint(site_url: str, pages: List[CleanPage], config: dict) -> str:
