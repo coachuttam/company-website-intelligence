@@ -128,6 +128,7 @@ from wi.extract.llm import ChatCompleter, LLMResult
 from wi.extract.prompt import build_messages
 from wi.schemas.announcement import Announcement
 from wi.schemas.claim import Claim, Status
+from wi.extract.evidence_upgrade import MAX_RECORDS as MAX_UPGRADE_RECORDS, upgrade_bare_product_quotes
 from wi.validate.evidence import (
     check_claim, check_claim_items, check_conflicting_claim, drop_unfound_lines, evidence_home,
     quote_in_page, quote_sources, realign_list_evidence, trim_delivery_model_details,
@@ -177,6 +178,8 @@ class ExtractionRun:
     # B-89: claim_id -> [{"quote", "urls"}] for accepted claims whose quotes are not all on the one
     # page their source_url names (quotes spread over several pages, or found elsewhere).
     evidence_sources: Dict[str, List[dict]] = field(default_factory=dict)
+    # B-102: products.names quotes upgraded from the bare name to a sentence (wi/extract/evidence_upgrade.py)
+    evidence_upgrades: List[dict] = field(default_factory=list)
 
 
 def _slug(site_url: str) -> str:
@@ -233,6 +236,7 @@ def _payload_from_run(run: ExtractionRun) -> dict:
         "rejected_announcements": [asdict(r) for r in run.rejected_announcements],
         "schema_errors": run.schema_errors,
         "evidence_sources": run.evidence_sources,   # B-89
+        "evidence_upgrades": run.evidence_upgrades,  # B-102
     }
 
 
@@ -254,6 +258,7 @@ def diagnostics_from_run(run: ExtractionRun) -> dict:
         "schema_errors": run.schema_errors,
         "rejected_announcements": [asdict(r) for r in run.rejected_announcements],
         "evidence_sources": run.evidence_sources,   # B-89: each quote's own page(s)
+        "evidence_upgrades": run.evidence_upgrades,  # B-102: bare products.names quotes upgraded
     }
 
 
@@ -267,6 +272,7 @@ def _run_from_cached_payload(site_url: str, payload: dict, model: str) -> Extrac
     ]
     run.schema_errors = list(payload.get("schema_errors", []))
     run.evidence_sources = dict(payload.get("evidence_sources", {}))   # B-89
+    run.evidence_upgrades = list(payload.get("evidence_upgrades", []))   # B-102
     run.usage = LLMResult(content="", model=model, prompt_tokens=0, completion_tokens=0,
                            total_tokens=0, elapsed_s=0.0)
     return run
@@ -512,6 +518,13 @@ def extract_claims(
                     f"claim #{i} ({field_name}): B-63: re-paired {moved} evidence quote(s) with "
                     f"the value each one supports"
                 )
+            # B-102: a products.names quote that is only the name itself is swapped for a real
+            # sentence naming it from the sent pages, when one exists (wi/extract/evidence_upgrade.py);
+            # the unchanged gate below then checks that sentence like any other quote.
+            claim, upgrades = upgrade_bare_product_quotes(claim, text_by_url)
+            room = MAX_UPGRADE_RECORDS - len(run.evidence_upgrades)
+            if room > 0:
+                run.evidence_upgrades.extend(upgrades[:room])
             ok, reason = check_claim(claim, page_text, corpus_texts=list(text_by_url.values()))
             if not ok:
                 # B-40 (2026-09-27): before discarding the whole claim, see if it's a multi-value

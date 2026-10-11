@@ -1033,7 +1033,8 @@ def test_diagnostics_from_run_on_a_clean_run_is_all_empty():
     diag = diagnostics_from_run(run)
 
     assert diag == {"rejected": [], "schema_errors": [], "rejected_announcements": [],
-                    "evidence_sources": {}}   # B-89: every quote is on its cited page
+                    "evidence_sources": {},     # B-89: every quote is on its cited page
+                    "evidence_upgrades": []}    # B-102: no bare products.names quote to upgrade
 
 
 # --- B-77: cite the page the evidence is actually on ------------------------------------------

@@ -139,6 +139,11 @@ Post-hoc and read-only; no change has been made. Details in `eval/HELDOUT_V2_REP
 - **`products.names` bare-label guard also rejects correct names.** When the only quote available
   for a product is its own name (Notion "Notion AI", Typeform "Growth Flow"), the guard that stops
   menu labels being reported as products rejects the real product too.
+- **Evidence upgrades for `products.names` take the first qualifying sentence (B-102).** That sentence
+  can be a FAQ question ("How does Notion AI use my data?") or a customer-story line, so the quote
+  shows that the name exists on the site but not always that it is a product. `products.names` items
+  are scored by exact match, so company-prefixed names ("Chargebee Billing") score as disjoint from
+  labels without the prefix ("Billing").
 
 ## Crawl
 

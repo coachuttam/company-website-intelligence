@@ -62,3 +62,43 @@ The control's combined strict score moved 0.5 points between its two rounds (dev
 - **v2 is development data from now on**, so the v2 columns are not held-out numbers. The recorded
   held-out headline is unchanged: 35% strict, tag `pre-heldout-v2` (`eval/HELDOUT_V2_REPORT.md`).
 - **Raw data:** reports and run files are in `data/archive/dev13/`, local only.
+
+## fix1: sentence evidence for bare products.names quotes (B-102), 2026-10-11
+
+**What was run.** `eval/dev13_compare.sh 2 main fix1-bare-label-evidence`. The control is `main` at
+099ec9e, which already includes the cleaner change.
+
+| Build | Round | dev5 | v2 | Combined |
+| --- | --- | --- | --- | --- |
+| main | 1 | 68.0 / 72.0 | 38.3 / 48.3 | 49.7 / 57.4 |
+| main | 2 | 68.0 / 72.0 | 36.7 / 46.7 | 48.7 / 56.4 |
+| **main** | **mean** | 68.0 / 72.0 | 37.5 / 47.5 | **49.2 / 56.9** |
+| fix1 | 1 | 70.7 / 74.7 | 39.2 / 49.2 | 51.3 / 59.0 |
+| fix1 | 2 | 68.0 / 72.0 | 38.3 / 47.5 | 49.7 / 56.9 |
+| **fix1** | **mean** | 69.3 / 73.3 | 38.8 / 48.3 | **50.5 / 57.9** |
+
+Figures are strict / normalised (%). The control's spread between rounds was 1.0 point.
+
+**products.names:** miss −12, partial +7, correct +2, incorrect +3.
+- All 3 extra incorrect answers are Chargebee naming: "Chargebee Billing" against the label's
+  "Billing" scores as disjoint.
+- 39 items were upgraded over the 2 rounds.
+
+**Unsupported:** unchanged at 16.
+
+**Pass test:**
+
+| Test | Result |
+| --- | --- |
+| Combined strict +1.3 (needs ≥ +1.0) | PASS |
+| Unsupported +0 | PASS |
+| Worst field +3 incorrect (limit 3) | PASS |
+
+**Overall: PASS. Cost:** about $0.38.
+
+**Caveats:**
+- **Only 2 rounds,** and the +1.3 gain is barely above the 1.0-point spread.
+- **v2 is development data,** so the v2 columns are not held-out numbers. The held-out headline is
+  unchanged (35%, `pre-heldout-v2`).
+- **Raw data** is in `data/archive/dev13/`; the earlier main-versus-cleaner files are in
+  `data/archive/dev13_main-vs-cleaner/`. Both are local only.
