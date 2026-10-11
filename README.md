@@ -38,9 +38,9 @@ cp .env.example .env                         # then fill in the keys you have (n
   and holds no `data/` folder.
   - **Tests:** one test (`tests/test_snapshot.py::test_b88_snapshots_are_git_ignored`) asks git whether
     `data/clean/` is ignored, so outside a repository it is skipped (3 skipped instead of 2).
-  - **No saved runs:** there are no saved runs, snapshots or rendered pages, so the "Check and render
-    a saved run" and "Evaluation" steps below need a run first (which needs `OPENAI_API_KEY`). The
-    `data/` folders are created on the first run.
+  - **No saved runs under `data/`:** apart from the three samples below, there are no saved runs,
+    snapshots or rendered pages, so the "Evaluation" steps need runs first (which needs
+    `OPENAI_API_KEY`). The `data/` folders are created on the first run.
   - **No git restore:** the `git checkout -- eval/<file>` advice for restoring overwritten reports
     does not apply until the folder is a git repository with a first commit, so copy a report before
     re-running a scorer.
