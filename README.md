@@ -44,7 +44,7 @@ cp .env.example .env                         # then fill in the keys you have (n
   - **No git restore:** the `git checkout -- eval/<file>` advice for restoring overwritten reports
     does not apply until the folder is a git repository with a first commit, so copy a report before
     re-running a scorer.
-- **Samples:** `samples/runs/` holds three saved runs (snowflake_com, notion_com, cashfree_com) and `samples/pages/` their rendered pages, so the offline commands work without a key: `python eval/check_gate.py samples/runs/notion_com.json`, `python -m wi.render samples/runs/notion_com.json` (writes `samples/pages/notion_com.html`).
+- **Samples:** `samples/runs/` holds three saved runs (snowflake_com, notion_com, cashfree_com) and `samples/pages/` their rendered pages, so the offline commands work without a key: `python eval/check_gate.py samples/runs/notion_com.json`, `python -m wi.render samples/runs/notion_com.json` (writes `samples/pages/notion_com.html`). They are development runs from 2026-10-11 (Notion is a dev site, snowflake.com a peeked site, cashfree.com a v2 site run after the held-out run), not held-out results.
 - **Expected warnings during setup and tests:** pip may print "lxml does not provide the extra
   'html_clean'" and pytest prints urllib3's `NotOpenSSLWarning` on macOS's LibreSSL Python. Neither
   affects the results.
