@@ -36,9 +36,8 @@ cp .env.example .env                         # then fill in the keys you have (n
   (`shasum -a 256 -c HANDOFF_SHA256.txt`).
 - **`company_website_intelligence_main.zip`** (the `main` branch only): it is not a git repository
   and holds no `data/` folder.
-  - **Before running the tests,** run `git init` in the unzipped folder. One test
-    (`tests/test_snapshot.py::test_b88_snapshots_are_git_ignored`) asks git whether `data/clean/` is
-    ignored, and fails outside a repository.
+  - **Tests:** one test (`tests/test_snapshot.py::test_b88_snapshots_are_git_ignored`) asks git whether
+    `data/clean/` is ignored, so outside a repository it is skipped (3 skipped instead of 2).
   - **No saved runs:** there are no saved runs, snapshots or rendered pages, so the "Check and render
     a saved run" and "Evaluation" steps below need a run first (which needs `OPENAI_API_KEY`). The
     `data/` folders are created on the first run.
