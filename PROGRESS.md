@@ -2139,3 +2139,5 @@ but cannot run Uttam's actual crawler/LLM pipeline against the real sites.
 - 2026-10-11: Merged cleaner-alt-nav (B-100: logo and image labels from main content, homepage navigation text; EXTRACTION_LOGIC_VERSION 27). 13-site comparison (dev5 + v2 as development data, 2 rounds, back to back): combined strict 50.0% vs main 46.4% (normalised 57.2 vs 53.3), unsupported +3 (at the limit), pass test PASS; details in eval/DEV13_RESULTS.md. Held-out headline unchanged (35%, pre-heldout-v2).
 
 - 2026-10-11: Merged fix1-bare-label-evidence (B-102: a bare products.names quote is upgraded to a sentence naming the product from the sent pages before the unchanged gate; EXTRACTION_LOGIC_VERSION 28). 13-site comparison, 2 rounds: combined strict 50.5% vs 49.2% (spread 1.0), products.names miss -12, unsupported unchanged; details in eval/DEV13_RESULTS.md.
+
+- 2026-10-11: fix3 (B-103, price-window evidence for public_plans, branch fix3-plan-price-evidence 47ea010) failed the 13-site pass test: combined strict 51.3% vs control 51.5%; only ElevenLabs improved; kept unmerged. A further cleaner exploration was planned but not done. Details in eval/DEV13_RESULTS.md.

@@ -103,3 +103,24 @@ Figures are strict / normalised (%). The control's spread between rounds was 1.0
   unchanged (35%, `pre-heldout-v2`).
 - **Raw data** is in `data/archive/dev13/`; the earlier main-versus-cleaner files are in
   `data/archive/dev13_main-vs-cleaner/`. Both are local only.
+
+## fix3: price-window evidence for public_plans (B-103), not merged
+
+**What was run.** Branch `fix3-plan-price-evidence` (47ea010), compared with `main` (52e29d5) using
+`eval/dev13_compare.sh 2 main fix3-plan-price-evidence`.
+
+**Result.** Combined strict mean 51.3%, against 51.5% for the control (it needed +1.0; the control's
+spread between rounds was 1.5 points). It fails the pass test, so the branch is kept but not merged.
+
+**Why it did not help.**
+- **ElevenLabs** was the only site whose public_plans improved: its 7 upgraded plan quotes found the
+  plan name and price in separate cells.
+- **Framer:** the upgrades found real USD prices, but the label records INR (geo-dependent prices),
+  so the field stayed a miss.
+- **Other sites:** the remaining plan misses and disjoint answers were not "quote not found" cases,
+  so the fix could not reach them.
+
+**Cost:** about $0.38.
+
+**Planned but not done.** A further cleaner exploration (what else the cleaner drops beyond menus,
+footers and logo text) was planned after the cleaner merge but not carried out.
