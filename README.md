@@ -3,7 +3,7 @@
 Given one public company website URL, this produces a structured, evidence-backed profile of what the company states on its own website: 15 fixed fields, each with a source URL, an exact quote and a retrieval date, or an honest `not_found`.
 A company website is a **self-reported source**. Claims are never presented as independently verified.
 
-Spec: `docs/PRD.MD`. Behaviour log: `tests/BEHAVIOURS.md`. Progress log: `PROGRESS.md`.
+Spec: `docs/PRD.MD`. Behaviour log: `tests/BEHAVIOURS.md`. Progress log: `PROGRESS.md`. Acceptance status (AC-01 to AC-12), open decisions and what was cut: `docs/ACCEPTANCE_SUMMARY.md`.
 
 ## Status at a glance
 
