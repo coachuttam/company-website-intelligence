@@ -189,6 +189,8 @@ def test_render_package_imports_only_the_standard_library():
                 names = [node.module]
             for name in names:
                 top = name.split(".")[0]
+                if path.name == "pdf.py" and top == "playwright":
+                    continue   # B-108: optional PDF export, imported lazily inside write_pdf only
                 assert top in stdlib or name.startswith("wi.render"), path.name + " imports " + name
 
 

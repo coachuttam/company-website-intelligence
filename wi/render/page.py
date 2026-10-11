@@ -28,6 +28,13 @@ HTML-escaped, and a source URL only becomes a link if it starts with http:// or 
 `javascript:` URL is shown as plain text). The page uses no JavaScript (evidence drawers are
 native <details> elements) and loads nothing external, so it renders offline. This module imports
 only the standard library on purpose (see tests/test_render.py, which enforces it).
+
+B-108 (presentable report): a print stylesheet (light colours whatever the screen theme, A4, no
+facts split across pages), a cover block shown only in print (company name, domain, retrieval date,
+"Website-sourced profile"), and `render_pdf_file`, which prints the same page to
+data/pages/<slug>.pdf through wi/render/pdf.py (Playwright, optional). In the PDF the evidence
+drawers are open, since a printed <details> cannot be clicked. B-109: the inline SVG charts from
+wi/render/charts.py (field coverage, pages used, news timeline).
 """
 from __future__ import annotations
 
@@ -36,6 +43,8 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 from urllib.parse import urlparse
+
+from wi.render import charts
 
 NL = chr(10)  # newline, built here so this file needs no backslash escapes anywhere
 
@@ -168,7 +177,37 @@ a { color: var(--accent); }
 .ledger code { font-size: 13px; }
 .preview { color: var(--muted); overflow-wrap: anywhere; }
 footer { margin-top: 40px; color: var(--muted); font-size: 12px; }
-"""
+.cover { display: none; }
+@page { size: A4; margin: 16mm 14mm; }
+@media print {
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    --bg: #ffffff; --surface: #ffffff; --ink: #1d2227; --muted: #4f5a63; --line: #c9ced3;
+    --accent: #1f4e79;
+    --sourced-bg: #e3f1e6; --sourced-ink: #1e5a2d;
+    --inferred-bg: #fbefd3; --inferred-ink: #7a4e00;
+    --conflicting-bg: #f9dcdc; --conflicting-ink: #8a1f1f;
+    --notfound-bg: #e9ebed; --notfound-ink: #4a545c;
+    --banner-bg: #fbefd3; --banner-ink: #5c3b00;
+  }
+  body { font-size: 11pt; background: #ffffff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  main { max-width: none; padding: 0; }
+  .cover {
+    display: flex; flex-direction: column; justify-content: center; min-height: 240mm;
+    break-after: page; page-break-after: always;
+  }
+  .cover .kicker { margin: 0; font-size: 12pt; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .cover .name { margin: 8px 0 4px; font-size: 32pt; font-weight: 700; line-height: 1.15; }
+  .cover .domain { margin: 0; font-size: 14pt; }
+  .cover .retrieved { margin: 18px 0 0; font-size: 12pt; }
+  .cover .note { max-width: 60ch; }
+  section { break-before: auto; }
+  h2, h3 { break-after: avoid; page-break-after: avoid; }
+  .fact, .gap, figure, .strip, .ledger details.item { break-inside: avoid; page-break-inside: avoid; }
+  details.drawer > summary, .ledger summary { list-style: none; }
+  a { color: var(--ink); text-decoration: none; }
+  footer { margin-top: 24px; }
+}
+""" + charts.CHART_CSS
 
 
 def esc(value: Any) -> str:
@@ -182,7 +221,7 @@ def _label(field: str) -> str:
 
 
 def _badge(status: Optional[str]) -> str:
-    key = status if status in STATUS_LABEL else "notfound"
+    key = status if status in STATUS_LABEL else "not_found"
     return '<span class="badge ' + STATUS_CLASS[key] + '">' + STATUS_LABEL.get(status or "", "Not found") + "</span>"
 
 
@@ -315,7 +354,8 @@ def _news_section(news: Dict[str, Any]) -> str:
             + ' <span class="muted">&middot; ' + esc(it.get("publisher")) + " &middot; "
             + esc(it.get("source_class")) + " &middot; event type (rule-based): "
             + esc(it.get("event_type") or "other") + "</span></li>")
-    return _section(NEWS_TITLE, "news", intro + "<ul>" + "".join(rows) + "</ul>")
+    timeline = charts.news_timeline_svg(charts.news_timeline(news))   # B-109
+    return _section(NEWS_TITLE, "news", intro + timeline + "<ul>" + "".join(rows) + "</ul>")
 
 
 def _domain(run: Dict[str, Any]) -> str:
@@ -395,10 +435,23 @@ def _ledger(claims: List[Dict[str, Any]]) -> str:
     return '<div class="ledger">' + "".join(items) + "</div>"
 
 
-def render_profile_html(run: Dict[str, Any], source_name: str = "", news: Optional[Dict[str, Any]] = None) -> str:
+def _cover(name: str, domain: str, retrieved: Any) -> str:
+    """B-108: the print-only cover block (hidden on screen by CSS)."""
+    return (
+        '<div class="cover"><p class="kicker">Website-sourced profile</p>'
+        '<p class="name">' + esc(name) + '</p><p class="domain">' + esc(domain) + "</p>"
+        '<p class="retrieved">Retrieved ' + esc(retrieved or "n/a") + "</p>"
+        '<p class="note">A company website is a self-reported source. Facts in this report are what the '
+        "company states about itself and are not independently verified.</p></div>"
+    )
+
+
+def render_profile_html(run: Dict[str, Any], source_name: str = "", news: Optional[Dict[str, Any]] = None,
+                        open_drawers: bool = False) -> str:
     """Render one run dict (the JSON run_site.py writes) to a complete HTML document string.
     `news` (B-105): the run's news report, shown as a separate section at the bottom when given;
-    without it the page is exactly as before."""
+    without it the page is exactly as before. `open_drawers` (B-108, used for the PDF): evidence
+    drawers start open."""
     profile = run.get("profile") or {}
     claims = run.get("claims") or []
     # B-89: attach each claim's per-quote sources (run-level evidence_sources) for the drawer.
@@ -468,6 +521,10 @@ def render_profile_html(run: Dict[str, Any], source_name: str = "", news: Option
             sections.append(_section(title, anchor, "".join(facts)))
 
     sections.append(_section("Gaps and conflicts", "gaps", _gaps(profile.get("gaps_conflicts") or [], lookup)))
+    if claims:
+        coverage = profile.get("coverage") or {}
+        sections.append(_section("Pages used as evidence", "pages",
+                                 charts.pages_svg(charts.page_field_counts(run), coverage.get("pages_scanned"))))
     sections.append(_section("Evidence ledger", "ledger", _ledger(claims)))
     if news is not None:
         sections.append(_news_section(news))
@@ -478,19 +535,22 @@ def render_profile_html(run: Dict[str, Any], source_name: str = "", news: Option
         + ", schema " + esc(run.get("schema_version") or "unknown")
         + ". No model call was made to build this page.</footer>"
     )
-    return (
+    coverage = profile.get("coverage") or {}
+    page = (
         "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">"
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         "<title>" + esc(name) + " - Website-sourced profile</title><style>" + CSS + "</style></head><body><main>"
-        + head + banner + _strip(profile.get("coverage") or {}) + "".join(sections) + foot
+        + _cover(str(name), domain, coverage.get("last_retrieved_at")) + head + banner + _strip(coverage)
+        + charts.coverage_svg(charts.coverage_counts(run)) + "".join(sections) + foot
         + "</main></body></html>"
     )
+    if open_drawers:
+        # The literal below is only ever written by _drawer: third-party text is escaped (quotes too).
+        page = page.replace('<details class="drawer">', '<details class="drawer" open>')
+    return page
 
 
-def render_file(run_path: Any, out_path: Any = None) -> Path:
-    """Read a run JSON file and write its HTML page. Default output: data/pages/<stem>.html next
-    to the run's data/ folder (created if missing). Returns the written path. B-105: when
-    data/news/<same name>.json exists next to the run's data/ folder, its news section is added."""
+def _load(run_path: Any) -> Tuple[Path, Dict[str, Any], Optional[Dict[str, Any]]]:
     src = Path(run_path)
     run = json.loads(src.read_text(encoding="utf-8"))
     news = None
@@ -500,6 +560,14 @@ def render_file(run_path: Any, out_path: Any = None) -> Path:
             news = json.loads(news_path.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             news = None   # an unreadable news file never stops the profile page
+    return src, run, news
+
+
+def render_file(run_path: Any, out_path: Any = None) -> Path:
+    """Read a run JSON file and write its HTML page. Default output: data/pages/<stem>.html next
+    to the run's data/ folder (created if missing). Returns the written path. B-105: when
+    data/news/<same name>.json exists next to the run's data/ folder, its news section is added."""
+    src, run, news = _load(run_path)
     if out_path is None:
         out = src.parent.parent / "pages" / (src.stem + ".html")
     else:
@@ -507,3 +575,17 @@ def render_file(run_path: Any, out_path: Any = None) -> Path:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(render_profile_html(run, source_name=src.name, news=news), encoding="utf-8")
     return out
+
+
+def render_pdf_file(run_path: Any, out_path: Any = None, writer: Any = None) -> Tuple[Path, int]:
+    """B-108: print the same page (news included, drawers open) to a PDF. Default output:
+    data/pages/<stem>.pdf. `writer(html, path) -> page count` defaults to wi/render/pdf.py
+    (Playwright); tests pass their own. Returns (path, page count)."""
+    src, run, news = _load(run_path)
+    out = Path(out_path) if out_path is not None else src.parent.parent / "pages" / (src.stem + ".pdf")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    if writer is None:
+        from wi.render.pdf import write_pdf
+        writer = write_pdf
+    pages = writer(render_profile_html(run, source_name=src.name, news=news, open_drawers=True), out)
+    return out, pages

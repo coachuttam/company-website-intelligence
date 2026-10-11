@@ -104,9 +104,12 @@ When `crawl_status` is not `ok`, no model is called, every field is `not_found` 
 ```bash
 python eval/check_gate.py data/runs/<domain>.json    # schema-valid, every populated claim has evidence; exit 0 = PASS
 python -m wi.render data/runs/<domain>.json          # writes data/pages/<domain>.html; no model call
+python -m wi.render data/runs/<domain>.json --pdf    # writes data/pages/<domain>.pdf (needs playwright + chromium)
 ```
 
 The rendered page shows each fact with its status and quote, all `not_found` fields under Gaps, and a banner when the run is partial (`limit_reached`), non-English, or `crawl_status` is not `ok` (with its code and reason).
+
+It also shows three inline SVG charts: field coverage by status (coverage, not accuracy), the pages used as evidence with how many fields each supports, and, in the separate news section, a 90-day timeline of the news items. Printed or exported with `--pdf`, the page starts with a cover page and shows the evidence drawers open.
 
 ## Evaluation
 
