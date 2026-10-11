@@ -116,6 +116,10 @@ Post-hoc and read-only; no change has been made. Details in `eval/HELDOUT_V2_REP
   12 to 14 pages. Meeting 60 s needs a change to those Section 13 parameters, which needs approval.
 - **Cost is well inside its targets:** mean $0.0061 to $0.0062 and p95 $0.0085 to $0.0087 per site
   against $0.10 and $0.25 (gpt-4o-mini list prices; Jev adds about $0.0001).
+- **A stronger extraction model was tried and rejected.** gpt-4.1 (branch `strong-model`, not
+  merged) scored 50.3% combined strict against 50.5% on the 13 development sites, raised unsupported
+  from 17 to 45 and cost about $0.10 per site at p50 (14 of 26 runs over the cap); gpt-4o-mini stays.
+  See `eval/DEV13_RESULTS.md`.
 
 ## Field-specific
 

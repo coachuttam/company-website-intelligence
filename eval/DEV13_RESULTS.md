@@ -124,3 +124,35 @@ spread between rounds was 1.5 points). It fails the pass test, so the branch is 
 
 **Planned but not done.** A further cleaner exploration (what else the cleaner drops beyond menus,
 footers and logo text) was planned after the cleaner merge but not carried out.
+
+## gpt-4.1 extraction model (B-107), not merged
+
+**What was run.** Branch `strong-model` (2f049d9), which sets `llm.extraction_model: gpt-4.1` (the
+semantic judge stays on gpt-4o-mini), compared with `main` (a45e2f7) using
+`eval/dev13_compare.sh 2 main strong-model`. A one-site smoke test (calendly) ran first.
+
+**Result.** Combined strict mean 50.3%, against 50.5% for the control (it needed +1.0; the control's
+spread between rounds was 1.5 points).
+- **dev5:** 67.3% → 52.7%.
+- **v2:** 40.0% → 48.8%.
+- **Unsupported:** 17 → 45.
+
+**Pass test:**
+
+| Test | Result |
+| --- | --- |
+| Combined strict −0.2 (needs ≥ +1.0) | FAIL |
+| Unsupported +28 (limit +3) | FAIL |
+| Worst field +12 incorrect (pricing.revenue_model; limit 3) | FAIL |
+
+**Overall: FAIL.** Seven other fields also exceeded +3: partnerships +11, industries +7,
+named_alternatives +6, headquarters +5, free_trial +4, named_customers +4, certifications +4.
+
+**Why.** gpt-4.1 answers fields the labels mark as `not_found`: correct abstentions fell from 61 to
+33 and misses from 83 to 44, and many of the new answers scored incorrect or unsupported.
+
+**Cost and latency.** Cost per site p50 $0.100 and p95 $0.133, with 14 of 26 runs over the $0.10 cap
+(main: $0.0071 / $0.0094). Latency was no worse: p50 86.3 s and p95 164.8 s, against 88.0 s and
+170.1 s for main. Total spend about $2.85, including the smoke test.
+
+**Decision.** gpt-4o-mini stays the extraction model. The branch is kept but not merged.
