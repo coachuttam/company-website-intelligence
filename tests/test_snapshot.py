@@ -5,6 +5,8 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 
+import pytest
+
 from wi.crawl.clean import CleanPage
 from wi.crawl.fetch import FetchResult
 from wi.crawl.snapshot import build_snapshot, sha256_text, write_snapshot
@@ -48,6 +50,15 @@ def test_b88_write_snapshot_returns_a_path_and_a_checksum_of_the_file(tmp_path):
     assert json.loads(data)["pages"][0]["clean_text"] == "Hello"
 
 
+def _inside_git_work_tree() -> bool:
+    try:
+        out = subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], cwd=ROOT, capture_output=True, text=True)
+    except OSError:
+        return False
+    return out.returncode == 0 and out.stdout.strip() == "true"
+
+
+@pytest.mark.skipif(not _inside_git_work_tree(), reason="needs a git work tree (e.g. not an unzipped archive)")
 def test_b88_snapshots_are_git_ignored():
     out = subprocess.run(["git", "check-ignore", "-q", "data/clean/acme_test/20261009-130507.json"],
                          cwd=ROOT, capture_output=True)

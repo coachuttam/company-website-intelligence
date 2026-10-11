@@ -1,0 +1,1416 @@
+{
+  "claims": [
+    {
+      "claim_id": "cashfree.com:company_identity.name:0",
+      "field": "company_identity.name",
+      "value": "Cashfree Payments",
+      "status": "extracted",
+      "confidence": null,
+      "source_url": "https://www.cashfree.com/about-us",
+      "page_title": "About Cashfree Payments",
+      "evidence": "Cashfree Payments is a leader in India\u2019s payments landscape, processing $80B annually for over 1 Million+ businesses since 2015.",
+      "retrieved_at": "2026-10-11",
+      "notes": null,
+      "coverage": null
+    },
+    {
+      "claim_id": "cashfree.com:company_identity.description:1",
+      "field": "company_identity.description",
+      "value": "Cashfree Payments is a leader in India\u2019s payments landscape, processing $80B annually for over 1 Million+ businesses since 2015.",
+      "status": "extracted",
+      "confidence": null,
+      "source_url": "https://www.cashfree.com/about-us",
+      "page_title": "About Cashfree Payments",
+      "evidence": "Cashfree Payments is a leader in India\u2019s payments landscape, processing $80B annually for over 1 Million+ businesses since 2015.",
+      "retrieved_at": "2026-10-11",
+      "notes": null,
+      "coverage": null
+    },
+    {
+      "claim_id": "cashfree.com:company_identity.headquarters:2",
+      "field": "company_identity.headquarters",
+      "value": "Bengaluru, Karnataka, India",
+      "status": "extracted",
+      "confidence": null,
+      "source_url": "https://www.cashfree.com/customer-reward-scheme-terms-and-conditions",
+      "page_title": "Customer Reward Scheme Terms and Conditions | Cashfree Payments",
+      "evidence": "CASHFREE PAYMENTS INDIA PRIVATE LIMITED, Building No. 7, 10th Floor, Ecoworld, Sarjapur Marathalli Outer Ring Road, Bellandur, Bengaluru, Karnataka 560103",
+      "retrieved_at": "2026-10-11",
+      "notes": null,
+      "coverage": null
+    },
+    {
+      "claim_id": "cashfree.com:products.names:3",
+      "field": "products.names",
+      "value": [
+        "Cashfree Checkout",
+        "Payment Gateway",
+        "Payment Links",
+        "Payment Forms",
+        "Cashgram",
+        "Payouts",
+        "Subscriptions",
+        "RiskShield",
+        "Secure ID"
+      ],
+      "status": "extracted",
+      "confidence": null,
+      "source_url": "https://www.cashfree.com/",
+      "page_title": "Cashfree Payments - Fastest way to collect online payments",
+      "evidence": [
+        "With Cashfree Checkout, Aura Gold achieved a lightning-fast ~200 ms load time, along with full configurability of branding elements like logo, colors, and layout. They could also customize available payment modes and their ordering, ensuring the checkout reflected their exact preferences.",
+        "Get your business festive ready with India's Best Payment Gateway",
+        "No, you do not need a website or app to accept payments. Cashfree Payments has two no-code solutions for entities that want to accept payments without a website or application - Payment Links and Payment Forms.",
+        "No, you do not need a website or app to accept payments. Cashfree Payments has two no-code solutions for entities that want to accept payments without a website or application - Payment Links and Payment Forms.",
+        "Zoomcar Refunds Security Deposits Instantly With Cashgram",
+        "Payouts and refunds, done in seconds.",
+        "One recurring payments stack across UPI, Cards, eNACH and Global subscriptions - built to register mandates faster and keep every renewal running seamlessly.",
+        "RiskShield's AI blocks suspicious transactions before they happen, cutting down fraud losses by \u226480%.",
+        "Secure ID provides the following advantages for your verification workflows:- Comprehensive verification: Support for all major Indian identity documents and verification methods."
+      ],
+      "retrieved_at": "2026-10-11",
+      "notes": null,
+      "coverage": null
+    },
+    {
+      "claim_id": "cashfree.com:products.delivery_model:4",
+      "field": "products.delivery_model",
+      "value": "software",
+      "status": "inferred",
+      "confidence": null,
+      "source_url": "https://www.cashfree.com/",
+      "page_title": "Cashfree Payments - Fastest way to collect online payments",
+      "evidence": "Cashfree provides the best-in-class payments experience for businesses and customers.",
+      "retrieved_at": "2026-10-11",
+      "notes": "Inferred from the quote; details the quote does not mention were removed.",
+      "coverage": null
+    },
+    {
+      "claim_id": "cashfree.com:customers.segments:5",
+      "field": "customers.segments",
+      "value": "Businesses of all shapes and sizes",
+      "status": "extracted",
+      "confidence": null,
+      "source_url": "https://www.cashfree.com/about-us",
+      "page_title": "About Cashfree Payments",
+      "evidence": "Cashfree Payments is for businesses of all shapes and sizes.",
+      "retrieved_at": "2026-10-11",
+      "notes": null,
+      "coverage": null
+    },
+    {
+      "claim_id": "cashfree.com:customers.industries:6",
+      "field": "customers.industries",
+      "value": [
+        "E-commerce",
+        "Travel",
+        "Fintech",
+        "Retail",
+        "Logistics",
+        "Healthcare"
+      ],
+      "status": "extracted",
+      "confidence": null,
+      "source_url": "https://www.cashfree.com/",
+      "page_title": "Cashfree Payments - Fastest way to collect online payments",
+      "evidence": [
+        "E-commerce",
+        "Travel",
+        "Fintech",
+        "Retail",
+        "Logistics",
+        "Healthcare"
+      ],
+      "retrieved_at": "2026-10-11",
+      "notes": null,
+      "coverage": null
+    },
+    {
+      "claim_id": "cashfree.com:pricing.public_plans:7",
+      "field": "pricing.public_plans",
+      "value": [
+        "Zero payment gateway fees up to \u20b920 lakh in sales",
+        "Next-day settlements"
+      ],
+      "status": "extracted",
+      "confidence": null,
+      "source_url": "https://www.cashfree.com/payment-gateway-india",
+      "page_title": "Best Payment Gateway in India - 180+ Online Payment Modes | Cashfree",
+      "evidence": [
+        "Zero payment gateway fees up to \u20b920 lakh in sales",
+        "Next-day settlements"
+      ],
+      "retrieved_at": "2026-10-11",
+      "notes": null,
+      "coverage": null
+    },
+    {
+      "claim_id": "cashfree.com:pricing.sales_motion:8",
+      "field": "pricing.sales_motion",
+      "value": "Self-serve signup",
+      "status": "inferred",
+      "confidence": null,
+      "source_url": "https://www.cashfree.com/",
+      "page_title": "Cashfree Payments - Fastest way to collect online payments",
+      "evidence": "Start taking payments today. Grow into everything else.",
+      "retrieved_at": "2026-10-11",
+      "notes": "The page encourages businesses to start using the service immediately, indicating a self-serve signup process.",
+      "coverage": null
+    },
+    {
+      "claim_id": "replacement:pricing.free_trial",
+      "field": "pricing.free_trial",
+      "value": null,
+      "status": "not_found",
+      "confidence": null,
+      "source_url": null,
+      "page_title": null,
+      "evidence": null,
+      "retrieved_at": null,
+      "notes": null,
+      "coverage": {
+        "page_types_checked": [
+          "all pages sent to the model"
+        ],
+        "pages_checked": 40
+      }
+    },
+    {
+      "claim_id": "cashfree.com:pricing.revenue_model:10",
+      "field": "pricing.revenue_model",
+      "value": "transaction-based",
+      "status": "inferred",
+      "confidence": null,
+      "source_url": "https://www.cashfree.com/payment-gateway-india",
+      "page_title": "Best Payment Gateway in India - 180+ Online Payment Modes | Cashfree",
+      "evidence": "Pay only for actual transactions",
+      "retrieved_at": "2026-10-11",
+      "notes": "The pricing model is based on transaction fees, indicating a transaction-based revenue model.",
+      "coverage": null
+    },
+    {
+      "claim_id": "cashfree.com:traction.named_customers:11",
+      "field": "traction.named_customers",
+      "value": [
+        "redBus",
+        "Tata CLiQ",
+        "Zoomcar",
+        "Wakefit",
+        "MyPB",
+        "Sepoy & Co.",
+        "Aura Gold"
+      ],
+      "status": "extracted",
+      "confidence": null,
+      "source_url": "https://www.cashfree.com/case-study",
+      "page_title": "Cashfree Payments - Case Studies & Customer Success Stories",
+      "evidence": [
+        "redBus",
+        "Tata CLiQ",
+        "Zoomcar",
+        "Wakefit",
+        "MyPB",
+        "Sepoy & Co.",
+        "Aura Gold"
+      ],
+      "retrieved_at": "2026-10-11",
+      "notes": null,
+      "coverage": null
+    },
+    {
+      "claim_id": "cashfree.com:traction.certifications:12",
+      "field": "traction.certifications",
+      "value": null,
+      "status": "not_found",
+      "confidence": null,
+      "source_url": null,
+      "page_title": null,
+      "evidence": null,
+      "retrieved_at": null,
+      "notes": null,
+      "coverage": {
+        "page_types_checked": [
+          "all pages sent to the model"
+        ],
+        "pages_checked": 40
+      }
+    },
+    {
+      "claim_id": "cashfree.com:traction.partnerships:13",
+      "field": "traction.partnerships",
+      "value": null,
+      "status": "not_found",
+      "confidence": null,
+      "source_url": null,
+      "page_title": null,
+      "evidence": null,
+      "retrieved_at": null,
+      "notes": null,
+      "coverage": {
+        "page_types_checked": [
+          "all pages sent to the model"
+        ],
+        "pages_checked": 40
+      }
+    },
+    {
+      "claim_id": "cashfree.com:comparisons.named_alternatives:14",
+      "field": "comparisons.named_alternatives",
+      "value": null,
+      "status": "not_found",
+      "confidence": null,
+      "source_url": null,
+      "page_title": null,
+      "evidence": null,
+      "retrieved_at": null,
+      "notes": null,
+      "coverage": {
+        "page_types_checked": [
+          "all pages sent to the model"
+        ],
+        "pages_checked": 40
+      }
+    }
+  ],
+  "announcements": [],
+  "cache_status": "miss",
+  "dropped_pages": [],
+  "profile": {
+    "company_identity": {
+      "name": {
+        "value": "Cashfree Payments",
+        "status": "extracted",
+        "claim_id": "cashfree.com:company_identity.name:0"
+      },
+      "description": {
+        "value": "Cashfree Payments is a leader in India\u2019s payments landscape, processing $80B annually for over 1 Million+ businesses since 2015.",
+        "status": "extracted",
+        "claim_id": "cashfree.com:company_identity.description:1"
+      },
+      "headquarters": {
+        "value": "Bengaluru, Karnataka, India",
+        "status": "extracted",
+        "claim_id": "cashfree.com:company_identity.headquarters:2"
+      }
+    },
+    "company_comparisons": {},
+    "pricing_commercial": {
+      "public_plans": {
+        "value": [
+          "Zero payment gateway fees up to \u20b920 lakh in sales",
+          "Next-day settlements"
+        ],
+        "status": "extracted",
+        "claim_id": "cashfree.com:pricing.public_plans:7"
+      },
+      "sales_motion": {
+        "value": "Self-serve signup",
+        "status": "inferred",
+        "claim_id": "cashfree.com:pricing.sales_motion:8"
+      },
+      "revenue_model": {
+        "value": "transaction-based",
+        "status": "inferred",
+        "claim_id": "cashfree.com:pricing.revenue_model:10"
+      }
+    },
+    "products_services": {
+      "names": {
+        "value": [
+          "Cashfree Checkout",
+          "Payment Gateway",
+          "Payment Links",
+          "Payment Forms",
+          "Cashgram",
+          "Payouts",
+          "Subscriptions",
+          "RiskShield",
+          "Secure ID"
+        ],
+        "status": "extracted",
+        "claim_id": "cashfree.com:products.names:3"
+      },
+      "delivery_model": {
+        "value": "software",
+        "status": "inferred",
+        "claim_id": "cashfree.com:products.delivery_model:4"
+      }
+    },
+    "customers_positioning": {
+      "segments": {
+        "value": "Businesses of all shapes and sizes",
+        "status": "extracted",
+        "claim_id": "cashfree.com:customers.segments:5"
+      },
+      "industries": {
+        "value": [
+          "E-commerce",
+          "Travel",
+          "Fintech",
+          "Retail",
+          "Logistics",
+          "Healthcare"
+        ],
+        "status": "extracted",
+        "claim_id": "cashfree.com:customers.industries:6"
+      }
+    },
+    "evidence_traction": {
+      "named_customers": {
+        "value": [
+          "redBus",
+          "Tata CLiQ",
+          "Zoomcar",
+          "Wakefit",
+          "MyPB",
+          "Sepoy & Co.",
+          "Aura Gold"
+        ],
+        "status": "extracted",
+        "claim_id": "cashfree.com:traction.named_customers:11"
+      },
+      "announcements": []
+    },
+    "coverage": {
+      "pages_scanned": 40,
+      "total_fields": 15,
+      "fields_populated": 11,
+      "fields_inferred": 3,
+      "fields_conflicting": 0,
+      "fields_not_found": 4,
+      "evidence_support_rate": 0.8461538461538461,
+      "last_retrieved_at": "2026-10-11",
+      "crawl_status": "ok",
+      "crawl_error_code": null,
+      "crawl_status_reason": null,
+      "site_language": "en",
+      "site_language_source": "text",
+      "non_english": false
+    },
+    "gaps_conflicts": [
+      {
+        "value": null,
+        "status": "not_found",
+        "claim_id": "replacement:pricing.free_trial",
+        "field": "pricing.free_trial"
+      },
+      {
+        "value": null,
+        "status": "not_found",
+        "claim_id": "cashfree.com:traction.certifications:12",
+        "field": "traction.certifications"
+      },
+      {
+        "value": null,
+        "status": "not_found",
+        "claim_id": "cashfree.com:traction.partnerships:13",
+        "field": "traction.partnerships"
+      },
+      {
+        "value": null,
+        "status": "not_found",
+        "claim_id": "cashfree.com:comparisons.named_alternatives:14",
+        "field": "comparisons.named_alternatives"
+      }
+    ]
+  },
+  "schema_version": "schema-v1",
+  "limit_reached": true,
+  "crawl_status": "ok",
+  "crawl_error_code": null,
+  "crawl_status_reason": null,
+  "final_url": null,
+  "site_language": "en",
+  "site_language_source": "text",
+  "non_english": false,
+  "crawl": {
+    "pages": [
+      {
+        "url": "https://www.cashfree.com/",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": "https://cashfree.com/"
+      },
+      {
+        "url": "https://www.cashfree.com/secure-id",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/docs/secure-id/introduction",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/about-us",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://docs.cashfree.com/docs/mobile-integration",
+        "status": "error",
+        "status_code": 404,
+        "error": "HTTP 404",
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/partner-integration",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/customer-query-resolution-guide",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/customer-reward-scheme-terms-and-conditions",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/docs/partners/introduction",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/docs/secure-id/dashboard",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/docs/secure-id/e-sign/e-sign",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/docs/secure-id/get-started/integration/integration-verify-bank-account",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/docs/secure-id/kyc-stack/verify-bank-account",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/docs/help/secure-id/general-faqs",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/ixigo-provides-a-hassle-free-booking-experience-and-instant-refunds-to-train-travellers-with-pre-authorization-by-cashfree-payments",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/zoomcar-refunds-deposits-instantly-with-cashgram",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/wakefit-wins-customer-trust-with-100-days-full-instant-refund-policy-using-cashgram-by-cashfree-payments",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/tata-cliq-delights-customers-with-instant-cod-refunds",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/cred-revolutionizes-credit-card-repayment-by-automating-credit-card-settlement",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/zepto-delivers-10-min-groceries-with-a-seamless-payment-collection-solution-by-cashfree-payments",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-grip-invest-used-cashfree-payments-to-optimise-online-payments-for-bond-investments",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/branchs-journey-to-a-high-success-rate-with-multi-bank-support-through-cashfree-payments",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/furlenco-automates-security-deposit-refund-process-and-enhances-customer-experience-using-cashgram-by-cashfree-payments",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/porter-uses-cashfree-payments-to-do-instant-driver-partners-payouts-at-the-end-of-every-trip",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-indiabonds-improved-success-rate-with-cashfree-s-tpv-solution",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/70-orders-every-second-how-delhi-watch-company-clocked-rs.-1.1-cr-in-20-minutes-with-one-click-checkout",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-redbus-improved-credit-card-payment-success-rates-by-~4.8-with-cashfree",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-mypb-reduced-rto-by-86-and-hit-62.4-conversions-in-4-months-with-cashfree-one-click-checkout",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-sepoy-co.-took-its-premium-mixer-brand-to-15-higher-conversions-with-cashfree-one-click-checkout",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-atomic-pharmacy-improved-checkout-conversion-from-29-to-33-with-cashfree%E2%80%99s-new-one-click-checkout-flow",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": "https://www.cashfree.com/case-study/how-atomic-pharmacy-improved-checkout-conversion-from-29-to-33-with-cashfree\u2019s-new-one-click-checkout-flow"
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/from-shark-tank-to-scale-how-cashfree-helped-shesha-ayurveda-handle-a-5x-surge",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-safaa-delivered-a-premium-zero-friction-checkout-experience-with-apple-pay-on-cashfree-international-payment-gateway",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-aura-gold-scaled-recurring-investments-while-maintaining-90-success-rate",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://cashfreelogo.cashfree.com/website/pdf/ISO27001_2022Year2024certificate.pdf",
+        "status": "error",
+        "status_code": 200,
+        "error": "Unsupported content-type: 'application/pdf'",
+        "error_code": "UNSUPPORTED_CONTENT_TYPE",
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/payment-gateway-india",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/hosted-checkout",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/blog/trust-at-checkout-now-easier-to-build",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/payment-links",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/payment-forms",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/recurring-payment",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/from-signup-to-renewal-how-cashfree-powers-story-tv-s-subscription-growth-at-scale",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      }
+    ],
+    "skipped_by_robots": [],
+    "skipped_as_duplicate": [
+      "https://www.cashfree.com/customer-resolution-guide"
+    ],
+    "skipped_as_other_locale": [],
+    "skipped_as_auth": [
+      "https://merchant.cashfree.com/auth/login"
+    ],
+    "dropped_after_redirect": [],
+    "budget_exhausted": false,
+    "page_cap_reached": true,
+    "crawl_status": "ok",
+    "crawl_error_code": null,
+    "crawl_status_reason": null,
+    "start_attempts": 1,
+    "final_url": null,
+    "blocked_pages": [],
+    "page_languages": [
+      {
+        "url": "https://www.cashfree.com/",
+        "declared_lang": null,
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/secure-id",
+        "declared_lang": null,
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/docs/secure-id/introduction",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/about-us",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/partner-integration",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/customer-query-resolution-guide",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/customer-reward-scheme-terms-and-conditions",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/docs/partners/introduction",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/docs/secure-id/dashboard",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/docs/secure-id/e-sign/e-sign",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/docs/secure-id/get-started/integration/integration-verify-bank-account",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/docs/secure-id/kyc-stack/verify-bank-account",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/docs/help/secure-id/general-faqs",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/ixigo-provides-a-hassle-free-booking-experience-and-instant-refunds-to-train-travellers-with-pre-authorization-by-cashfree-payments",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/zoomcar-refunds-deposits-instantly-with-cashgram",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/wakefit-wins-customer-trust-with-100-days-full-instant-refund-policy-using-cashgram-by-cashfree-payments",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/tata-cliq-delights-customers-with-instant-cod-refunds",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/cred-revolutionizes-credit-card-repayment-by-automating-credit-card-settlement",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/zepto-delivers-10-min-groceries-with-a-seamless-payment-collection-solution-by-cashfree-payments",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-grip-invest-used-cashfree-payments-to-optimise-online-payments-for-bond-investments",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/branchs-journey-to-a-high-success-rate-with-multi-bank-support-through-cashfree-payments",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/furlenco-automates-security-deposit-refund-process-and-enhances-customer-experience-using-cashgram-by-cashfree-payments",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/porter-uses-cashfree-payments-to-do-instant-driver-partners-payouts-at-the-end-of-every-trip",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-indiabonds-improved-success-rate-with-cashfree-s-tpv-solution",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/70-orders-every-second-how-delhi-watch-company-clocked-rs.-1.1-cr-in-20-minutes-with-one-click-checkout",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-redbus-improved-credit-card-payment-success-rates-by-~4.8-with-cashfree",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-mypb-reduced-rto-by-86-and-hit-62.4-conversions-in-4-months-with-cashfree-one-click-checkout",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-sepoy-co.-took-its-premium-mixer-brand-to-15-higher-conversions-with-cashfree-one-click-checkout",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-atomic-pharmacy-improved-checkout-conversion-from-29-to-33-with-cashfree%E2%80%99s-new-one-click-checkout-flow",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/from-shark-tank-to-scale-how-cashfree-helped-shesha-ayurveda-handle-a-5x-surge",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-safaa-delivered-a-premium-zero-friction-checkout-experience-with-apple-pay-on-cashfree-international-payment-gateway",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/how-aura-gold-scaled-recurring-investments-while-maintaining-90-success-rate",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/payment-gateway-india",
+        "declared_lang": null,
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/hosted-checkout",
+        "declared_lang": null,
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/blog/trust-at-checkout-now-easier-to-build",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/payment-links",
+        "declared_lang": null,
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/payment-forms",
+        "declared_lang": null,
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/recurring-payment",
+        "declared_lang": null,
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.cashfree.com/case-study/from-signup-to-renewal-how-cashfree-powers-story-tv-s-subscription-growth-at-scale",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      }
+    ],
+    "language_measured": {
+      "guess": "en",
+      "words": 27198,
+      "letters": 147483,
+      "latin_ratio": 1.0,
+      "en_ratio": 0.275,
+      "other_ratio": 0.003,
+      "declared_lang": null
+    }
+  },
+  "focus_retry": {
+    "enabled": false
+  },
+  "classifier": {
+    "provider": "jev",
+    "enabled": true,
+    "calls": 0,
+    "decisions": [
+      {
+        "field": "pricing.sales_motion",
+        "applied": false,
+        "reason": "no pricing-style page was crawled; no call made"
+      },
+      {
+        "field": "pricing.revenue_model",
+        "applied": false,
+        "reason": "existing answer kept (mode fill_missing)"
+      }
+    ],
+    "mode": "override",
+    "min_probability": 0.8
+  },
+  "rejected": [
+    {
+      "field": "customers.industries",
+      "reason": "quote not found in page text for 'Education': 'Education' (partial: kept 6/7 item(s) that independently verified)",
+      "attempted_value": [
+        "E-commerce",
+        "Travel",
+        "Fintech",
+        "Education",
+        "Retail",
+        "Logistics",
+        "Healthcare"
+      ],
+      "attempted_evidence": [
+        "E-commerce",
+        "Travel",
+        "Fintech",
+        "Education",
+        "Retail",
+        "Logistics",
+        "Healthcare"
+      ],
+      "source_url": "https://www.cashfree.com/"
+    },
+    {
+      "field": "pricing.free_trial",
+      "reason": "quote does not support the value",
+      "attempted_value": "0% payment gateway fees on first \u20b920 lakh of GMV",
+      "attempted_evidence": "Get your business festive ready today with 0% payment gateway fees, on sales up to \u20b920L*.",
+      "source_url": "https://www.cashfree.com/payment-gateway-india"
+    }
+  ],
+  "schema_errors": [
+    "claim #2 (company_identity.headquarters): B-77: evidence is on https://www.cashfree.com/customer-reward-scheme-terms-and-conditions, not on the cited https://www.cashfree.com/customer-query-resolution-guide; source_url re-pointed",
+    "claim #3 (products.names): B-77: evidence spans more than one page (4 quote(s) on the cited page, 5 elsewhere); citation left as it was",
+    "claim #4 (products.delivery_model): B-81: dropped detail(s) not in the evidence quote: API, web app (value now 'software')",
+    "claim #6 (customers.industries): B-77: evidence spans more than one page (2 quote(s) on the cited page, 4 elsewhere); citation left as it was",
+    "claim #7 (pricing.public_plans): B-77: evidence spans more than one page (1 quote(s) on the cited page, 1 elsewhere); citation left as it was",
+    "claim #11 (traction.named_customers): B-77: evidence spans more than one page (4 quote(s) on the cited page, 3 elsewhere); citation left as it was"
+  ],
+  "rejected_announcements": [],
+  "evidence_sources": {
+    "cashfree.com:products.names:3": [
+      {
+        "quote": "With Cashfree Checkout, Aura Gold achieved a lightning-fast ~200 ms load time, along with full configurability of branding elements like logo, colors, and layout. They could also customize available payment modes and their ordering, ensuring the checkout reflected their exact preferences.",
+        "urls": [
+          "https://www.cashfree.com/case-study/how-aura-gold-scaled-recurring-investments-while-maintaining-90-success-rate"
+        ]
+      },
+      {
+        "quote": "Get your business festive ready with India's Best Payment Gateway",
+        "urls": [
+          "https://www.cashfree.com/"
+        ]
+      },
+      {
+        "quote": "No, you do not need a website or app to accept payments. Cashfree Payments has two no-code solutions for entities that want to accept payments without a website or application - Payment Links and Payment Forms.",
+        "urls": [
+          "https://www.cashfree.com/"
+        ]
+      },
+      {
+        "quote": "No, you do not need a website or app to accept payments. Cashfree Payments has two no-code solutions for entities that want to accept payments without a website or application - Payment Links and Payment Forms.",
+        "urls": [
+          "https://www.cashfree.com/"
+        ]
+      },
+      {
+        "quote": "Zoomcar Refunds Security Deposits Instantly With Cashgram",
+        "urls": [
+          "https://www.cashfree.com/case-study/zoomcar-refunds-deposits-instantly-with-cashgram"
+        ]
+      },
+      {
+        "quote": "Payouts and refunds, done in seconds.",
+        "urls": [
+          "https://www.cashfree.com/"
+        ]
+      },
+      {
+        "quote": "One recurring payments stack across UPI, Cards, eNACH and Global subscriptions - built to register mandates faster and keep every renewal running seamlessly.",
+        "urls": [
+          "https://www.cashfree.com/recurring-payment"
+        ]
+      },
+      {
+        "quote": "RiskShield's AI blocks suspicious transactions before they happen, cutting down fraud losses by \u226480%.",
+        "urls": [
+          "https://www.cashfree.com/hosted-checkout"
+        ]
+      },
+      {
+        "quote": "Secure ID provides the following advantages for your verification workflows:- Comprehensive verification: Support for all major Indian identity documents and verification methods.",
+        "urls": [
+          "https://www.cashfree.com/docs/secure-id/introduction"
+        ]
+      }
+    ],
+    "cashfree.com:customers.industries:6": [
+      {
+        "quote": "E-commerce",
+        "urls": [
+          "https://www.cashfree.com/"
+        ]
+      },
+      {
+        "quote": "Travel",
+        "urls": [
+          "https://www.cashfree.com/"
+        ]
+      },
+      {
+        "quote": "Fintech",
+        "urls": [
+          "https://www.cashfree.com/secure-id"
+        ]
+      },
+      {
+        "quote": "Retail",
+        "urls": [
+          "https://www.cashfree.com/case-study/how-indiabonds-improved-success-rate-with-cashfree-s-tpv-solution",
+          "https://www.cashfree.com/case-study/70-orders-every-second-how-delhi-watch-company-clocked-rs.-1.1-cr-in-20-minutes-with-one-click-checkout",
+          "https://www.cashfree.com/case-study/how-sepoy-co.-took-its-premium-mixer-brand-to-15-higher-conversions-with-cashfree-one-click-checkout"
+        ]
+      },
+      {
+        "quote": "Logistics",
+        "urls": [
+          "https://www.cashfree.com/case-study/porter-uses-cashfree-payments-to-do-instant-driver-partners-payouts-at-the-end-of-every-trip",
+          "https://www.cashfree.com/case-study/how-mypb-reduced-rto-by-86-and-hit-62.4-conversions-in-4-months-with-cashfree-one-click-checkout",
+          "https://www.cashfree.com/case-study/how-sepoy-co.-took-its-premium-mixer-brand-to-15-higher-conversions-with-cashfree-one-click-checkout"
+        ]
+      },
+      {
+        "quote": "Healthcare",
+        "urls": [
+          "https://www.cashfree.com/case-study/how-atomic-pharmacy-improved-checkout-conversion-from-29-to-33-with-cashfree%E2%80%99s-new-one-click-checkout-flow"
+        ]
+      }
+    ],
+    "cashfree.com:pricing.public_plans:7": [
+      {
+        "quote": "Zero payment gateway fees up to \u20b920 lakh in sales",
+        "urls": [
+          "https://www.cashfree.com/"
+        ]
+      },
+      {
+        "quote": "Next-day settlements",
+        "urls": [
+          "https://www.cashfree.com/payment-gateway-india"
+        ]
+      }
+    ],
+    "cashfree.com:traction.named_customers:11": [
+      {
+        "quote": "redBus",
+        "urls": [
+          "https://www.cashfree.com/case-study"
+        ]
+      },
+      {
+        "quote": "Tata CLiQ",
+        "urls": [
+          "https://www.cashfree.com/case-study/zoomcar-refunds-deposits-instantly-with-cashgram",
+          "https://www.cashfree.com/case-study/tata-cliq-delights-customers-with-instant-cod-refunds"
+        ]
+      },
+      {
+        "quote": "Zoomcar",
+        "urls": [
+          "https://www.cashfree.com/case-study/zoomcar-refunds-deposits-instantly-with-cashgram"
+        ]
+      },
+      {
+        "quote": "Wakefit",
+        "urls": [
+          "https://www.cashfree.com/case-study/wakefit-wins-customer-trust-with-100-days-full-instant-refund-policy-using-cashgram-by-cashfree-payments"
+        ]
+      },
+      {
+        "quote": "MyPB",
+        "urls": [
+          "https://www.cashfree.com/case-study"
+        ]
+      },
+      {
+        "quote": "Sepoy & Co.",
+        "urls": [
+          "https://www.cashfree.com/case-study"
+        ]
+      },
+      {
+        "quote": "Aura Gold",
+        "urls": [
+          "https://www.cashfree.com/case-study"
+        ]
+      }
+    ]
+  },
+  "evidence_upgrades": [
+    {
+      "field": "products.names",
+      "value": "Cashfree Checkout",
+      "source_url": "https://www.cashfree.com/case-study/how-aura-gold-scaled-recurring-investments-while-maintaining-90-success-rate",
+      "quote": "With Cashfree Checkout, Aura Gold achieved a lightning-fast ~200 ms load time, along with full configurability of branding elements like logo, colors, and layout. They could also customize available payment modes and their ordering, ensuring the checkout reflected their exact preferences."
+    },
+    {
+      "field": "products.names",
+      "value": "Payment Gateway",
+      "source_url": "https://www.cashfree.com/",
+      "quote": "Get your business festive ready with India's Best Payment Gateway"
+    },
+    {
+      "field": "products.names",
+      "value": "Payment Links",
+      "source_url": "https://www.cashfree.com/",
+      "quote": "No, you do not need a website or app to accept payments. Cashfree Payments has two no-code solutions for entities that want to accept payments without a website or application - Payment Links and Payment Forms."
+    },
+    {
+      "field": "products.names",
+      "value": "Payment Forms",
+      "source_url": "https://www.cashfree.com/",
+      "quote": "No, you do not need a website or app to accept payments. Cashfree Payments has two no-code solutions for entities that want to accept payments without a website or application - Payment Links and Payment Forms."
+    },
+    {
+      "field": "products.names",
+      "value": "Cashgram",
+      "source_url": "https://www.cashfree.com/case-study/zoomcar-refunds-deposits-instantly-with-cashgram",
+      "quote": "Zoomcar Refunds Security Deposits Instantly With Cashgram"
+    },
+    {
+      "field": "products.names",
+      "value": "Payouts",
+      "source_url": "https://www.cashfree.com/",
+      "quote": "Payouts and refunds, done in seconds."
+    },
+    {
+      "field": "products.names",
+      "value": "Subscriptions",
+      "source_url": "https://www.cashfree.com/recurring-payment",
+      "quote": "One recurring payments stack across UPI, Cards, eNACH and Global subscriptions - built to register mandates faster and keep every renewal running seamlessly."
+    },
+    {
+      "field": "products.names",
+      "value": "RiskShield",
+      "source_url": "https://www.cashfree.com/hosted-checkout",
+      "quote": "RiskShield's AI blocks suspicious transactions before they happen, cutting down fraud losses by \u226480%."
+    },
+    {
+      "field": "products.names",
+      "value": "Secure ID",
+      "source_url": "https://www.cashfree.com/docs/secure-id/introduction",
+      "quote": "Secure ID provides the following advantages for your verification workflows:- Comprehensive verification: Support for all major Indian identity documents and verification methods."
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 45628,
+    "completion_tokens": 1874,
+    "total_tokens": 47502,
+    "elapsed_s": 14.870885999999999,
+    "estimated_cost_usd": 0.0079686
+  },
+  "timing": {
+    "crawl_s": 48.315,
+    "clean_s": 21.77,
+    "extract_s": 16.5,
+    "second_pass_s": 0.0,
+    "classifier_s": 0.0,
+    "total_s": 89.832
+  },
+  "clean_snapshot": {
+    "path": "data/clean/cashfree_com/20261011-125331.json",
+    "sha256": "146481524fbf6fa6f668241b6d08a85436238c1df0ba39a4941ed51d95f829c4",
+    "pages": 42
+  }
+}

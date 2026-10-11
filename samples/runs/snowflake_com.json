@@ -1,0 +1,1325 @@
+{
+  "claims": [
+    {
+      "claim_id": "snowflake.com:company_identity.name:0",
+      "field": "company_identity.name",
+      "value": "Snowflake",
+      "status": "extracted",
+      "confidence": null,
+      "source_url": "https://www.snowflake.com/en",
+      "page_title": "Snowflake AI Data Cloud",
+      "evidence": "Snowflake AI Data Cloud",
+      "retrieved_at": "2026-10-11",
+      "notes": null,
+      "coverage": null
+    },
+    {
+      "claim_id": "snowflake.com:company_identity.description:1",
+      "field": "company_identity.description",
+      "value": "Snowflake is a fully managed service that\u2019s truly easy to use, connected across your entire data estate and trusted by thousands of customers.",
+      "status": "extracted",
+      "confidence": null,
+      "source_url": "https://www.snowflake.com/en",
+      "page_title": "Snowflake AI Data Cloud",
+      "evidence": "Snowflake is a fully managed service that\u2019s truly easy to use, connected across your entire data estate and trusted by thousands of customers.",
+      "retrieved_at": "2026-10-11",
+      "notes": null,
+      "coverage": null
+    },
+    {
+      "claim_id": "snowflake.com:company_identity.headquarters:2",
+      "field": "company_identity.headquarters",
+      "value": null,
+      "status": "not_found",
+      "confidence": null,
+      "source_url": "https://www.snowflake.com/en",
+      "page_title": "Snowflake AI Data Cloud",
+      "evidence": null,
+      "retrieved_at": null,
+      "notes": null,
+      "coverage": {
+        "page_types_checked": [
+          "all pages sent to the model"
+        ],
+        "pages_checked": 40
+      }
+    },
+    {
+      "claim_id": "snowflake.com:products.names:3",
+      "field": "products.names",
+      "value": null,
+      "status": "not_found",
+      "confidence": null,
+      "source_url": "https://www.snowflake.com/en",
+      "page_title": "Snowflake AI Data Cloud",
+      "evidence": null,
+      "retrieved_at": null,
+      "notes": null,
+      "coverage": {
+        "page_types_checked": [
+          "all pages sent to the model"
+        ],
+        "pages_checked": 40
+      }
+    },
+    {
+      "claim_id": "snowflake.com:products.delivery_model:4",
+      "field": "products.delivery_model",
+      "value": "software",
+      "status": "inferred",
+      "confidence": null,
+      "source_url": "https://www.snowflake.com/en",
+      "page_title": "Snowflake AI Data Cloud",
+      "evidence": "Snowflake helps you innovate faster and do more with your data.",
+      "retrieved_at": "2026-10-11",
+      "notes": "The page describes a platform that provides software capabilities for data management and analytics.",
+      "coverage": null
+    },
+    {
+      "claim_id": "snowflake.com:customers.segments:5",
+      "field": "customers.segments",
+      "value": null,
+      "status": "not_found",
+      "confidence": null,
+      "source_url": "https://www.snowflake.com/en/customers",
+      "page_title": "Snowflake Customers: Join the World's Leading Brands",
+      "evidence": null,
+      "retrieved_at": null,
+      "notes": null,
+      "coverage": {
+        "page_types_checked": [
+          "all pages sent to the model"
+        ],
+        "pages_checked": 40
+      }
+    },
+    {
+      "claim_id": "snowflake.com:customers.industries:6",
+      "field": "customers.industries",
+      "value": [
+        "Retail",
+        "Healthcare & Life Sciences",
+        "Manufacturing",
+        "Public Sector",
+        "Telecom",
+        "Technology",
+        "Advertising, Media & Entertainment"
+      ],
+      "status": "extracted",
+      "confidence": null,
+      "source_url": "https://www.snowflake.com/en/solutions/industries",
+      "page_title": "Industry Solutions | Snowflake",
+      "evidence": [
+        "Retail & Consumer Goods",
+        "Healthcare & Life Sciences",
+        "Manufacturing",
+        "Public Sector",
+        "Telecom",
+        "Technology",
+        "Advertising, Media & Entertainment"
+      ],
+      "retrieved_at": "2026-10-11",
+      "notes": null,
+      "coverage": null
+    },
+    {
+      "claim_id": "snowflake.com:pricing.public_plans:7",
+      "field": "pricing.public_plans",
+      "value": [
+        "Standard",
+        "Enterprise",
+        "Business Critical",
+        "Virtual Private Snowflake"
+      ],
+      "status": "extracted",
+      "confidence": null,
+      "source_url": "https://www.snowflake.com/en/pricing-options",
+      "page_title": "Snowflake Pricing | Choose the Right Edition for Your Data Needs",
+      "evidence": [
+        "Standard",
+        "Enterprise",
+        "Business Critical",
+        "Virtual Private Snowflake"
+      ],
+      "retrieved_at": "2026-10-11",
+      "notes": null,
+      "coverage": null
+    },
+    {
+      "claim_id": "snowflake.com:pricing.sales_motion:8",
+      "field": "pricing.sales_motion",
+      "value": "Self-serve signup, plus contact sales or demo for larger plans",
+      "status": "inferred",
+      "confidence": 1.0,
+      "source_url": "https://www.snowflake.com/en/pricing-options",
+      "page_title": "Snowflake Pricing | Choose the Right Edition for Your Data Needs",
+      "evidence": "start for free\nGet Started\nCONTACT SALES\nTalk to Sales",
+      "retrieved_at": "2026-10-11",
+      "notes": "Jev (jev-1.13.0) chose 'hybrid' with probability 1.00; the evidence lines are the page's own button/link labels.",
+      "coverage": null
+    },
+    {
+      "claim_id": "replacement:pricing.free_trial",
+      "field": "pricing.free_trial",
+      "value": null,
+      "status": "not_found",
+      "confidence": null,
+      "source_url": null,
+      "page_title": null,
+      "evidence": null,
+      "retrieved_at": null,
+      "notes": null,
+      "coverage": {
+        "page_types_checked": [
+          "all pages sent to the model"
+        ],
+        "pages_checked": 40
+      }
+    },
+    {
+      "claim_id": "snowflake.com:pricing.revenue_model:10",
+      "field": "pricing.revenue_model",
+      "value": "consumption-based",
+      "status": "inferred",
+      "confidence": null,
+      "source_url": "https://www.snowflake.com/en/pricing-options",
+      "page_title": "Snowflake Pricing | Choose the Right Edition for Your Data Needs",
+      "evidence": "We keep pricing simple with a consumption-based pricing model.",
+      "retrieved_at": "2026-10-11",
+      "notes": "The page describes a pricing model based on consumption, indicating a usage-based revenue model.",
+      "coverage": null
+    },
+    {
+      "claim_id": "snowflake.com:traction.named_customers:11",
+      "field": "traction.named_customers",
+      "value": [
+        "Under Armour",
+        "Petco",
+        "Novo Nordisk",
+        "HelloFresh",
+        "Tampa Bay Rays"
+      ],
+      "status": "extracted",
+      "confidence": null,
+      "source_url": "https://www.snowflake.com/en/customers/all-customers",
+      "page_title": "Snowflake: All Customers",
+      "evidence": [
+        "Under Armour",
+        "Petco",
+        "Novo Nordisk",
+        "HelloFresh",
+        "Tampa Bay Rays"
+      ],
+      "retrieved_at": "2026-10-11",
+      "notes": null,
+      "coverage": null
+    },
+    {
+      "claim_id": "snowflake.com:traction.certifications:12",
+      "field": "traction.certifications",
+      "value": [
+        "HIPAA",
+        "HITRUST CERTIFIED",
+        "FEDRAMP",
+        "SOC2",
+        "GDPR"
+      ],
+      "status": "extracted",
+      "confidence": null,
+      "source_url": "https://www.snowflake.com/en/solutions/industries/healthcare-and-life-sciences",
+      "page_title": "AI Data Cloud for Healthcare & Life Sciences | Snowflake",
+      "evidence": [
+        "HIPAA",
+        "HITRUST CERTIFIED",
+        "FEDRAMP",
+        "SOC2",
+        "GDPR"
+      ],
+      "retrieved_at": "2026-10-11",
+      "notes": null,
+      "coverage": null
+    },
+    {
+      "claim_id": "snowflake.com:traction.partnerships:13",
+      "field": "traction.partnerships",
+      "value": null,
+      "status": "not_found",
+      "confidence": null,
+      "source_url": "https://www.snowflake.com/en/why-snowflake/partners",
+      "page_title": "Snowflake Partner Network | Snowflake",
+      "evidence": null,
+      "retrieved_at": null,
+      "notes": null,
+      "coverage": {
+        "page_types_checked": [
+          "all pages sent to the model"
+        ],
+        "pages_checked": 40
+      }
+    },
+    {
+      "claim_id": "snowflake.com:comparisons.named_alternatives:14",
+      "field": "comparisons.named_alternatives",
+      "value": null,
+      "status": "not_found",
+      "confidence": null,
+      "source_url": "https://www.snowflake.com/en/solutions/industries",
+      "page_title": "Industry Solutions | Snowflake",
+      "evidence": null,
+      "retrieved_at": null,
+      "notes": null,
+      "coverage": {
+        "page_types_checked": [
+          "all pages sent to the model"
+        ],
+        "pages_checked": 40
+      }
+    }
+  ],
+  "announcements": [],
+  "cache_status": "miss",
+  "dropped_pages": [],
+  "profile": {
+    "products_services": {
+      "delivery_model": {
+        "value": "software",
+        "status": "inferred",
+        "claim_id": "snowflake.com:products.delivery_model:4"
+      }
+    },
+    "company_comparisons": {},
+    "pricing_commercial": {
+      "public_plans": {
+        "value": [
+          "Standard",
+          "Enterprise",
+          "Business Critical",
+          "Virtual Private Snowflake"
+        ],
+        "status": "extracted",
+        "claim_id": "snowflake.com:pricing.public_plans:7"
+      },
+      "sales_motion": {
+        "value": "Self-serve signup, plus contact sales or demo for larger plans",
+        "status": "inferred",
+        "claim_id": "snowflake.com:pricing.sales_motion:8",
+        "confidence": 1.0
+      },
+      "revenue_model": {
+        "value": "consumption-based",
+        "status": "inferred",
+        "claim_id": "snowflake.com:pricing.revenue_model:10"
+      }
+    },
+    "evidence_traction": {
+      "named_customers": {
+        "value": [
+          "Under Armour",
+          "Petco",
+          "Novo Nordisk",
+          "HelloFresh",
+          "Tampa Bay Rays"
+        ],
+        "status": "extracted",
+        "claim_id": "snowflake.com:traction.named_customers:11"
+      },
+      "certifications": {
+        "value": [
+          "HIPAA",
+          "HITRUST CERTIFIED",
+          "FEDRAMP",
+          "SOC2",
+          "GDPR"
+        ],
+        "status": "extracted",
+        "claim_id": "snowflake.com:traction.certifications:12"
+      },
+      "announcements": []
+    },
+    "customers_positioning": {
+      "industries": {
+        "value": [
+          "Retail",
+          "Healthcare & Life Sciences",
+          "Manufacturing",
+          "Public Sector",
+          "Telecom",
+          "Technology",
+          "Advertising, Media & Entertainment"
+        ],
+        "status": "extracted",
+        "claim_id": "snowflake.com:customers.industries:6"
+      }
+    },
+    "company_identity": {
+      "name": {
+        "value": "Snowflake",
+        "status": "extracted",
+        "claim_id": "snowflake.com:company_identity.name:0"
+      },
+      "description": {
+        "value": "Snowflake is a fully managed service that\u2019s truly easy to use, connected across your entire data estate and trusted by thousands of customers.",
+        "status": "extracted",
+        "claim_id": "snowflake.com:company_identity.description:1"
+      }
+    },
+    "coverage": {
+      "pages_scanned": 40,
+      "total_fields": 15,
+      "fields_populated": 9,
+      "fields_inferred": 3,
+      "fields_conflicting": 0,
+      "fields_not_found": 6,
+      "evidence_support_rate": 0.9,
+      "last_retrieved_at": "2026-10-11",
+      "crawl_status": "ok",
+      "crawl_error_code": null,
+      "crawl_status_reason": null,
+      "site_language": "en",
+      "site_language_source": "text",
+      "non_english": false
+    },
+    "gaps_conflicts": [
+      {
+        "value": null,
+        "status": "not_found",
+        "claim_id": "snowflake.com:company_identity.headquarters:2",
+        "field": "company_identity.headquarters"
+      },
+      {
+        "value": null,
+        "status": "not_found",
+        "claim_id": "snowflake.com:products.names:3",
+        "field": "products.names"
+      },
+      {
+        "value": null,
+        "status": "not_found",
+        "claim_id": "snowflake.com:customers.segments:5",
+        "field": "customers.segments"
+      },
+      {
+        "value": null,
+        "status": "not_found",
+        "claim_id": "replacement:pricing.free_trial",
+        "field": "pricing.free_trial"
+      },
+      {
+        "value": null,
+        "status": "not_found",
+        "claim_id": "snowflake.com:traction.partnerships:13",
+        "field": "traction.partnerships"
+      },
+      {
+        "value": null,
+        "status": "not_found",
+        "claim_id": "snowflake.com:comparisons.named_alternatives:14",
+        "field": "comparisons.named_alternatives"
+      }
+    ]
+  },
+  "schema_version": "schema-v1",
+  "limit_reached": true,
+  "crawl_status": "ok",
+  "crawl_error_code": null,
+  "crawl_status_reason": null,
+  "final_url": null,
+  "site_language": "en",
+  "site_language_source": "text",
+  "non_english": false,
+  "crawl": {
+    "pages": [
+      {
+        "url": "https://www.snowflake.com/en",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": "https://www.snowflake.com/"
+      },
+      {
+        "url": "https://www.snowflake.com/en/pricing-options",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/retail-consumer-goods",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/case-study/under-armour",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/healthcare-and-life-sciences",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/video/novo",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/video/tampa-bay-rays",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/manufacturing",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/snapshot/united-rentals",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/travel-hospitality",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/video/booking-com",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/video/fanatics",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/why-snowflake/partners",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/why-snowflake/partners/all-partners",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/advertising-media-entertainment",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/departments/finance",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": "https://www.snowflake.com/en/solutions/industries/financial-services"
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/public-sector",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/telecom",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/technology",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/company/overview/about-snowflake",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/resources/learn/certifications",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/pricing-options/cost-and-performance-optimization",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/pricing-options/calculator",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/pricing-options/calculator/overview",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/pricing-options/calculator/feedback-faqs",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/pricing-options/performance-index",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/resource/the-simple-guide-to-snowflake-pricing",
+        "status": "error",
+        "status_code": 200,
+        "error": "bot-protection page (/cdn-cgi/challenge-platform/; 716 chars of text)",
+        "error_code": "BLOCKED",
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/snapshot/canva",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/case-study/penske",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/case-study/mercury",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/video/mandai-wildlife-group",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/retail-consumer-goods/retail",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/retail-consumer-goods/consumer-goods",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/retail-consumer-goods/partners",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/retail-consumer-goods/resources",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/departments/marketing/customer-360",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/case-study/petco",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/case-study/hellofresh",
+        "status": "ok",
+        "status_code": 200,
+        "error": null,
+        "error_code": null,
+        "truncated": false,
+        "js_rendered": false,
+        "requested_url": null
+      }
+    ],
+    "skipped_by_robots": [],
+    "skipped_as_duplicate": [],
+    "skipped_as_other_locale": [
+      "https://www.snowflake.com/ja",
+      "https://www.snowflake.com/ko",
+      "https://www.snowflake.com/zh_cn",
+      "https://www.snowflake.com/pt_br",
+      "https://www.snowflake.com/de",
+      "https://www.snowflake.com/fr",
+      "https://www.snowflake.com/es",
+      "https://www.snowflake.com/it",
+      "https://www.snowflake.com/ja/pricing-options",
+      "https://www.snowflake.com/ko/pricing-options",
+      "https://www.snowflake.com/pt_br/pricing-options",
+      "https://www.snowflake.com/de/pricing-options",
+      "https://www.snowflake.com/fr/pricing-options",
+      "https://www.snowflake.com/es/pricing-options",
+      "https://www.snowflake.com/it/pricing-options",
+      "https://www.snowflake.com/ja/customers",
+      "https://www.snowflake.com/ko/customers",
+      "https://www.snowflake.com/pt_br/customers",
+      "https://www.snowflake.com/de/customers",
+      "https://www.snowflake.com/fr/customers",
+      "https://www.snowflake.com/es/customers",
+      "https://www.snowflake.com/it/customers",
+      "https://www.snowflake.com/ja/solutions/industries/retail-consumer-goods",
+      "https://www.snowflake.com/ko/solutions/industries/retail-consumer-goods",
+      "https://www.snowflake.com/pt_br/solutions/industries/retail-consumer-goods",
+      "https://www.snowflake.com/de/solutions/industries/retail-consumer-goods",
+      "https://www.snowflake.com/fr/solutions/industries/retail-consumer-goods",
+      "https://www.snowflake.com/ja/solutions/industries/healthcare-and-life-sciences",
+      "https://www.snowflake.com/ko/solutions/industries/healthcare-and-life-sciences",
+      "https://www.snowflake.com/pt_br/solutions/industries/healthcare-and-life-sciences",
+      "https://www.snowflake.com/de/solutions/industries/healthcare-and-life-sciences",
+      "https://www.snowflake.com/fr/solutions/industries/healthcare-and-life-sciences",
+      "https://www.snowflake.com/ja/solutions/industries/manufacturing",
+      "https://www.snowflake.com/ko/solutions/industries/manufacturing",
+      "https://www.snowflake.com/pt_br/solutions/industries/manufacturing",
+      "https://www.snowflake.com/de/solutions/industries/manufacturing",
+      "https://www.snowflake.com/fr/solutions/industries/manufacturing",
+      "https://www.snowflake.com/ja/customers/all-customers",
+      "https://www.snowflake.com/ko/customers/all-customers",
+      "https://www.snowflake.com/pt_br/customers/all-customers",
+      "https://www.snowflake.com/de/customers/all-customers",
+      "https://www.snowflake.com/fr/customers/all-customers",
+      "https://www.snowflake.com/es/customers/all-customers",
+      "https://www.snowflake.com/it/customers/all-customers",
+      "https://www.snowflake.com/ja/solutions/industries/travel-hospitality",
+      "https://www.snowflake.com/ko/solutions/industries/travel-hospitality",
+      "https://www.snowflake.com/pt_br/solutions/industries/travel-hospitality",
+      "https://www.snowflake.com/de/solutions/industries/travel-hospitality",
+      "https://www.snowflake.com/fr/solutions/industries/travel-hospitality",
+      "https://www.snowflake.com/ko/customers/all-customers/video/booking-com",
+      "https://www.snowflake.com/de/customers/all-customers/video/booking-com",
+      "https://www.snowflake.com/es/customers/all-customers/video/booking-com",
+      "https://www.snowflake.com/ja/solutions/industries",
+      "https://www.snowflake.com/ko/solutions/industries",
+      "https://www.snowflake.com/pt_br/solutions/industries",
+      "https://www.snowflake.com/de/solutions/industries",
+      "https://www.snowflake.com/fr/solutions/industries",
+      "https://www.snowflake.com/ja/solutions/industries/advertising-media-entertainment",
+      "https://www.snowflake.com/ko/solutions/industries/advertising-media-entertainment",
+      "https://www.snowflake.com/pt_br/solutions/industries/advertising-media-entertainment",
+      "https://www.snowflake.com/de/solutions/industries/advertising-media-entertainment",
+      "https://www.snowflake.com/fr/solutions/industries/advertising-media-entertainment",
+      "https://www.snowflake.com/ja/solutions/departments/finance",
+      "https://www.snowflake.com/ko/solutions/departments/finance",
+      "https://www.snowflake.com/pt_br/solutions/departments/finance",
+      "https://www.snowflake.com/de/solutions/departments/finance",
+      "https://www.snowflake.com/fr/solutions/departments/finance",
+      "https://www.snowflake.com/es/solutions/departments/finance",
+      "https://www.snowflake.com/it/solutions/departments/finance",
+      "https://www.snowflake.com/ja/solutions/industries/public-sector",
+      "https://www.snowflake.com/ko/solutions/industries/public-sector",
+      "https://www.snowflake.com/pt_br/solutions/industries/public-sector",
+      "https://www.snowflake.com/de/solutions/industries/public-sector",
+      "https://www.snowflake.com/fr/solutions/industries/public-sector",
+      "https://www.snowflake.com/ja/solutions/industries/telecom",
+      "https://www.snowflake.com/ko/solutions/industries/telecom",
+      "https://www.snowflake.com/pt_br/solutions/industries/telecom",
+      "https://www.snowflake.com/de/solutions/industries/telecom",
+      "https://www.snowflake.com/fr/solutions/industries/telecom",
+      "https://www.snowflake.com/ja/solutions/industries/technology",
+      "https://www.snowflake.com/ko/solutions/industries/technology",
+      "https://www.snowflake.com/pt_br/solutions/industries/technology",
+      "https://www.snowflake.com/de/solutions/industries/technology",
+      "https://www.snowflake.com/fr/solutions/industries/technology",
+      "https://www.snowflake.com/ja/company/overview/about-snowflake",
+      "https://www.snowflake.com/ko/company/overview/about-snowflake",
+      "https://www.snowflake.com/pt_br/company/overview/about-snowflake",
+      "https://www.snowflake.com/de/company/overview/about-snowflake",
+      "https://www.snowflake.com/fr/company/overview/about-snowflake",
+      "https://www.snowflake.com/es/company/overview/about-snowflake",
+      "https://www.snowflake.com/it/company/overview/about-snowflake",
+      "https://www.snowflake.com/ja/resources/learn/certifications",
+      "https://www.snowflake.com/ko/resources/learn/certifications"
+    ],
+    "skipped_as_auth": [
+      "https://spn.snowflake.com/s/login"
+    ],
+    "dropped_after_redirect": [],
+    "budget_exhausted": false,
+    "page_cap_reached": true,
+    "crawl_status": "ok",
+    "crawl_error_code": null,
+    "crawl_status_reason": null,
+    "start_attempts": 1,
+    "final_url": null,
+    "blocked_pages": [
+      {
+        "url": "https://www.snowflake.com/resource/the-simple-guide-to-snowflake-pricing",
+        "reason": "bot-protection page (/cdn-cgi/challenge-platform/; 716 chars of text)"
+      }
+    ],
+    "page_languages": [
+      {
+        "url": "https://www.snowflake.com/en",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/pricing-options",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/retail-consumer-goods",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/case-study/under-armour",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/healthcare-and-life-sciences",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/video/novo",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/video/tampa-bay-rays",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/manufacturing",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/snapshot/united-rentals",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/travel-hospitality",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/video/booking-com",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/video/fanatics",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/why-snowflake/partners",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/why-snowflake/partners/all-partners",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/advertising-media-entertainment",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/departments/finance",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/public-sector",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/telecom",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/technology",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/company/overview/about-snowflake",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/resources/learn/certifications",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/pricing-options/cost-and-performance-optimization",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/pricing-options/calculator",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/pricing-options/calculator/overview",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/pricing-options/calculator/feedback-faqs",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/pricing-options/performance-index",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/snapshot/canva",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/case-study/penske",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/case-study/mercury",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/video/mandai-wildlife-group",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/retail-consumer-goods/retail",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/retail-consumer-goods/consumer-goods",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/retail-consumer-goods/partners",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/industries/retail-consumer-goods/resources",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/solutions/departments/marketing/customer-360",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/case-study/petco",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      },
+      {
+        "url": "https://www.snowflake.com/en/customers/all-customers/case-study/hellofresh",
+        "declared_lang": "en",
+        "guessed_lang": "en",
+        "sent_to_model": true
+      }
+    ],
+    "language_measured": {
+      "guess": "en",
+      "words": 22704,
+      "letters": 123489,
+      "latin_ratio": 1.0,
+      "en_ratio": 0.287,
+      "other_ratio": 0.002,
+      "declared_lang": "en"
+    }
+  },
+  "focus_retry": {
+    "enabled": false
+  },
+  "classifier": {
+    "provider": "jev",
+    "enabled": true,
+    "calls": 1,
+    "decisions": [
+      {
+        "field": "pricing.sales_motion",
+        "applied": true,
+        "raw": {
+          "type": "choice",
+          "choice": "hybrid",
+          "confidence": 1.0,
+          "probabilities": {
+            "self_serve": 0.0,
+            "sales_led": 0.0,
+            "hybrid": 1.0,
+            "unclear": 0.0
+          }
+        },
+        "choice": "hybrid",
+        "probability": 1.0,
+        "previous": {
+          "status": "inferred",
+          "value": "Self-serve signup; contact-sales for Enterprise"
+        },
+        "reason": "applied"
+      },
+      {
+        "field": "pricing.revenue_model",
+        "applied": false,
+        "reason": "existing answer kept (mode fill_missing)"
+      }
+    ],
+    "mode": "override",
+    "min_probability": 0.8,
+    "model": "jev-1.13.0",
+    "input_tokens": 1882,
+    "output_tokens": 54,
+    "elapsed_s": 0.635,
+    "estimated_cost_usd": 7.9e-05
+  },
+  "rejected": [
+    {
+      "field": "pricing.free_trial",
+      "reason": "quote does not support the value",
+      "attempted_value": "30-day free trial with $400 in credits",
+      "attempted_evidence": "$400 in free credits",
+      "source_url": "https://www.snowflake.com/en/pricing-options"
+    }
+  ],
+  "schema_errors": [
+    "claim #11 (traction.named_customers): B-77: evidence spans more than one page (1 quote(s) on the cited page, 4 elsewhere); citation left as it was"
+  ],
+  "rejected_announcements": [],
+  "evidence_sources": {
+    "snowflake.com:traction.named_customers:11": [
+      {
+        "quote": "Under Armour",
+        "urls": [
+          "https://www.snowflake.com/en/customers/all-customers"
+        ]
+      },
+      {
+        "quote": "Petco",
+        "urls": [
+          "https://www.snowflake.com/en/solutions/industries/retail-consumer-goods",
+          "https://www.snowflake.com/en/solutions/industries/retail-consumer-goods/retail",
+          "https://www.snowflake.com/en/customers/all-customers/case-study/petco"
+        ]
+      },
+      {
+        "quote": "Novo Nordisk",
+        "urls": [
+          "https://www.snowflake.com/en/solutions/industries/healthcare-and-life-sciences",
+          "https://www.snowflake.com/en/customers/all-customers/video/novo"
+        ]
+      },
+      {
+        "quote": "HelloFresh",
+        "urls": [
+          "https://www.snowflake.com/en/solutions/industries/retail-consumer-goods",
+          "https://www.snowflake.com/en/customers/all-customers/case-study/hellofresh"
+        ]
+      },
+      {
+        "quote": "Tampa Bay Rays",
+        "urls": [
+          "https://www.snowflake.com/en/customers/all-customers/video/tampa-bay-rays"
+        ]
+      }
+    ]
+  },
+  "evidence_upgrades": [],
+  "usage": {
+    "prompt_tokens": 38749,
+    "completion_tokens": 1803,
+    "total_tokens": 40552,
+    "elapsed_s": 16.643962833999993,
+    "estimated_cost_usd": 0.00689415
+  },
+  "timing": {
+    "crawl_s": 72.277,
+    "clean_s": 17.232,
+    "extract_s": 16.902,
+    "second_pass_s": 0.0,
+    "classifier_s": 0.638,
+    "total_s": 109.476
+  },
+  "clean_snapshot": {
+    "path": "data/clean/snowflake_com/20261011-134110.json",
+    "sha256": "b99ee0bebb899a99608af1f538dc08e8b1265720e43b4be633713b3206d4ff8c",
+    "pages": 41
+  }
+}
