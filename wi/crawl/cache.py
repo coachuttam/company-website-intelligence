@@ -165,7 +165,9 @@ from wi.crawl.fetch import content_hash
 # removed too, so a stale cached claim would keep a note that contradicts its value.
 # 26 (2026-10-09, B-94): evidence lines found on no crawled page are removed from accepted multi-line
 # evidence (and the removal noted), so a stale cached claim would keep the made-up lines.
-EXTRACTION_LOGIC_VERSION = 26
+# 27 (2026-10-11, B-100): clean_page appends logo and image labels to every page and the navigation,
+# header and footer link texts to the homepage, so the text the model and the gate see changes.
+EXTRACTION_LOGIC_VERSION = 27
 
 
 def run_fingerprint(site_url: str, pages: List[CleanPage], config: dict) -> str:

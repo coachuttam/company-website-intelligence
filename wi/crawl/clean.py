@@ -66,6 +66,7 @@ from urllib.parse import urlsplit
 import trafilatura
 from bs4 import BeautifulSoup
 
+from wi.crawl.page_labels import labels_block, nav_block
 from wi.crawl.sales_cues import cue_block_for_html, is_pricing_page_url
 
 _ADDRESS_STREET_WORDS = re.compile(
@@ -244,7 +245,9 @@ def main_text(url: str, html: str) -> str:
     return text
 
 
-def clean_page(url: str, html: str, max_clean_chars: int) -> CleanPage:
+def clean_page(url: str, html: str, max_clean_chars: int, homepage: bool = False) -> CleanPage:
+    """`homepage` (B-100): the caller's shortest-path page of the site, the only page that gets the
+    "[site navigation]" block. See wi/crawl/page_labels.py for both appended blocks."""
     text = main_text(url, html)
 
     truncated = len(text) > max_clean_chars
@@ -258,6 +261,17 @@ def clean_page(url: str, html: str, max_clean_chars: int) -> CleanPage:
         cue_block = cue_block_for_html(html)
         if cue_block:
             text = text + "\n" + cue_block
+
+    # B-100 (wi/crawl/page_labels.py): logo and image labels on every page, and the navigation, header
+    # and footer link texts on the homepage only. Appended after the cap, each within its own budget,
+    # so main content is never pushed out; nothing is added when a page has neither.
+    labels = labels_block(html)
+    if labels:
+        text = text + "\n" + labels
+    if homepage:
+        nav = nav_block(html)
+        if nav:
+            text = text + "\n" + nav
 
     return CleanPage(url=url, title=_title(html), text=text, truncated=truncated)
 

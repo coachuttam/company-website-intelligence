@@ -248,9 +248,11 @@ BADGE_GRID = (
 
 def test_b92_badge_grid_labels_are_folded_back_in():
     from wi.crawl.clean import CERT_BLOCK_HEADER
+    from wi.crawl.page_labels import LABELS_HEADER
     text = clean_page("https://acme.test/security", _security_page(BADGE_GRID), 16000).text
     assert CERT_BLOCK_HEADER in text
-    block = text.split(CERT_BLOCK_HEADER, 1)[1]
+    # B-100 appends a separate image-labels block after it; the badge block itself ends there
+    block = text.split(CERT_BLOCK_HEADER, 1)[1].split(LABELS_HEADER, 1)[0]
     for label in ["SOC 2 Type II", "PCI DSS", "HIPAA", "GDPR", "CCPA / CPRA", "CSA STAR",
                   "TX-RAMP", "ISO 27001", "ISO 42001"]:
         assert f"\n{label}" in block                    # one quotable line per label
