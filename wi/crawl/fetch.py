@@ -103,7 +103,7 @@ from wi.crawl.url import is_restricted_host
 from wi.crawl.js_fallback import (DEFAULT_MIN_TEXT_CHARS, DEFAULT_TIMEOUT_S, needs_fallback,
                                   visible_text_length)
 
-USER_AGENT = "CompanyWebsiteIntelBot/0.1 (+https://samkhya.ai/bot)"
+USER_AGENT = "CompanyWebsiteIntelBot/0.1 (+https://github.com/coachuttam/company-website-intelligence)"
 
 
 @dataclass

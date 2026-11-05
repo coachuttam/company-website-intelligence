@@ -5,14 +5,14 @@ run_site.py does, then show which self-serve and contact-sales cue lines the rul
 the pipeline, whether the cues are present in the cleaned text and how noisy the lexicons are.
 
 Usage:
-    python _diagnostic_sales_cues.py URL [URL ...]
+    python tools/diagnostics/_diagnostic_sales_cues.py URL [URL ...]
 Example:
-    python _diagnostic_sales_cues.py https://www.notion.com/ https://www.loom.com/
+    python tools/diagnostics/_diagnostic_sales_cues.py https://www.notion.com/ https://www.loom.com/
 """
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from wi.config import load_config
 from wi.crawl.clean import clean_page, resolve_char_cap

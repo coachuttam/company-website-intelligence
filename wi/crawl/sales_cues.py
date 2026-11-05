@@ -11,7 +11,7 @@ matched. Every returned line is a real line of the page text, which keeps the cl
 evidence rules (nothing is composed or paraphrased).
 
 This module is pure (no network, no model call). Live finding that decided how it is used
-(_diagnostic_sales_cues.py on the 5 dev sites, 2026-10-06): the CLEANED pricing-page text had no
+(tools/diagnostics/_diagnostic_sales_cues.py on the 5 dev sites, 2026-10-06): the CLEANED pricing-page text had no
 contact-sales line on any site and no self-serve line on three of them, because the text cleaner
 (trafilatura) drops button and link labels as page furniture -- yet the raw page's buttons showed
 BOTH cues on all five. So the model was never shown the call-to-action text that prompt rules 14

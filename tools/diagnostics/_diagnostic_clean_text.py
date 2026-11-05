@@ -4,8 +4,8 @@ CLEANED text the model would see (plus its length), so "why was this field not_f
 answered by looking at the page text instead of guessing.
 
 Usage:
-    python _diagnostic_clean_text.py https://www.snowflake.com/en/solutions/industries
-    python _diagnostic_clean_text.py URL1 URL2 --chars 3000     # print up to 3000 chars per page
+    python tools/diagnostics/_diagnostic_clean_text.py https://www.snowflake.com/en/solutions/industries
+    python tools/diagnostics/_diagnostic_clean_text.py URL1 URL2 --chars 3000     # print up to 3000 chars per page
 Changes nothing; makes no model call.
 """
 import sys
@@ -13,7 +13,7 @@ from pathlib import Path
 
 import httpx
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from wi.config import load_config                    # noqa: E402
 from wi.crawl.clean import clean_page, resolve_char_cap   # noqa: E402
 from wi.crawl.fetch import USER_AGENT                # noqa: E402

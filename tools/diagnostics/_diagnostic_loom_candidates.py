@@ -87,7 +87,7 @@ response = client.chat.completions.create(
 usage = response.usage
 print(f"  tokens: {usage.total_tokens} ({usage.prompt_tokens} prompt + {usage.completion_tokens} completion)")
 
-out_path = PROJECT_ROOT / "_diagnostic_loom_candidates_output.json"
+out_path = PROJECT_ROOT / "tools" / "diagnostics" / "_diagnostic_loom_candidates_output.json"
 out_path.write_text(response.choices[0].message.content)
 print(f"Wrote raw candidate list to {out_path}")
 print()

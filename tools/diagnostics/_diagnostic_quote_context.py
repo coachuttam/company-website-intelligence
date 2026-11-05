@@ -5,7 +5,7 @@ visible. Used to see why a model quote such as 'Business, 1,499/month' was 'not 
 text' -- i.e. how the real page text lays that content out.
 
 Usage:
-    python _diagnostic_quote_context.py URL TERM [TERM ...] [options]
+    python tools/diagnostics/_diagnostic_quote_context.py URL TERM [TERM ...] [options]
 
 Options:
     --home         only look at the site's home page (the page whose path is "/")
@@ -14,9 +14,9 @@ Options:
     --max-hits N   hits shown per term per page (default 2)
 
 Examples:
-    python _diagnostic_quote_context.py https://simplestores.in/ "1,499" "Enterprise"
-    python _diagnostic_quote_context.py https://www.notion.com/ "capture context" --home
-    python _diagnostic_quote_context.py https://www.notion.com/ --home --full
+    python tools/diagnostics/_diagnostic_quote_context.py https://simplestores.in/ "1,499" "Enterprise"
+    python tools/diagnostics/_diagnostic_quote_context.py https://www.notion.com/ "capture context" --home
+    python tools/diagnostics/_diagnostic_quote_context.py https://www.notion.com/ --home --full
 
 A summary at the end lists, for every term, how many pages it was found on, so a term that
 printed nothing is reported as "NOT FOUND" rather than silently omitted. TERM is optional
@@ -26,7 +26,7 @@ import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from wi.config import load_config
 from wi.crawl.clean import clean_page, resolve_char_cap

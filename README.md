@@ -3,17 +3,29 @@
 Given one public company website URL, this produces a structured, evidence-backed profile of what the company states on its own website: 15 fixed fields, each with a source URL, an exact quote and a retrieval date, or an honest `not_found`.
 A company website is a **self-reported source**. Claims are never presented as independently verified.
 
-Spec: `docs/PRD.MD`. Behaviour log: `tests/BEHAVIOURS.md`. Progress log: `PROGRESS.md`. Acceptance status (AC-01 to AC-12), open decisions and what was cut: `docs/ACCEPTANCE_SUMMARY.md`.
+![Pipeline: crawl, clean, one gpt-4o-mini call, evidence gate, Jev classifier, run JSON, profile page or PDF; optional news path; offline evaluation](docs/architecture.png)
+
+The model proposes; deterministic code disposes. Every value must quote the page it cites, or the field becomes `not_found`. Diagram source: `docs/architecture.svg`.
+
+## Quick start
+
+```bash
+pip install -r requirements-dev.txt -r requirements-llm.txt && cp .env.example .env   # then add OPENAI_API_KEY
+python run_site.py https://www.notion.com/ --news                                     # writes data/runs/notion_com.json
+python -m wi.render data/runs/notion_com.json                                         # writes data/pages/notion_com.html
+```
+
+No key? `python -m wi.render samples/runs/notion_com.json` renders a saved run offline. Full setup below.
 
 ## Status at a glance
 
-- **Accuracy is below target.** On current code (tag `pre-compare-b93`) the dev-set headline is **63.6%**: the mean of 3 same-window `--no-cache` rounds scored with the semantic judge (64.0, 62.7, 64.0; `eval/baseline_report_cmp_C_nc1-3.json`). In the same window the post-B-81 code scored 65.8% (`eval/baseline_report_cmp_A_nc1-3.json`). The PRD target (AC-02) is **80% on held-out sites**. It is **not met**: the fresh held-out set v2 (8 sites, tag `pre-heldout-v2`, run once) scored **35%** (`eval/HELDOUT_V2_REPORT.md`).
-- **Held-out result in detail.** The 35% is 42 of 120 field-scores on 8 fresh sites that were labelled by hand before any run, then frozen by checksum and tag (`pre-heldout-v2`). The dev figure comes from sites the pipeline was tuned on, so it overstates performance on unseen sites. The dev and v2 label sets also follow different conventions (one dev label, Loom's, counts the laws GDPR and CCPA as certifications, which v2 does not; dev uses "Subscription" for `revenue_model` and free-text descriptions for `delivery_model`, v2 uses descriptive "Category: description" values), so the two numbers are not measured quite the same way; a post-hoc label-adjusted figure for `delivery_model` alone is 40.8%, and a category-normalised metric for `delivery_model` and `revenue_model` (rules fixed before computing and applied identically to dev and v2; off by default, `--normalised`; `docs/SCORING.md`) gives 45.8% (55/120) on v2 and 69.8% on the dev main control (strict 65.8%). Both are post-hoc and secondary; the strict 35% remains the recorded headline. Post-run development work (the cleaner change B-100 and the products.names evidence upgrade B-102) raised the 13-site development scores (`eval/DEV13_RESULTS.md`), but the held-out v2 headline stays 35%: once run, v2 became development data. Most of the loss is misses (43 of 120): the model returning `not_found`, the evidence gate rejecting quotes, and the cleaner removing menus and logo text. A fallback extraction fix was tried after the run and rejected on the dev set (61.3% against 65.8% for the control, with more unsupported answers); it was not merged. Details: `eval/HELDOUT_V2_REPORT.md` and `eval/FALLBACK_EXPERIMENT.md`.
-- **How much the numbers move.** ±3 points holds for 3-round means within one day. Single rounds varied by up to about 8 points (post-B-81 code: 61.3 to 69.3), the same code moved about 2 points between days (67.6% on 2026-10-07, 65.8% on 2026-10-09), and single fields swing far more (`pricing.free_trial` 40 / 0 / 0 on identical code).
-- **Latency misses the p50 target** on current code: p50 91.9 / 80.4 / 79.9 s per round against 60 s; p95 132 to 134 s against 180 s. Mean variable cost was $0.0061 to $0.0062 per site against $0.10 (`eval/latency_report_cmp_C_nc1-3.json`).
-- **Jev** (TypeSafe, the optional `pricing.sales_motion` / `pricing.revenue_model` classifier) is on in `config.yaml`. It was approved verbally by Abhishek in a meeting on 2026-10-06; written confirmation is pending.
-- A Gemini extraction comparison was prepared and then dropped. Its code (B-82, an optional extraction endpoint) sits **unmerged on the `gemini-compare` branch**; `main` uses `gpt-4o-mini`.
-- Reviews: `docs/ERROR_REVIEW.md` (every dev-set error and its cause, plus the held-out v2 misses) and `docs/KNOWN_LIMITATIONS.md`. The held-out run is done, so neither is marked DRAFT any more.
+- **Accuracy is below target.** The fresh held-out set v2 (8 sites labelled by hand before any run, frozen by checksum and tag `pre-heldout-v2`, run once) scored **35%** (42 of 120 field-scores) against the PRD's **80%** (AC-02, **not met**). Of the 43 misses, 25 are the model returning `not_found` and 17 are evidence-gate rejections. Details: `eval/HELDOUT_V2_REPORT.md`.
+- **Development numbers overstate it.** Current `main` scores 67–69% on the 5 dev sites it was tuned on and about 50% strict on all 13 development sites, which now include the v2 sites (`eval/DEV13_RESULTS.md`). Dev and v2 labels follow different conventions; a post-hoc category-normalised metric gives 45.8% on v2 and is secondary (`docs/SCORING.md`). 3-round means hold to ±3 points within a day; single rounds vary by up to about 8.
+- **Evidence holds.** 100% of returned claims pass the evidence gate (AC-01); the gate is never loosened to raise accuracy.
+- **Latency misses its p50 target; cost is well under.** p50 about 80–94 s per site against 60 s; p95 132–134 s against 180 s; mean cost about $0.006 per site against $0.10 (AC-10, `eval/latency_report*.json`).
+- **What is not in `main`.** Experiments that did not beat the control were not merged: a Gemini comparison, a fallback extraction pass, price-window evidence and a gpt-4.1 extraction model (`eval/FALLBACK_EXPERIMENT.md`, `eval/DEV13_RESULTS.md`); `main` uses `gpt-4o-mini`. The optional Jev classifier (TypeSafe) is on; Abhishek approved it verbally on 2026-10-06, written confirmation pending.
+
+Spec: `docs/PRD.MD`. Acceptance status (AC-01 to AC-12), open decisions and what was cut: `docs/ACCEPTANCE_SUMMARY.md`. Error review: `docs/ERROR_REVIEW.md`. Known limitations: `docs/KNOWN_LIMITATIONS.md`. Behaviour log: `tests/BEHAVIOURS.md`. Progress log: `PROGRESS.md`.
 
 ## Setup
 
@@ -145,7 +157,7 @@ B-72 to B-94 were motivated partly by informal spot-checks on non-dev sites: fre
 
 ## Project layout
 
-Architecture diagram: `docs/architecture.svg` (also `docs/architecture.png`), including the optional news path and the profile page/PDF. It was generated with Archify; the interactive source is under `.archify/`, which is not in the zip.
+Architecture diagram: `docs/architecture.svg` (also `docs/architecture.png`, shown at the top), generated with Archify.
 
 | Path | Purpose |
 | --- | --- |
@@ -158,7 +170,8 @@ Architecture diagram: `docs/architecture.svg` (also `docs/architecture.png`), in
 | `wi/profile/`, `wi/render/` | Canonical profile; read-only reference page (no model call) |
 | `wi/eval/`, `eval/` | Scoring, latency report, gate check, dev and held-out scripts, labels, saved reports |
 | `tests/` | Offline tests; `tests/BEHAVIOURS.md` lists every behaviour and its test |
-| `docs/` | PRD, error review, known limitations |
+| `docs/` | PRD, error review, known limitations, architecture diagram |
+| `tools/diagnostics/` | Read-only debugging scripts cited by code comments and `tests/BEHAVIOURS.md` (for example, print the cleaned text the model saw for a URL); not part of the pipeline |
 | `data/runs/`, `data/pages/` | Run outputs and rendered pages (not committed) |
 
 ## Rules
@@ -170,3 +183,7 @@ Architecture diagram: `docs/architecture.svg` (also `docs/architecture.png`), in
 5. Use `--no-cache` for any measurement, and judge a change on 3 or more runs.
 6. Do not tune on the dev set any further and never edit a label to match an output. The v2 held-out set has been run once on the tagged code (`pre-heldout-v2`) and scored 35%; the v2 sites are now development data, so any further held-out measurement needs a new, blind set labelled under one convention (see `eval/HELDOUT_V2_REPORT.md`, section 7, and `eval/FALLBACK_EXPERIMENT.md`).
 7. The 15-field schema is frozen.
+
+## License
+
+MIT. See `LICENSE`.

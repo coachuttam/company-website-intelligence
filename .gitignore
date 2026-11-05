@@ -22,3 +22,8 @@ data/pages/*
 
 # OS
 .DS_Store
+
+# Not shipped: Archify working files (the diagram is in docs/), prompt backups, the unused toy crawler
+.archify/
+wi/extract/*.bak_*
+traditional_crawler/

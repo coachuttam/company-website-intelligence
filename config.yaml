@@ -258,6 +258,6 @@ schema_version: "1"
 # sizes, never an industries list (seen on snowflake.com, simplestores.in, calendly.com). Prompt-text only.
 # Bumped 15 -> 16 (2026-10-06, B-70): the B-69 segments rule made the model abstain on BOTH fields
 # for snowflake.com, whose /solutions/industries page plainly lists eight industries (verified with
-# _diagnostic_clean_text.py: the list is in the cleaned text). Rule 13 now sends that list to
+# tools/diagnostics/_diagnostic_clean_text.py: the list is in the cleaned text). Rule 13 now sends that list to
 # customers.industries with a worked example. Prompt-text only.
 prompt_version: "16"

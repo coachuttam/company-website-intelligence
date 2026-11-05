@@ -3,7 +3,7 @@
 Why: on snowflake.com the cleaned text of /solutions/industries really lists eight industries, yet
 customers.industries came back not_found on every full run (40 pages, ~36,000 input tokens), with the
 model reporting it had only looked at the home page. Shown that one page alone, the same model and
-prompt returned all eight (checked with _diagnostic_focus_field.py). So the fact was lost among too
+prompt returned all eight (checked with tools/diagnostics/_diagnostic_focus_field.py). So the fact was lost among too
 many pages, not missing and not rejected. Prompt wording cannot fix attention dilution; showing the
 model fewer, better-chosen pages can.
 

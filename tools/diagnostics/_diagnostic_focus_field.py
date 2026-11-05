@@ -7,8 +7,8 @@ with the full 40-page run: if the field is populated here but not_found there, t
 the fact among too many pages. One model call (~1-3k tokens). Writes nothing (no run file, no cache).
 
 Usage:
-    python _diagnostic_focus_field.py customers.industries https://www.snowflake.com/en/solutions/industries
-    python _diagnostic_focus_field.py traction.certifications URL1 URL2
+    python tools/diagnostics/_diagnostic_focus_field.py customers.industries https://www.snowflake.com/en/solutions/industries
+    python tools/diagnostics/_diagnostic_focus_field.py traction.certifications URL1 URL2
 """
 import os
 import sys
@@ -18,7 +18,7 @@ from pathlib import Path
 import httpx
 from dotenv import load_dotenv
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 load_dotenv(ROOT / ".env")
 
